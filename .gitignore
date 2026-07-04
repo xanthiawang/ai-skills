@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+.git-archives/
+
+# Local-only skill aliases or separate project checkouts
+longevity-os
+taiyiyuan

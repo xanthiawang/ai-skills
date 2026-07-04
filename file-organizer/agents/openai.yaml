@@ -1,0 +1,4 @@
+interface:
+  display_name: "File Organizer"
+  short_description: "Route and record files safely"
+  default_prompt: "Use this skill to inventory recent Downloads/Desktop files, route obvious current-task artifacts, and produce approval-first cleanup plans with audit records for Albert."

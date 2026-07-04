@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nature Schematic"
+  short_description: "Watercolor schematic figure workflow"
+  default_prompt: "Use $nature-schematic to create a Nature-style biomedical schematic with watercolor biological elements and editable labels."

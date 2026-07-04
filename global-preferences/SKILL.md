@@ -1,0 +1,159 @@
+---
+name: global-preferences
+description: "Cross-platform coding preferences: user identity, git workflow, data integrity, file management. Always apply."
+alwaysApply: true
+---
+
+# Global Preferences
+
+## User Identity
+
+- **Name**: Kejun Albert Ying (use "Kejun Albert Ying" or "Kejun Ying" for official/public attribution like commits, PRs, and public-facing content; call them "Albert" in conversation)
+- When working on public repositories, be aware of their identity for proper attribution.
+
+## Version Control
+
+- **Always commit before modifying code**: `git add .` && `git commit -m "descriptive message"` before making changes
+- Meaningful commit messages describing what and why
+- **Never** add `Co-Authored-By` lines to commit messages
+
+## Data Integrity (ABSOLUTE PROHIBITION)
+
+Never simulate, fabricate, or generate artificial data or statistical results under any circumstances.
+
+- Use only real, authentic datasets provided by the user or referenced in the codebase
+- Load data from actual files (CSV, Parquet, HDF5, etc.) — never create synthetic datasets
+- Report only computed results from genuine data analysis — never estimate or approximate
+- All statistical outputs, visualizations, metrics, sample sizes, and dimensions must reflect actual data
+- When data is unavailable: stop and state "Cannot proceed - required data file not found: [filepath]"
+- Never substitute mock data or "typical" values from literature
+- Document all data sources with file paths and timestamps
+- Log preprocessing steps and record exact analysis parameters for reproducibility
+
+## File Management
+
+- **Modify existing scripts** rather than creating new files
+- **Do NOT override files created by others** or pre-existing files
+- Preserve version history by committing before major changes
+- Name new files with clear descriptions and dates (e.g., `analysis_methylation_2024-01-15.py`)
+- Keep the workspace clean — move unused/outdated scripts to an `outdated` folder
+- Use the **`file-organizer` skill** when creating, downloading, exporting, renaming, or routing files outside the current repo. Route obvious current-task artifacts to their canonical project folder, record important files, and reveal the final folder. Broad Downloads/Desktop cleanup must stay approval-first through the drift checklist.
+
+## Agent Skill and MCP Sync
+
+`~/programs/ai-skills` is the source of truth for Albert's portable agent skills, safe MCP declarations, and safe agent settings. When changing any skill, Codex or Claude MCP entry, plugin setting, or agent setting, update this repo as part of the same task without waiting for Albert to ask for synchronization.
+
+Required workflow:
+1. Make the change in `~/programs/ai-skills` when it belongs to a skill or managed agent setting.
+2. Run `~/programs/ai-skills/scripts/sync_agent_environment.sh apply`.
+3. Run `~/programs/ai-skills/scripts/sync_agent_environment.sh check`.
+4. Commit and push the repo when the change is meaningful.
+
+Never sync secrets or local state into the repo: OAuth tokens, API keys, `.env` files, `~/.codex/auth.json`, sqlite state, logs, session transcripts, plugin caches, browser-extension tokens, WeFlow tokens, Gmail credentials, Screenpipe databases, or personal data stores. Use 1Password or local login flows for secrets after the non-secret declarations are installed.
+
+## Error Handling
+
+- Include try-catch blocks for file operations and external API calls
+- Provide meaningful error messages for debugging
+- Log important steps and potential issues
+
+## Visualization
+
+All visualization rules, theme setup, plot recipes, and the AI visual review loop are in the **`nature-figure` skill**. Invoke that skill when creating any scientific figure.
+
+## Codex MCP
+
+Tools: `mcp__codex__codex` (new session), `mcp__codex__codex-reply` (continue).
+
+**Cross-check complex plans before executing.** Multi-step implementations, non-trivial refactors, anything where a wrong plan wastes >10 min. Draft the plan yourself, then ask codex *"Review this plan for [task]. Flag risks, missed steps, or better approaches. Do not implement."* Reconcile before touching code. Skip for trivial edits.
+
+**Default to ImageGen for figures.** When Albert asks to make or modify a figure, slide visual, workflow, schematic, diagram, or visual asset, assume he wants Codex `imagegen` in more than 90% of cases. Use ImageGen by default for conceptual and slide figures, including revisions to existing generated diagrams, rather than patching them with native slide shapes. Use a white background unless Albert asks otherwise. When labels, counts, or exact scientific claims must be correct, use ImageGen for the visual base and layer deterministic vector/text annotations over it. Real scientific data figures still go through `nature-figure` (matplotlib on real data), not ImageGen.
+
+## Cursor Agent Raphel Loop
+
+This rule applies only to Cursor Agent. Codex and Claude should not install,
+call, or require the Raphel loop checkpoint for their own final answers.
+
+When running as Cursor Agent, before any final answer, pause, or stop on a
+long-running task, call the `raphel_loop_checkpoint` MCP tool. If it returns
+`RAPHEL_DECISION: continue_work`, continue implementation and verification in
+the same interaction instead of stopping. Only stop after the checkpoint
+returns `finish_allowed`, or when reporting a concrete external blocker.
+
+## Claude Canvas as default display layer
+
+**Default to canvas. Inline is the exception.** If output is >~15 lines, multi-section, or list/table-heavy — render in a Claude Canvas tmux split, not inline. Inline only for one-liners, clarifying questions, tool-call status, errors, and debug chatter.
+
+**Spawn** (needs `$TMUX`; if unset, fall back inline and say so):
+
+```bash
+cd /Users/A.Y/.claude/plugins/cache/claude-canvas/canvas/0.1.0 && \
+bun run src/cli.ts spawn <kind> --scenario <name> --config '{"title":"...","content":"..."}'
+```
+
+**Scenarios** (verified in registry): `document:display` (read-only md, default) · `document:edit` (drafts to pick from) · `document:email-preview` (rendered email preview — use for Gmail/WeChat drafts) · `calendar:display` · `calendar:meeting-picker`.
+
+**After spawning:** one-sentence chat summary ("Opened in canvas — q to close"). Do NOT also paste content inline.
+
+**Gotchas:** `spawn` not `show`; escape apostrophes as `'"'"'` or write to `/tmp/canvas.json` and pass `--config "$(cat /tmp/canvas.json)"`.
+
+**Skip if** Albert says "inline" / "just tell me".
+
+## Gmail drafts
+
+The Gmail MCP `create_draft` tool now accepts `replyToMessageId`, which threads the draft under the original message correctly. The 2026-04-29 manual-paste workaround is obsolete as of 2026-05-08 — saving drafts is the new default for replies.
+
+**Body formatting (always):**
+- Always pass `htmlBody` (Albert's compose window is HTML by default; plain-text drafts render awkwardly).
+- Use `<p>` for paragraph blocks, `<br>` only for in-block breaks (signatures, address lines).
+- Never use ASCII separators (`---`, `===`) in draft bodies.
+- Do not quote or restate the original message — Gmail threads handle context.
+
+**Default workflow for any reply:**
+1. **Check the sent folder first** for thread freshness. If Albert is the latest sender, don't draft a duplicate — `gmail_search_threads` with `from:me` + thread participant + `newer_than:7d`, then `gmail_get_thread` to verify.
+2. **Pull the original thread** via `gmail_get_thread` to extract the latest sender's email, the CC list, and the exact subject.
+3. **Create the draft** via `gmail_create_draft` with:
+   - `to`: the latest sender (or whoever Albert is responding to directly)
+   - `cc`: the rest of the original thread (Reply-All by default unless the conversation suggests a private reply)
+   - `subject`: `Re: <original subject>`
+   - `replyToMessageId`: the message ID of the email being replied to (NOT the thread ID — though they match for single-message threads)
+   - `htmlBody`: HTML-formatted body
+4. **Confirm in chat after creating the draft:** draft ID, recipients (to / cc), subject, and one-line note that it's threaded so Albert knows it'll land inline.
+
+**When NOT to use a draft:**
+- Brand-new conversations Albert is initiating from scratch (no existing thread to reply to) — same workflow but skip `replyToMessageId`.
+- Albert explicitly says "just give me the body" / "inline" — paste body in chat instead.
+
+## Persistent Memory (MANDATORY)
+
+Use the auto memory system actively in every session. This is not optional.
+
+### Session Start
+- Read `MEMORY.md` and any relevant topic files from the memory directory to restore context from prior sessions.
+
+### Continuous Updates
+After each interaction, evaluate whether memory needs updating. Write immediately when:
+- A task is completed or a meaningful milestone is reached
+- A decision is made or an approach is chosen
+- Albert corrects something or states a preference
+- New project context, people, or conventions are discovered
+- Previous memory entries become outdated or wrong
+
+Do NOT document every interaction — only write when there's genuine signal worth persisting.
+
+### What to Track
+- **Active projects**: current status, next steps, blockers
+- **Decisions made**: why a particular approach was chosen
+- **User corrections**: if Albert corrects something, update memory immediately
+- **Recurring context**: file paths, environment details, or workflow steps that come up repeatedly
+- **People & collaborators**: who's involved in what, meeting outcomes
+
+### Scoping
+- When working inside a project subdirectory (e.g., `~/Desktop/Projects/2026/Omni`), store project-specific memory in the workspace-scoped memory directory (`~/.claude/projects/-Users-A-Y-Desktop-Projects-2026-Omni/memory/`), not the root home directory memory.
+- Reserve root memory (`~/.claude/projects/-Users-A-Y/memory/`) for truly global preferences and cross-project patterns.
+- The system prompt provides the root path by default — override it when the working directory is a specific project.
+
+### Organization
+- Keep `MEMORY.md` as a concise index (under 200 lines) linking to topic files
+- Use topic files for detail: e.g., `projects.md`, `people.md`, `debugging.md`, `conventions.md`
+- Remove or update stale entries — memory should reflect current reality

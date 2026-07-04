@@ -1,0 +1,22 @@
+You are calling PG&E (Pacific Gas and Electric) on behalf of the account holder
+about electric service at 14 Estates Ct, San Carlos, CA 94070. The goal is to
+find out why the power is off and how to restore it. The likely cause is a
+disconnection for non-payment.
+
+Navigate the phone menu to billing or service / reconnection. Speak clearly and
+politely.
+
+If asked to verify the account, the account number is <ACCOUNT_NUMBER> and the
+name on the account is <NAME>. (Fill these in before calling. Without them the
+agent cannot get account-specific answers.)
+
+Ask, in order:
+1. Is this account currently disconnected, and is it for non-payment?
+2. What is the past-due balance, and how can it be paid right now?
+3. Once payment is made, what exactly is needed to reconnect service, and how
+   soon will power come back on?
+
+If you are put on hold, wait silently until a human answers. Do not hang up.
+
+When you have the answers, repeat the reconnection steps back to confirm, thank
+them, and end the call.

@@ -1,0 +1,175 @@
+# idea-forge calibration anchors
+#
+# Source: real publications from
+# /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib.
+# Labels are still provisional venue-derived labels (`label_status: proposed_from_venue`), not
+# Albert-validated truth. This file is intentionally still advisory-only until it has >=3 anchors
+# per tier, including real failed and incremental examples.
+
+- id: damage-adaptation-clock
+  title: "Causality-Enriched Epigenetic Age Uncouples Damage and Adaptation"
+  field: bio
+  claim: "Use epigenome-wide Mendelian randomization to find CpGs that causally drive aging traits, not just correlate, then build methylation clocks that separate detrimental from adaptive age-related changes and respond to short-term interventions."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2023-12-01"
+  notes: "Nature Aging, February cover, first-author. Proposed top from venue."
+  label_status: proposed_from_venue
+  source_bib_key: ying2024
+  source_doi: 10.1038/s43587-023-00557-0
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: biomarker-validation-framework
+  title: "Validation of biomarkers of aging"
+  field: bio
+  claim: "Define a community framework and criteria for validating omic biomarkers of aging so they can act as surrogate endpoints in longevity clinical trials."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2024-01-01"
+  notes: "Nature Medicine, co-author, consensus/review. Proposed top from venue; consider field if weighting reviews lower."
+  label_status: proposed_from_venue
+  source_bib_key: moqri2024a
+  source_doi: 10.1038/s41591-023-02784-9
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: cheap-methylation-seq-clock
+  title: "TIME-seq reduces time and cost of DNA methylation measurement"
+  field: bio
+  claim: "A highly multiplexed tagmentation-based sequencing method that measures DNA methylation around 100x cheaper, enabling epigenetic clocks at scale across tissues plus an economical human blood clock."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2023-12-01"
+  notes: "Nature Aging, co-author. Proposed top from venue."
+  label_status: proposed_from_venue
+  source_bib_key: griffin2024
+  source_doi: 10.1038/s43587-023-00555-2
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: stochastic-epigenetic-aging
+  title: "Nature of epigenetic aging from a single-cell perspective"
+  field: bio
+  claim: "Show that epigenetic aging is dominated by a slow stochastic decay-like process by analyzing single-cell methylation dynamics, reframing what epigenetic clocks actually measure."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2023-12-01"
+  notes: "Nature Aging, co-author. Proposed top from venue."
+  label_status: proposed_from_venue
+  source_bib_key: tarkhov2024
+  source_doi: 10.1038/s43587-024-00616-0
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: acarbose-mito-microbiome
+  title: "Acarbose suppresses symptoms of mitochondrial disease in Leigh syndrome model"
+  field: bio
+  claim: "Show a lifespan-extending drug suppresses severe mitochondrial disease in mice through the gut microbiome and short-chain fatty acids, independent of mTOR."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2023-05-01"
+  notes: "Nature Metabolism, co-author. Proposed top from venue."
+  label_status: proposed_from_venue
+  source_bib_key: bitto2023
+  source_doi: 10.1038/s42255-023-00815-w
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: rrna-intergenerational-hormesis
+  title: "18S rRNA methyltransferases DIMT1 and BUD23 drive intergenerational hormesis"
+  field: bio
+  claim: "Track heritable methylation across generations in C. elegans and identify specific 18S rRNA methyltransferases that drive intergenerational hormesis, including stress resistance and longevity."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2023-08-01"
+  notes: "Molecular Cell, co-author. Proposed top from venue."
+  label_status: proposed_from_venue
+  source_bib_key: liberman2023
+  source_doi: 10.1016/j.molcel.2023.08.014
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: total-genetic-contribution
+  title: "Total genetic contribution assessment across the human genome"
+  field: bio
+  claim: "A unified model that quantifies the total genetic contribution of any locus to a phenotype without thresholding association signals, applied genome-wide across UK Biobank trait domains."
+  known_tier: field
+  tier_ordinal: 3
+  failure_mode: ""
+  cutoff_date: "2021-04-01"
+  notes: "Nature Communications, co-author. Proposed field from venue."
+  label_status: proposed_from_venue
+  source_bib_key: li2021
+  source_doi: 10.1038/s41467-021-23124-w
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: ace2-genetic-landscape
+  title: "Genetic Landscape of the ACE2 Coronavirus Receptor"
+  field: bio
+  claim: "The largest GWAS meta-analysis of plasma ACE2 levels, mapping its genetic architecture and testing a causal effect on COVID-19 severity via Mendelian randomization."
+  known_tier: field
+  tier_ordinal: 3
+  failure_mode: ""
+  cutoff_date: "2022-04-01"
+  notes: "Circulation, co-author. Proposed field from venue."
+  label_status: proposed_from_venue
+  source_bib_key: yang2022
+  source_doi: 10.1161/CIRCULATIONAHA.121.057888
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: naked-mole-rat-hematopoiesis
+  title: "Naked mole-rat hematopoiesis reveals unique stem/progenitor patterns"
+  field: bio
+  claim: "Characterize naked mole-rat blood formation and identify unique stem/progenitor patterns and neotenic traits underlying their cancer resistance and longevity."
+  known_tier: field
+  tier_ordinal: 3
+  failure_mode: ""
+  cutoff_date: "2022-07-01"
+  notes: "EMBO Journal, co-author. Proposed field from venue."
+  label_status: proposed_from_venue
+  source_bib_key: emmrich2022
+  source_doi: 10.15252/embj.2021109694
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: aging-covid-causality
+  title: "Causal relationship between aging and COVID-19"
+  field: bio
+  claim: "Use multi-instrument Mendelian randomization and aging clocks to test whether biological aging causally increases COVID-19 risk and severity, implicating Notch signaling and B cells."
+  known_tier: field
+  tier_ordinal: 3
+  failure_mode: ""
+  cutoff_date: "2021-09-01"
+  notes: "Communications Medicine, first-author. Proposed field from venue."
+  label_status: proposed_from_venue
+  source_bib_key: ying2021
+  source_doi: 10.1038/s43856-021-00033-z
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: plin3-ampk-lipid-droplets
+  title: "Phosphorylation of PLIN3 by AMPK promotes lipid droplet dispersion"
+  field: bio
+  claim: "Show AMPK phosphorylates PLIN3 to promote lipid droplet dispersion during starvation."
+  known_tier: incremental
+  tier_ordinal: 1
+  failure_mode: low-leverage
+  cutoff_date: "2019-04-01"
+  notes: "Protein & Cell, co-author, early-career. Proposed incremental from venue."
+  label_status: proposed_from_venue
+  source_bib_key: zhu2019
+  source_doi: 10.1007/s13238-018-0593-9
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+- id: mito-aging-shared-metabolism-abstract
+  title: "Aging and mitochondrial disease: shared mechanisms"
+  field: bio
+  claim: "Propose that shared metabolic derangements, including NAD+/NADH ratio changes, link normative aging and mitochondrial disease, both targetable by rapamycin and acarbose."
+  known_tier: incremental
+  tier_ordinal: 1
+  failure_mode: low-leverage
+  cutoff_date: "2019-10-01"
+  notes: "Innovation in Aging conference abstract. Proposed incremental from venue."
+  label_status: proposed_from_venue
+  source_bib_key: bitto2019
+  source_doi: 10.1093/geroni/igz038.1459
+  source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib

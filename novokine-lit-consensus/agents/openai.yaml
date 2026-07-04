@@ -1,0 +1,4 @@
+interface:
+  display_name: "Novokine Literature Consensus"
+  short_description: "Paperclip consensus for novokine direction"
+  default_prompt: "Assess novokine activation direction and high/mid/small novokine likelihood from full-text literature with Paperclip."

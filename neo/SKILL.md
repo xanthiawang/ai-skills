@@ -1,0 +1,1 @@
+/Users/A.Y/programs/neo/skill/SKILL.md

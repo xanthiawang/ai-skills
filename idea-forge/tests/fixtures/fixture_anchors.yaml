@@ -1,0 +1,3 @@
+- {id: a1, title: T1, field: bio, claim: c1, known_tier: top, failure_mode: '', cutoff_date: '2019-01-01', notes: fake}
+- {id: a2, title: T2, field: bio, claim: c2, known_tier: field, failure_mode: '', cutoff_date: '2019-01-01', notes: fake}
+- {id: a3, title: T3, field: cs, claim: c3, known_tier: incremental, failure_mode: low-leverage, cutoff_date: '2019-01-01', notes: fake}

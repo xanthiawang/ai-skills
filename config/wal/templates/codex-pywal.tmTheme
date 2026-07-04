@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>pywal</string>
+  <key>author</key>
+  <string>pywal</string>
+  <key>settings</key>
+  <array>
+    <dict>
+      <key>settings</key>
+      <dict>
+        <key>background</key>
+        <string>{background}</string>
+        <key>foreground</key>
+        <string>{foreground}</string>
+        <key>caret</key>
+        <string>{cursor}</string>
+        <key>selection</key>
+        <string>{color8}</string>
+        <key>lineHighlight</key>
+        <string>{color0}</string>
+        <key>gutter</key>
+        <string>{background}</string>
+        <key>gutterForeground</key>
+        <string>{color8}</string>
+        <key>invisibles</key>
+        <string>{color8}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Comment</string>
+      <key>scope</key>
+      <string>comment, punctuation.definition.comment</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color8}</string>
+        <key>fontStyle</key>
+        <string>italic</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Keyword and storage</string>
+      <key>scope</key>
+      <string>keyword, storage, storage.type, storage.modifier</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color4}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Operator and punctuation</string>
+      <key>scope</key>
+      <string>keyword.operator, punctuation.separator, punctuation.terminator</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color5}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>String</string>
+      <key>scope</key>
+      <string>string, punctuation.definition.string</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color2}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Constant</string>
+      <key>scope</key>
+      <string>constant, constant.numeric, constant.language, support.constant</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color3}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Function and method</string>
+      <key>scope</key>
+      <string>entity.name.function, meta.function-call, support.function</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color6}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Type and class</string>
+      <key>scope</key>
+      <string>entity.name.type, entity.name.class, support.type, support.class</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color5}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Variable and parameter</string>
+      <key>scope</key>
+      <string>variable, variable.parameter, support.variable</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{foreground}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Invalid and deleted</string>
+      <key>scope</key>
+      <string>invalid, markup.deleted, meta.diff.deleted</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color1}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Inserted</string>
+      <key>scope</key>
+      <string>markup.inserted, meta.diff.inserted</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color2}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Changed</string>
+      <key>scope</key>
+      <string>markup.changed, meta.diff.changed</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color3}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Markup heading</string>
+      <key>scope</key>
+      <string>markup.heading, entity.name.section</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color4}</string>
+        <key>fontStyle</key>
+        <string>bold</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Markup raw</string>
+      <key>scope</key>
+      <string>markup.raw, markup.inline.raw, markup.fenced_code.block</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{color6}</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>

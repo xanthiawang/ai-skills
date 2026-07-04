@@ -1,0 +1,13 @@
+{
+  "name": "novokine-lit-consensus-skill",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "rubric:check": "node scripts/claude_adversarial_rubric.mjs --dry-run",
+    "rubric:render": "node scripts/claude_adversarial_rubric.mjs --render-md",
+    "rubric:write": "node scripts/claude_adversarial_rubric.mjs --write"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.183"
+  }
+}

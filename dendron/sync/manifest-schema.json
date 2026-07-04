@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vault Sync Manifest",
+  "description": "Output format for all source sync adapters. Consumed by the vault-updater.",
+  "type": "object",
+  "required": ["source", "generated_at", "changes"],
+  "properties": {
+    "source": {
+      "type": "string",
+      "enum": ["calendar", "email", "screenpipe", "wechat", "superwhisper", "agent-session"]
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action", "confidence", "evidence"],
+        "properties": {
+          "note": {
+            "type": ["string", "null"],
+            "description": "Target note filename (e.g. 'user.per-greisen.md'), or null for create_note"
+          },
+          "action": {
+            "type": "string",
+            "enum": ["rewrite_section", "append", "update_frontmatter", "create_note"]
+          },
+          "section": {
+            "type": "string",
+            "description": "Markdown heading to target (for rewrite_section/append)"
+          },
+          "content": {
+            "type": "string",
+            "description": "New content to write"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string" },
+                "subject": { "type": "string" },
+                "date": { "type": "string" },
+                "session_id": { "type": "string" },
+                "path": { "type": "string" }
+              }
+            }
+          },
+          "suggested_path": {
+            "type": "string",
+            "description": "For create_note only: suggested filename"
+          },
+          "frontmatter": {
+            "type": "object",
+            "description": "For create_note only: must include title and desc at minimum",
+            "properties": {
+              "title": { "type": "string" },
+              "desc": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

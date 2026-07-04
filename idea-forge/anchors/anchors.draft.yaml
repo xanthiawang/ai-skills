@@ -1,0 +1,139 @@
+# idea-forge calibration anchors — DRAFT for Albert's review (2026-07-02)
+#
+# Source: real publications from content/cv/peer-reviewed.bib (kejunying.com). No invented
+# entries. `claim` is a BLINDED idea-card: the pre-publication idea stripped of title, venue,
+# authors, and outcome, so the judge cannot recognize the paper during retrodiction.
+# `known_tier` is PROPOSED from the real venue — CONFIRM or correct each one.
+#
+# Tier rubric used for the proposal:
+#   top         = Nature/Science/Cell-family ceiling (Nature Aging/Medicine/Metabolism, Molecular Cell)
+#   field       = strong selective field journal (Nature Communications, Circulation, EMBO J, Comms Med)
+#   incremental = solid but low-leverage / early-career / abstract
+#   failed      = ambitious idea that did NOT land (NONE here — the bib only has work that shipped)
+#
+# GAPS you must fill before calibration leaves advisory-only (needs >=12 anchors AND >=3 per tier):
+#   - failed:      0 real entries. Add >=3 ambitious ideas of yours that went nowhere (and why).
+#   - incremental: only 2. Add >=1 more.
+#   - CS/agents:   0 anchors (all your pubs are bio). Decide: seed external CS landmarks with known
+#                  outcomes (e.g. a transformer-class top paper vs an incremental benchmark), or accept
+#                  that CS/agent ideas run advisory-only until you supply CS anchors.
+
+- id: damage-adaptation-clock
+  title: "Causality-Enriched Epigenetic Age Uncouples Damage and Adaptation"
+  field: bio
+  claim: "Use epigenome-wide Mendelian randomization to find CpGs that causally drive aging traits (not just correlate), then build methylation clocks that separate detrimental from adaptive age-related changes and respond to short-term interventions."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2023-12-01"
+  notes: "Nature Aging, Feb cover, first-author. PROPOSED top."
+
+- id: biomarker-validation-framework
+  title: "Validation of biomarkers of aging"
+  field: bio
+  claim: "Define a community framework and criteria for validating omic biomarkers of aging so they can act as surrogate endpoints in longevity clinical trials."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2024-01-01"
+  notes: "Nature Medicine, co-author, consensus/review. PROPOSED top (venue) — consider 'field' if you weight it as a review."
+
+- id: cheap-methylation-seq-clock
+  title: "TIME-seq reduces time and cost of DNA methylation measurement"
+  field: bio
+  claim: "A highly multiplexed tagmentation-based sequencing method that measures DNA methylation ~100x cheaper, enabling epigenetic clocks at scale across tissues plus an economical human blood clock."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2023-12-01"
+  notes: "Nature Aging, co-author. PROPOSED top."
+
+- id: stochastic-epigenetic-aging
+  title: "Nature of epigenetic aging from a single-cell perspective"
+  field: bio
+  claim: "Show that epigenetic aging is dominated by a slow stochastic decay-like process by analyzing single-cell methylation dynamics, reframing what epigenetic clocks actually measure."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2023-12-01"
+  notes: "Nature Aging, co-author. PROPOSED top."
+
+- id: acarbose-mito-microbiome
+  title: "Acarbose suppresses symptoms of mitochondrial disease in Leigh syndrome model"
+  field: bio
+  claim: "Show a lifespan-extending drug suppresses severe mitochondrial (Leigh syndrome) disease in mice through the gut microbiome and short-chain fatty acids, independent of mTOR."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2023-05-01"
+  notes: "Nature Metabolism, co-author. PROPOSED top."
+
+- id: rrna-intergenerational-hormesis
+  title: "18S rRNA methyltransferases DIMT1 and BUD23 drive intergenerational hormesis"
+  field: bio
+  claim: "Track heritable methylation across generations in C. elegans and identify specific 18S rRNA methyltransferases that drive intergenerational hormesis (stress resistance, longevity)."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2023-08-01"
+  notes: "Molecular Cell, co-author. PROPOSED top (this is likely the 'Cell paper' in memory)."
+
+- id: total-genetic-contribution
+  title: "Total genetic contribution assessment across the human genome"
+  field: bio
+  claim: "A unified model that quantifies the total genetic contribution of any locus to a phenotype without thresholding association signals, applied genome-wide across UK Biobank trait domains."
+  known_tier: field
+  tier_ordinal: 3
+  failure_mode: ""
+  cutoff_date: "2021-04-01"
+  notes: "Nature Communications, co-author. PROPOSED field."
+
+- id: ace2-genetic-landscape
+  title: "Genetic Landscape of the ACE2 Coronavirus Receptor"
+  field: bio
+  claim: "The largest GWAS meta-analysis of plasma ACE2 levels, mapping its genetic architecture and testing a causal effect on COVID-19 severity via Mendelian randomization."
+  known_tier: field
+  tier_ordinal: 3
+  failure_mode: ""
+  cutoff_date: "2022-04-01"
+  notes: "Circulation, co-author. PROPOSED field."
+
+- id: naked-mole-rat-hematopoiesis
+  title: "Naked mole-rat hematopoiesis reveals unique stem/progenitor patterns"
+  field: bio
+  claim: "Characterize naked mole-rat blood formation and identify unique stem/progenitor patterns and neotenic traits underlying their cancer resistance and longevity."
+  known_tier: field
+  tier_ordinal: 3
+  failure_mode: ""
+  cutoff_date: "2022-07-01"
+  notes: "EMBO Journal, co-author. PROPOSED field."
+
+- id: aging-covid-causality
+  title: "Causal relationship between aging and COVID-19"
+  field: bio
+  claim: "Use multi-instrument Mendelian randomization and aging clocks to test whether biological aging causally increases COVID-19 risk and severity, implicating Notch signaling and B cells."
+  known_tier: field
+  tier_ordinal: 3
+  failure_mode: ""
+  cutoff_date: "2021-09-01"
+  notes: "Communications Medicine, first-author. PROPOSED field."
+
+- id: plin3-ampk-lipid-droplets
+  title: "Phosphorylation of PLIN3 by AMPK promotes lipid droplet dispersion"
+  field: bio
+  claim: "Show AMPK phosphorylates PLIN3 to promote lipid droplet dispersion during starvation."
+  known_tier: incremental
+  tier_ordinal: 1
+  failure_mode: low-leverage
+  cutoff_date: "2019-04-01"
+  notes: "Protein & Cell, co-author, early-career. PROPOSED incremental."
+
+- id: mito-aging-shared-metabolism-abstract
+  title: "Aging and mitochondrial disease: shared mechanisms (abstract)"
+  field: bio
+  claim: "Propose that shared metabolic derangements (NAD+/NADH ratio) link normative aging and mitochondrial disease, both targetable by rapamycin and acarbose."
+  known_tier: incremental
+  tier_ordinal: 1
+  failure_mode: low-leverage
+  cutoff_date: "2019-10-01"
+  notes: "Conference abstract (Innovation in Aging). PROPOSED incremental."
