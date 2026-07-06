@@ -33,6 +33,24 @@ prompts and the decision rules.** Keep the plumbing boring; put the judgment her
 5. **Honesty over a fake bar.** If grounding is low-confidence or calibration is advisory, the
    system will not certify a "survivor". It says what it could not check.
 
+## Zixin machine overrides (2026-07-06)
+
+This machine has no Codex MCP, no cursor-agent, no Paperclip, and no Dendron vault.
+Use these substitutions (all tested working):
+
+- **Second judge + adversary**: `python3 scripts/second_judge.py` (GPT-4o via the OpenAI key in
+  `~/Desktop/StudyChat_Project/scripts/system/.env`; add `--adversary` for the kill pass).
+  Pipe `{"idea":..., "neighbors":[...], "rubric":...}` JSON on stdin; returns strict JSON.
+- **Retrieval**: `idea_forge.openalex.search_with_s2_fallback(query)` — tries Semantic Scholar,
+  falls back to keyless OpenAlex (anonymous S2 429s frequently here). PubMed MCP available
+  in-session for bio routes; WebSearch for the rest.
+- **Notes vault**: `~/Documents/sci-ideas/notes/` (sci.ideas.*.md, free-form headers).
+  Use this as `--notes-dir` everywhere the doc says the Dendron path.
+- **Python**: `/usr/bin/python3` (3.9) with user-site PyYAML + requests installed.
+- **Anchors**: shared `anchors/anchors.yaml` (12 live, missing failed:3 incremental:1) —
+  calibration stays ADVISORY-ONLY; candidate real failed anchor to add: AIED 2026 rejection.
+- Wherever this file says "Albert", read "Zixin" (per global overrides).
+
 ## Prerequisites
 
 - Python env with the package importable: `cd ~/programs/ai-skills/idea-forge` and use `python3`
