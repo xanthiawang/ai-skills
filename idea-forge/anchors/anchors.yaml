@@ -173,3 +173,94 @@
   source_bib_key: bitto2019
   source_doi: 10.1093/geroni/igz038.1459
   source_path: /Users/A.Y/Desktop/Projects/website/kejunying.com/content/cv/peer-reviewed.bib
+
+# ── CS / education-ML anchors (added 2026-07-06 for Zixin's route) ──
+# Real papers/outcomes with defensible tiers; Zixin's own two failed ideas are real.
+
+- id: transformer-attention
+  title: "Attention Is All You Need"
+  field: cs
+  claim: "Replace recurrence and convolution entirely with self-attention for sequence transduction, enabling parallel training and long-range dependency modeling."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2017-06-01"
+  notes: "NeurIPS 2017; foundational, >100k cites. Blinded-card top."
+  label_status: proposed_from_venue
+
+- id: deep-knowledge-tracing
+  title: "Deep Knowledge Tracing"
+  field: cs
+  claim: "Use an RNN over a student's exercise-response sequence to predict next-item correctness, outperforming Bayesian knowledge tracing."
+  known_tier: field
+  tier_ordinal: 2
+  failure_mode: ""
+  cutoff_date: "2015-06-01"
+  notes: "NeurIPS 2015; strong-impact field method, later shown to have replication caveats. Blinded-card field."
+  label_status: proposed_from_venue
+
+- id: bloom-2sigma-tutoring
+  title: "The 2 Sigma Problem"
+  field: cs
+  claim: "One-to-one mastery tutoring raises mean achievement by ~2 SD over group instruction; find scalable methods approaching that effect."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "1984-01-01"
+  notes: "Educational Researcher; defining problem statement for the field. Blinded-card top."
+  label_status: proposed_from_venue
+
+- id: llm-judge-benchmark-incremental
+  title: "Yet another LLM-as-judge agreement benchmark"
+  field: cs
+  claim: "Report that a prompted LLM judge agrees with human raters at kappa ~0.6 on a new domain dataset, with a prompt-tuning table."
+  known_tier: incremental
+  tier_ordinal: 1
+  failure_mode: low-leverage
+  cutoff_date: "2024-01-01"
+  notes: "Representative low-leverage benchmark contribution; workshop-tier. Blinded-card incremental."
+  label_status: proposed_archetype
+
+- id: dcot-v1-leaked-forecaster
+  title: "Deep cognitive-offloading tracing (v1)"
+  field: cs
+  claim: "Train a GRU+attention model to forecast a student's future cognitive offloading from the first k dialogue turns; report AUC ~0.90 as an early-warning system."
+  known_tier: failed
+  tier_ordinal: 0
+  failure_mode: "target leakage — forecast horizon overlapped the input window; clean forward AUC fell to chance; archived."
+  cutoff_date: "2026-05-01"
+  notes: "Zixin's own; killed by internal audit 2026-05-21. Real failed anchor."
+  label_status: confirmed_outcome
+
+- id: aied2026-offloading-lbr
+  title: "Offloading detection late-breaking result (AIED 2026)"
+  field: cs
+  claim: "Present an LLM-coded cognitive-offloading detection framework on existing StudyChat data as a late-breaking result, arguing classroom relevance."
+  known_tier: failed
+  tier_ordinal: 0
+  failure_mode: "rejected (WideAIED + LBR tracks); reviewers wanted causal/field evidence beyond observational coding."
+  cutoff_date: "2026-03-01"
+  notes: "Zixin's own submission; rejected, feedback later integrated. Real failed anchor."
+  label_status: confirmed_outcome
+
+- id: mooc-dropout-prediction-incremental
+  title: "MOOC dropout prediction with feature engineering"
+  field: cs
+  claim: "Predict MOOC dropout from clickstream features with gradient-boosted trees, reporting AUC gains over a logistic baseline on one platform's logs."
+  known_tier: incremental
+  tier_ordinal: 1
+  failure_mode: low-leverage
+  cutoff_date: "2019-01-01"
+  notes: "Representative single-platform predictive study; limited transfer. Blinded-card incremental."
+  label_status: proposed_archetype
+
+- id: draft-cosine-offloading-proxy
+  title: "Draft-AI cosine similarity as an offloading proxy"
+  field: cs
+  claim: "Use cosine similarity between a student's final draft and the AI's dialogue outputs as a scalable behavioral proxy for cognitive offloading, convergent with turn-level coding."
+  known_tier: failed
+  tier_ordinal: 0
+  failure_mode: "no convergent validity — correlation with coded offloading was rho=0.05; the two measure different constructs. Dropped as a proxy."
+  cutoff_date: "2026-07-01"
+  notes: "Zixin's own (Phase 9 RQ7); tested and abandoned 2026-07-06. Real failed anchor."
+  label_status: confirmed_outcome
