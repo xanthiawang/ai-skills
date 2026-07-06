@@ -10,7 +10,7 @@ import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-HOME = Path("/Users/A.Y")
+HOME = Path.home()
 DEFAULT_ROOTS = [HOME / "Downloads", HOME / "Desktop"]
 DAY = 86400
 

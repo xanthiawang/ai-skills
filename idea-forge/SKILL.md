@@ -2,7 +2,7 @@
 name: idea-forge
 description: >
   Evaluate, refine, and evolve a research idea toward Nature/Science-level potential. Use when
-  Albert asks "is this idea Nature-worthy", to score/critique/kill a research idea, to push an
+  Zixin asks "is this idea Nature-worthy", to score/critique/kill a research idea, to push an
   idea toward a top journal, to refine or evolve an idea in his sci.ideas inbox, or invokes
   /idea-forge. Runs a retrieval-grounded, cross-model (Claude + Codex) judge with a grounded
   adversary and outcome-calibrated anchors; keeps only ideas that can plausibly hit the top tier.
@@ -49,7 +49,7 @@ Use these substitutions (all tested working):
 - **Python**: `/usr/bin/python3` (3.9) with user-site PyYAML + requests installed.
 - **Anchors**: shared `anchors/anchors.yaml` (12 live, missing failed:3 incremental:1) —
   calibration stays ADVISORY-ONLY; candidate real failed anchor to add: AIED 2026 rejection.
-- Wherever this file says "Albert", read "Zixin" (per global overrides).
+- Wherever this file says "Zixin", read "Zixin" (per global overrides).
 
 ## Prerequisites
 
@@ -58,13 +58,13 @@ Use these substitutions (all tested working):
 - Retrieval tools available in-session: Paperclip CLI (`paperclip`), PubMed MCP, WebSearch, and
   `idea_forge.semantic_scholar`. Codex second judge via `mcp__codex__codex`.
 - Anchor set at `anchors/anchors.yaml`. It currently contains real publication-derived anchors
-  with `label_status: proposed_from_venue`, so labels are useful but not Albert-validated. The
+  with `label_status: proposed_from_venue`, so labels are useful but not Zixin-validated. The
   gate stays advisory until `scripts/audit_anchors.py` reports >=12 anchors and >=3 per tier,
   including real failed and incremental examples.
 
 ## Lifecycle & ingestion (organic — woven into the vault idea pipeline)
 
-idea-forge is NOT a separate tool with its own idea list; it rides Albert's existing `sci.ideas`
+idea-forge is NOT a separate tool with its own idea list; it rides Zixin's existing `sci.ideas`
 pipeline. Ideas enter via `dendron-add`, JPR voice capture, or a hand-written note, landing in
 `sci.ideas.*` at stage `inbox`. idea-forge attaches to that lifecycle:
 
@@ -78,7 +78,7 @@ pipeline. Ideas enter via `dendron-add`, JPR voice capture, or a hand-written no
 - **outcome stages → anchors, automatically.** When an idea reaches `published` / `active-paper`
   (worked) or `rejected` / `dormant` (didn't), it becomes a **calibration anchor** with no manual
   bookkeeping: `harvest_anchors(notes_dir)` maps stage → tier. The calibration set is thus a *view
-  over Albert's own notes* + his publication record (the `top` successes), and **grows as the
+  over Zixin's own notes* + his publication record (the `top` successes), and **grows as the
   pipeline runs** — the anchor YAML is a cache, not a hand-maintained source of truth.
 - **command-center.** Surface newly-ingested ideas awaiting triage and stale high-potential ideas
   in briefings, so evaluation happens as part of the normal vault sweep, not a special errand.
@@ -95,7 +95,7 @@ supplies labels at scale.
 
 Before judging anything, establish whether forward verdicts can be trusted.
 
-1. Audit anchors: `python3 scripts/audit_anchors.py --notes-dir /Users/A.Y/Documents/Manual\ Library/Dendron/notes`.
+1. Audit anchors: `python3 scripts/audit_anchors.py --notes-dir ~/Documents/sci-ideas/notes`.
 2. If ≥12 anchors with ≥3 per tier: score each anchor **blinded and leave-one-out** (Step 4's
    judge prompt on `anchor.blinded_card()`, with that anchor excluded from any exemplars). Never
    expose anchor `title`, `known_tier`, `tier_ordinal`, `notes`, `label_status`, DOI, or source path
@@ -118,9 +118,9 @@ Resolve the target idea:
   `idea.content_for_judge()`** — structured sections when present, else the whole body. Never
   proceed on empty sections just because a note didn't use the exact template headers.
 - pasted free text → judge it directly as `raw_body`; fill the template slots only if a slot is
-  genuinely missing and you can't infer it (then ask Albert).
+  genuinely missing and you can't infer it (then ask Zixin).
 
-Echo back the parsed claim/mechanism/method/gap so Albert can catch a misread before compute.
+Echo back the parsed claim/mechanism/method/gap so Zixin can catch a misread before compute.
 
 ### Step 2 — Route + retrieve (with leakage control)
 
@@ -196,9 +196,9 @@ recorded, never fatal.
 ### Step 5 — Aggregate + surface disagreement
 
 - Keep the per-axis interval `[claude_score, codex_score]` (0–10). Do NOT average.
-- If the two models land in different rubric BANDS on any axis, flag it to Albert with BOTH
+- If the two models land in different rubric BANDS on any axis, flag it to Zixin with BOTH
   rationales verbatim and run an arbitration pass (a third scoring that sees both rationales, or
-  Albert's call).
+  Zixin's call).
 - The vector handed to Pareto is the **per-axis min** of the two models (conservative).
 - **Disposition** (from the rubric rule, using the min vector + adversary):
   - `top-shot` — both models N≥6, I≥7, F≥4, no grounded kill, grounding not low-unreviewed,
@@ -211,7 +211,7 @@ recorded, never fatal.
 
 ### Step 6 — Verdict card + branch
 
-Render (Canvas per Albert's display rule if output is rich):
+Render (Canvas per Zixin's display rule if output is rich):
 - per-axis interval (0–10) + grounding confidence; band-disagreement flags; `fundable`;
 - Pareto position vs the current `sci.ideas` population: `pop = load_population(notes_dir)` (reads
   every scored sibling's `## idea-forge` block → `{id: (nov, feas, imp)}`), add this idea's min
@@ -228,7 +228,7 @@ Then branch:
 
 ### Step 7 — Evolution operators (interactive)
 
-When close but short, propose these and let Albert pick (or auto-try the one targeting the
+When close but short, propose these and let Zixin pick (or auto-try the one targeting the
 weakest axis). After applying, re-run Steps 2–6 on the variant; record lineage.
 
 - **sharpen-claim** — collapse a topic into one precise take-home message.

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from pathlib import Path
 """Audit idea-forge calibration anchors without changing them.
 
 Expected advisory gaps are not errors. The command exits nonzero only for malformed input or
@@ -15,7 +16,7 @@ from idea_forge.harvest import harvest_anchors  # noqa: E402
 from idea_forge.models import TIER_ORDINAL  # noqa: E402
 
 
-DEFAULT_NOTES_DIR = "/Users/A.Y/Documents/Manual Library/Dendron/notes"
+DEFAULT_NOTES_DIR = str(Path.home() / "Documents/sci-ideas/notes")
 
 
 def _format_counts(counts):

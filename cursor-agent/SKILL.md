@@ -162,14 +162,14 @@ Arguments: {"job_id": "<returned job_id>"}
 If the MCP client does not expose `raphel-loop`, use the same loop directly:
 
 ```bash
-/Users/A.Y/programs/ai-skills/scripts/raphel_loop_mcp.py \
+~/programs/ai-skills/scripts/raphel_loop_mcp.py \
   --start "Self-contained task prompt with success criteria" \
   --workspace /absolute/path/to/repo \
   --model gpt-5.5-extra-high \
   --max-iterations 12 \
   --cursor-timeout-sec 7200
 
-/Users/A.Y/programs/ai-skills/scripts/raphel_loop_mcp.py --status <job_id>
+~/programs/ai-skills/scripts/raphel_loop_mcp.py --status <job_id>
 ```
 
 Use the direct CLI path for shorter one-shot jobs:
@@ -252,7 +252,7 @@ timeout 300 cursor-agent -p --output-format text --model claude-opus-4-8-high --
 
 ```bash
 timeout 300 cursor-agent -p --output-format text --model gpt-5.5-extra-high --force --trust \
-  --workspace /Users/A.Y/Desktop/Projects/2026/Haven \
+  --workspace <your-project-workspace> \
   "Add input validation to all POST endpoints in src/api/routes/. Use zod schemas. Return summary."
 ```
 

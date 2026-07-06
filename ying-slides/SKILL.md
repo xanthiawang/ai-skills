@@ -40,7 +40,7 @@ For IPD, Institute for Protein Design, David Baker, Hannele Ruohola-Baker,
 protein-design, and OpenAI x IPD decks, every slide must use the IPD-branded
 background from the previous IPD slides:
 
-`/Users/A.Y/Desktop/Projects/2025/presentations/0825_pku/ipd_bg.png`
+`<your-background-asset>.png` (e.g. an IPD/lab branded background)
 
 This background is mostly white, with a thin blue-to-purple bar across the top
 and a small IPD mark near the bottom. It replaces the plain white slide
@@ -72,7 +72,7 @@ presentation automatically.
 For every deck built with this skill, use the Kang job-talk deck as the local
 calibration reference:
 
-`/Users/A.Y/Desktop/Projects/Job/2026_stanford_knight/slides/knight_kang_v1.pptx`
+`<your-reference-deck>.pptx`
 
 This applies to job talks, project pitches, journal clubs, paper walkthroughs,
 internal updates, and single-slide visuals. Use the reference for pacing,

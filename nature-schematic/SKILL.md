@@ -88,7 +88,7 @@ For the companion direct-text version, use the same component prompt but include
 Use `scripts/add_schematic_labels.py` when the output should be a reusable SVG master plus PNG preview:
 
 ```bash
-python3 /Users/A.Y/programs/ai-skills/nature-schematic/scripts/add_schematic_labels.py \
+python3 ~/programs/ai-skills/nature-schematic/scripts/add_schematic_labels.py \
   --base /path/to/generated_base.png \
   --out-svg /path/to/figure.svg \
   --out-png /path/to/figure.png \

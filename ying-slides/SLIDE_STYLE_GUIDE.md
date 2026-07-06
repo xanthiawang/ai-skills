@@ -21,7 +21,7 @@ If it feels "inevitable" and "clean," it's right.
 
 ### Reference Deck Calibration
 
-Use `/Users/A.Y/Desktop/Projects/Job/2026_stanford_knight/slides/knight_kang_v1.pptx`
+Use `<your-reference-deck>.pptx`
 as the default local reference for all decks made with this skill. This includes
 job talks, project pitches, journal clubs, paper walkthroughs, internal updates,
 and single-slide visuals. It is a pacing and density reference, not a theme to
@@ -45,7 +45,7 @@ Do not emulate by default:
 
 For IPD, Institute for Protein Design, David Baker, Hannele Ruohola-Baker,
 protein-design, and OpenAI x IPD decks, use
-`/Users/A.Y/Desktop/Projects/2025/presentations/0825_pku/ipd_bg.png` as the
+`<your-background-asset>.png` as the
 background on every slide. This is the prior IPD-slide requirement: the deck
 should keep the white canvas while carrying the thin IPD gradient bar at the top
 and the small IPD mark near the bottom.
