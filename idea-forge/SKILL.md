@@ -32,6 +32,11 @@ prompts and the decision rules.** Keep the plumbing boring; put the judgment her
    or concrete mechanism → it does not count as a kill and it lowers grounding confidence.
 5. **Honesty over a fake bar.** If grounding is low-confidence or calibration is advisory, the
    system will not certify a "survivor". It says what it could not check.
+6. **No self-citation echo chamber.** An idea must stand as an independent paper once Zixin's own
+   prior work is excluded. Do NOT anchor a generated idea on his own papers, and treat "novelty"
+   that dissolves the moment his back-catalog is removed as *not novel* — it is an old method
+   renamed, an old framework pointed at a new object, or an old claim scaled up. The nearest-paper
+   check in Step 3 must include his own corpus as potential scoops, not as a friendly baseline.
 
 ## Zixin machine overrides (2026-07-06)
 
@@ -89,6 +94,14 @@ run Step 0. Today the harvest is near-empty (ideas are still active); calibratio
 until outcomes accumulate or the grant-impact RCR engine (`sci.ideas.grant-impact-metascience`)
 supplies labels at scale.
 
+**Rejections are assets, not deletions (negative preference learning).** When an idea dies, the
+typed kill reason written into its `## idea-forge` block (`adversary.flaw_type` +
+`reject_sentence`, plus any recurring Zixin-specific "won't do" — too meta-science, too heavy,
+wet-lab required, data inaccessible, just-a-combination) is not only anchor fuel: it is a
+**reusable filter**. At Step 3, scan the rejected siblings in the population and flag a new idea
+that matches a known rejection pattern early — so the system learns what Zixin does not want to
+spend time on, not only what he likes.
+
 ## Pipeline
 
 ### Step 0 — Session-start calibration check
@@ -121,6 +134,11 @@ Resolve the target idea:
   genuinely missing and you can't infer it (then ask Zixin).
 
 Echo back the parsed claim/mechanism/method/gap so Zixin can catch a misread before compute.
+
+For a brand-new note that hasn't been shaped yet, offer the human-facing capture template in
+`references/idea-note-template.md` — it forces the idea into a thesis (a precise claim, not a
+topic) with a Minimum Publishable Package, Best/Failure anchors, a reviewer kill pass, and a
+One Fix. A note with no statable MPP stays at `inbox`; it is not yet a paper-idea.
 
 ### Step 2 — Route + retrieve (with leakage control)
 
