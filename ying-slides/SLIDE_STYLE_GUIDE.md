@@ -36,7 +36,7 @@ Emulate:
 - Short centered transition slides only when they clarify the talk arc.
 
 Do not emulate by default:
-- The small top-left section label. Albert prefers that removed unless he asks
+- The small top-left section label. Zixin prefers that removed unless asked
   for explicit section navigation.
 - Any one-off serif typography or alternate accent colors from imported source
   material. Keep native slide text in the Architectural Calm system.
@@ -126,7 +126,7 @@ Implementation rule:
 Do not use top-left section labels by default. They make the slide feel more
 generic and reduce the clean first impression.
 
-Use section navigation only when Albert explicitly asks for it. In that case,
+Use section navigation only when Zixin explicitly asks for it. In that case,
 pass both `sectionNav` and `showSectionNav: true` to the template. Use Calibri,
 11pt, color `999999`, positioned above the title in the top-left corner.
 

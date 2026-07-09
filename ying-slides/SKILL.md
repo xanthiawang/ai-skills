@@ -14,7 +14,7 @@ protein-design, and OpenAI x IPD decks.
 
 ## When to Use
 
-Any time Albert asks to create a presentation, slide deck, or pitch deck.
+Any time Zixin asks to create a presentation, slide deck, or pitch deck.
 
 ## Style: Architectural Calm
 
@@ -28,7 +28,7 @@ Any time Albert asks to create a presentation, slide deck, or pitch deck.
 - **Layout**: Figure-centric (80%+ slides have visuals), canvas-efficient
   whitespace, one idea per slide
 - **No top-left labels by default**: Do not use `sectionNav` on content or title
-  slides unless Albert explicitly asks for it. If needed, pass both
+  slides unless Zixin explicitly asks for it. If needed, pass both
   `sectionNav` and `showSectionNav: true`.
 - **Title slide**: Centered, key phrase in rust accent color via `titleParts`
 - **No decoration**: No shadows, gradients, borders, cards, accent lines under titles
@@ -89,7 +89,7 @@ density, and canvas use, not as a literal theme file:
   sections.
 - Keep paper/data colors as-is inside imported figures, but keep native slide
   text and accents in the Architectural Calm palette.
-- Do not copy the reference deck's top-left section labels unless Albert
+- Do not copy the reference deck's top-left section labels unless Zixin
   explicitly asks for section navigation. The current default is no top-left
   label.
 
@@ -117,16 +117,16 @@ Reach for these instead of rebuilding them by hand:
 - **Claim titles ending in a period** ("Aging is the foundation of disease.")
   read as the manual style. Keep titles as direct claims.
 - **Section nav stays OFF by default** even though the manual deck uses it.
-  Albert's standing preference is no top-left label unless he asks; enable with
+  Zixin's standing preference is no top-left label unless asked; enable with
   `showSectionNav:true` + `sectionNav` per slide.
 
 ### Research 1-on-1 / project update override
 
-Use this mode for Albert's internal research updates, advisor 1-on-1s, project
+Use this mode for Zixin's internal research updates, advisor 1-on-1s, project
 steering decks, and small group review decks. These decks must read like
 scientific research presentations, not administrative status reports.
 
-- Start from the final audience question. Build the deck around what Albert
+- Start from the final audience question. Build the deck around what Zixin
   needs the audience to decide, inspect, or believe after the meeting.
 - Use research titles, not meeting titles. The title slide should name the
   scientific object, method, or prioritization problem. Avoid generic wording
@@ -138,7 +138,7 @@ scientific research presentations, not administrative status reports.
 - Add a method-onboarding ramp before unfamiliar platforms, assays, agents, or
   browsers. Cover what it is, why this source is authoritative, what it
   measures or ranks, what it cannot answer, and how it changes the next action.
-- Use authoritative source visuals before local derivative views. If Albert asks
+- Use authoritative source visuals before local derivative views. If Zixin asks
   for Open Targets, screenshot the official Open Targets Platform page first.
   Use local browsers only after the upstream source and scoring contract are
   clear.
@@ -155,13 +155,13 @@ scientific research presentations, not administrative status reports.
 - Add speaker notes for every assay, platform, agent, or source-introduction
   slide. Notes must be presenter-ready: introduce the method, explain why the
   slide exists, and bridge to the decision.
-- If Albert provides a concrete reference deck or slide folder, that reference
+- If Zixin provides a concrete reference deck or slide folder, that reference
   takes precedence over generic style defaults, including the IPD background
-  rule, unless Albert explicitly asks to keep the default branding.
+  rule, unless Zixin explicitly asks to keep the default branding.
 
 ### Journal Club / Paper-Figure Deck Override
 
-Use this mode when Albert asks for a journal club, paper walkthrough, or "slides from the paper."
+Use this mode when Zixin asks for a journal club, paper walkthrough, or "slides from the paper."
 This is a content-routing override, not a visual-style override: still calibrate
 spacing, title scale, figure density, and bottom-edge citations against the
 Kang reference deck.
@@ -170,7 +170,7 @@ Kang reference deck.
 - Use the paper title/author page as a screenshot on the paper-introduction slide. Do not recreate the title and author block as typed text unless the source screenshot is unavailable.
 - Use a short slide headline plus a compact side message. Do not label the side message "Take home"; just write the conclusion.
 - Keep the figure large. Use the available canvas before adding explanatory text. A side message is acceptable, but it must not shrink the figure more than needed.
-- Omit section-nav/top-left labels and decorative horizontal bars unless Albert
+- Omit section-nav/top-left labels and decorative horizontal bars unless Zixin
   explicitly asks for them. They read as generic/AI-like in this format.
 - Keep formatting quiet: white background by default, or the IPD-branded
   background when the deck is IPD-related. No cards, no borders around the
@@ -437,7 +437,7 @@ Symlinked into `~/Desktop/Projects/2026/presentation/` for use in deck scripts.
 
 ### Default title slide setup
 
-Albert is at Peking University, Stanford, and IPD. Always include logos and full affiliation:
+Use only affiliations and logos explicitly provided by Zixin or the current project. Do not inherit old hard-coded affiliation defaults:
 
 ```javascript
 t.addTitleSlide(pres, {
@@ -447,7 +447,7 @@ t.addTitleSlide(pres, {
   ],
   subtitle: "...",
   speaker: "Zixin Wang",
-  affiliation: "Peking University · Stanford University · Institute for Protein Design",
+  affiliation: "...",
   logos: [
     { path: logos + "/stanford_logo.png", w: 1.8 },
     { path: logos + "/ipd_logo.png", w: 1.5 },

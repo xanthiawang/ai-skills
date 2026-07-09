@@ -1,7 +1,7 @@
 /**
  * Ying Lab Slide Template v6 — Architectural Calm
  *
- * Calibrated against the Kang job-talk deck (Albert's manual style). v6
+ * Calibrated against the Kang job-talk deck reference style. v6
  * defaults now auto-match that deck:
  *   - Hero-image title slide (image bleeds off the left, text on the right)
  *   - Denser body type (Calibri ~13-14pt, body color 202020)
@@ -38,7 +38,7 @@
 
 // Resolve pptxgenjs across machines: prefer the caller's node_modules, then
 // fall back to common global locations. This makes the template portable
-// between Mac (Albert's laptop) and Linux servers.
+// between macOS and Linux servers.
 function _resolvePptxgenjs() {
   const path = require("path");
   const fs = require("fs");
@@ -85,7 +85,7 @@ const path = require("path");
 const fs = require("fs");
 
 // ── Color System ──
-// Calibrated against the Kang job-talk deck (Albert's manual style).
+// Calibrated against the Kang job-talk deck reference style.
 // Headings use warm ink (181114); body uses the slightly cooler near-black
 // 202020 that dominates the manual deck (168 runs). Inline citations inside
 // dense text can optionally use the steel tint 94A5A6 (Kang slide 39).
