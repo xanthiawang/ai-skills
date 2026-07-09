@@ -29,6 +29,34 @@ objectives, workflow/flowcharts, mechanism cartoons, slide visuals, and any
 illustrative graphic with no real data behind it. Use a white background unless
 asked otherwise.
 
+### HARD RULE: ImageGen figures carry the SAME Ying Lab palette
+
+The visual identity does not stop at matplotlib. Every `imagegen` prompt for a
+concept figure MUST embed the exact lab hex values and the semantic role
+mapping, so concept figures and data figures read as one system:
+
+- **RUST `#B3796D`** — hero: treatment, intervention, Socratic, main finding
+- **BLUE `#7689A0`** — alternative: direct/plain assistant, comparison condition
+- **GRAY `#8E8680`** — neutral: control, baseline, system components (detectors,
+  loggers), no-AI
+- **INK `#181114`** for text/arrows; accents from GOLD `#A08344` / SAGE `#5C8F82`
+  only when a 4th/5th role genuinely exists
+
+Prompt requirements (paste into every imagegen figure prompt):
+1. Name the hex codes explicitly next to each element ("the Socratic boxes in
+   muted rust #B3796D") — current image models follow explicit hexes well;
+   vague words like "terracotta" come back oversaturated.
+2. Say "low-saturation, muted academic palette; flat fills; no gradients".
+3. Keep one color = one role across ALL figures of the same paper (e.g. if
+   Direct condition is BLUE in the design figure, the direct-reply box in the
+   pipeline figure is BLUE too — never let the same hue play two roles).
+4. State exact text labels and mark them CRITICAL; English labels render
+   reliably, Chinese text does not — write dialogue/mockups in English or
+   composite Chinese text as a vector layer.
+
+After generation, verify against the checklist: labels exact, one-color-one-role,
+saturation comparable to the matplotlib figures when placed side by side.
+
 If a "concept" figure must also show real numbers/curves, generate the
 schematic with `imagegen` and composite the real-data panels (made here with
 matplotlib) over it — never let `imagegen` draw fabricated data points, bars, or
