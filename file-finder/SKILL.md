@@ -65,6 +65,6 @@ Downloads currently holds a backlog. Do not treat it as an archive, and do not b
 ## Delivering a File to Zixin
 
 - **Open it directly** (`open <file>`) — she reviews PDFs in Preview; this is the default handoff for documents just built.
+- **Drop it on the Yoink shelf** (`open -a /Applications/Yoink.app "<file>"`) when she will drag it elsewhere (attach to email, upload to a portal, move between apps). Multiple files: pass them all in one call. Installed 2026-07-09 via `brew install --cask yoink` (developer trial build; App Store license ~US$9 if she keeps it past the trial).
 - **Reveal in Finder** (`open -R <file>`) when she needs to locate it on disk.
 - **Send it inline** (harness file-send) when she wants the file in chat.
-- No Yoink on this machine.
