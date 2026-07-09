@@ -23,7 +23,7 @@ Use this skill when the user asks you to:
 
 ## Source documents
 
-This SKILL.md is the source of truth for the voice. The hard rules, register guidance, and revision checklist below are the full distilled reference; apply them directly. If a project-local voice sample or style note exists for the current work, read it and let it override the defaults here.
+Before writing, read **`zixin-voice-profile.md` in this skill directory** — the calibrated voice profile (ten English signature moves, Chinese register, thin-calibration flags), built 2026-07-09 from Zixin's real submissions (CAEAI v2, CHI 2027 draft v2, Phase 9 protocol docs). The hard rules below are the enforceable floor; the profile is the voice on top. If a project-local voice sample or style note exists for the current work, it overrides both.
 
 ## Biographical fact verification (MANDATORY)
 
