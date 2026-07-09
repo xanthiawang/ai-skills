@@ -53,7 +53,7 @@ For routing, naming, or cleanup decisions, use the `file-organizer` skill. This 
 
 ## Authoring Pipeline (Zixin's conventions, observed in practice)
 
-- **Markdown-first**: drafts are `.md`; PDFs built with `pandoc --pdf-engine=xelatex --citeproc`; ACM builds live in `paper/{venue}/acm/` (body.md → body.tex → latexmk).
+- **Quarto single source** (full adoption 2026-07-09): drafts are `.qmd`; `quarto render` regenerates review PDF + ACM PDF + coauthor docx in one command; pre-conversion `.md`/render/acm intermediates remain as archive. Quarto at `~/.local/bin/quarto`.
 - **Word deliverables for coauthors/revisions** (adopted from Albert's pipeline 2026-07-09): the GLOBAL master template is `~/programs/ai-skills/manuscript-revision/assets/template.docx` (Times 11pt, Songti SC for CJK, black headings, 2.5cm margins); render with `pandoc <render>.md --citeproc --reference-doc=<template> -o <draft>.docx`; copy into a paper folder only for venue-specific styling. Revision rounds use the `manuscript-revision` skill (point-by-point response, `[..]{.mark}` highlights, CLEAN + tracked-changes dual deliverables).
 - **Bilingual**: major drafts have `_CN.md` twins; technical terms stay English in Chinese text; numbers must match across versions.
 - **Dated, versioned filenames**: `{name}_{YYYY-MM-DD}` everywhere; drafts as `draft_v{N}`; superseded files stay in place (or `archive/`) rather than being deleted.

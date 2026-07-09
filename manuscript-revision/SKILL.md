@@ -3,14 +3,9 @@ name: manuscript-revision
 description: "Use when revising a scientific manuscript or its point-by-point (rebuttal) response for Zixin Wang — turning reviewer or coauthor comments into manuscript/response edits, marking changes (yellow [..]{.mark} highlight, gray custom-style reviewer text), updating citations, fixing figures, de-emphasizing method internals, reordering sections, or rebuilding the Quarto qmd-to-docx CLEAN/tracked-changes deliverables."
 ---
 
-> **Zixin machine adaptation (2026-07-09):** sources here are `.md` / `.tex`, not `.qmd`.
-> Everything register-level transfers as-is: point-by-point response structure, yellow
-> `[..]{.mark}` change highlighting, gray reviewer-text style, CLEAN vs tracked-changes
-> dual deliverables. Rebuilds use `pandoc <draft>.md --citeproc --reference-doc=<template> -o <draft>.docx`.
-> The master template is GLOBAL: `~/programs/ai-skills/manuscript-revision/assets/template.docx`
-> (Times 11pt, Songti SC for CJK, black headings, 2.5cm margins) — use it directly for any
-> project, or copy it into a paper folder only when that venue needs custom styling. Where this file says
-> "qmd-to-docx", read "md-to-docx via pandoc".
+> **Zixin machine (2026-07-09, full Quarto adoption):** sources are `.qmd` — this skill's
+> native format. Rebuild deliverables with `quarto render <draft>.qmd` (all formats, one
+> command). The docx reference template is `~/programs/ai-skills/manuscript-revision/assets/template.docx`.
 
 # Revising manuscripts + point-by-point responses
 
