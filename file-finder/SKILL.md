@@ -34,6 +34,8 @@ For routing, naming, or cleanup decisions, use the `file-organizer` skill. This 
 | Skills repo | `~/programs/ai-skills/` |
 | Skill libraries (149 scientific skills etc.) | `~/programs/academic-forge/skills/` |
 | Claude session memory | `~/.claude/projects/{workspace-slug}/memory/` |
+| Zotero central library | app `/Applications/Zotero.app`, data `~/Zotero/` (verified refs from all papers; back-fill target) |
+| Zotero import inbox (app closed) | `~/Documents/zotero-inbox/` |
 | R environments | system `/usr/local/bin/Rscript` (primary), `~/micromamba/envs/rstats/` (backup) |
 
 ## Decision Tree — "Where Is That File?"
