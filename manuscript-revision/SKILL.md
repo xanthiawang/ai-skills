@@ -6,9 +6,10 @@ description: "Use when revising a scientific manuscript or its point-by-point (r
 > **Zixin machine adaptation (2026-07-09):** sources here are `.md` / `.tex`, not `.qmd`.
 > Everything register-level transfers as-is: point-by-point response structure, yellow
 > `[..]{.mark}` change highlighting, gray reviewer-text style, CLEAN vs tracked-changes
-> dual deliverables. Rebuilds use `pandoc <draft>.md --citeproc --reference-doc=template.docx
-> -o <draft>.docx` (template.docx lives next to each paper, e.g.
-> `StudyChat_Project/paper/phase9_field_study/template.docx`). Where this file says
+> dual deliverables. Rebuilds use `pandoc <draft>.md --citeproc --reference-doc=<template> -o <draft>.docx`.
+> The master template is GLOBAL: `~/programs/ai-skills/manuscript-revision/assets/template.docx`
+> (Times 11pt, Songti SC for CJK, black headings, 2.5cm margins) — use it directly for any
+> project, or copy it into a paper folder only when that venue needs custom styling. Where this file says
 > "qmd-to-docx", read "md-to-docx via pandoc".
 
 # Revising manuscripts + point-by-point responses
