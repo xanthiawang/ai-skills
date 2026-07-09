@@ -1,7 +1,15 @@
 ---
 name: manuscript-revision
-description: "Use when revising a scientific manuscript or its point-by-point (rebuttal) response for Albert Ying — turning reviewer or coauthor comments into manuscript/response edits, marking changes (yellow [..]{.mark} highlight, gray custom-style reviewer text), updating citations, fixing figures, de-emphasizing method internals, reordering sections, or rebuilding the Quarto qmd-to-docx CLEAN/tracked-changes deliverables."
+description: "Use when revising a scientific manuscript or its point-by-point (rebuttal) response for Zixin Wang — turning reviewer or coauthor comments into manuscript/response edits, marking changes (yellow [..]{.mark} highlight, gray custom-style reviewer text), updating citations, fixing figures, de-emphasizing method internals, reordering sections, or rebuilding the Quarto qmd-to-docx CLEAN/tracked-changes deliverables."
 ---
+
+> **Zixin machine adaptation (2026-07-09):** sources here are `.md` / `.tex`, not `.qmd`.
+> Everything register-level transfers as-is: point-by-point response structure, yellow
+> `[..]{.mark}` change highlighting, gray reviewer-text style, CLEAN vs tracked-changes
+> dual deliverables. Rebuilds use `pandoc <draft>.md --citeproc --reference-doc=template.docx
+> -o <draft>.docx` (template.docx lives next to each paper, e.g.
+> `StudyChat_Project/paper/phase9_field_study/template.docx`). Where this file says
+> "qmd-to-docx", read "md-to-docx via pandoc".
 
 # Revising manuscripts + point-by-point responses
 
@@ -83,7 +91,7 @@ Tracked changes are **generated, not hand-authored**: a script diffs a flattened
 - **Tables:** the reference-doc Table style is borderless/narrow, so wide top-N tables wrap badly — apply a direct-XML pass (cell borders, column widths rebalanced to the page content width, shaded bold header). Re-apply *after* redline-inject.
 - **Reference list:** it is machine-built from the `.bib`, so tracked-changes there are noise — flatten the ref-list runs to clean text in the tracked deliverables.
 
-## House style (Albert Ying)
+## House style (Zixin Wang)
 
 - **No em-dashes** (`—`); use commas/periods. (en-dash `–` in ranges is fine; single hyphen for compound modifiers.)
 - **American spelling**; British only inside a verbatim citation title.

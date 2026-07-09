@@ -52,6 +52,7 @@ For routing, naming, or cleanup decisions, use the `file-organizer` skill. This 
 ## Authoring Pipeline (Zixin's conventions, observed in practice)
 
 - **Markdown-first**: drafts are `.md`; PDFs built with `pandoc --pdf-engine=xelatex --citeproc`; ACM builds live in `paper/{venue}/acm/` (body.md → body.tex → latexmk).
+- **Word deliverables for coauthors/revisions** (adopted from Albert's pipeline 2026-07-09): each paper folder carries a `template.docx` reference doc (Times 11pt, Songti SC for CJK, black headings, 2.5cm margins); render with `pandoc <render>.md --citeproc --reference-doc=template.docx -o <draft>.docx`. Revision rounds use the `manuscript-revision` skill (point-by-point response, `[..]{.mark}` highlights, CLEAN + tracked-changes dual deliverables).
 - **Bilingual**: major drafts have `_CN.md` twins; technical terms stay English in Chinese text; numbers must match across versions.
 - **Dated, versioned filenames**: `{name}_{YYYY-MM-DD}` everywhere; drafts as `draft_v{N}`; superseded files stay in place (or `archive/`) rather than being deleted.
 - **References**: per-paper `references.bib`, every entry CrossRef/OpenAlex-verified before use.
