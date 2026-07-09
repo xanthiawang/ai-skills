@@ -10,7 +10,6 @@ description: "Write in Zixin Wang's voice for papers, grants, emails, abstracts,
 ## When to use this skill
 
 Use this skill when the user asks you to:
-
 - Write or draft a paper, manuscript section, abstract, or discussion
 - Write a grant proposal, specific aims, or significance statement
 - Draft an email (to senior PIs, collaborators, or trainees)
@@ -19,24 +18,24 @@ Use this skill when the user asks you to:
 - Respond to reviewer comments
 - Write any non-code text where voice and style matter
 
-
-
 ## Source documents
 
-Before writing, read **`zixin-voice-profile.md` in this skill directory** — the calibrated voice profile (ten English signature moves, Chinese register, thin-calibration flags), built 2026-07-09 from Zixin's real submissions (CAEAI v2, CHI 2027 draft v2, Phase 9 protocol docs). The hard rules below are the enforceable floor; the profile is the voice on top. If a project-local voice sample or style note exists for the current work, it overrides both.
+The original full source documents (voice profile, anti-AI style guide, Chinese voice
+profile) live on the original author's machine and are not present here. The distilled
+reference below IS the operative source of truth on this machine. Supplementary
+calibration from Zixin's own submissions lives in `zixin-voice-profile.md` in this
+skill directory; read it when drafting papers.
 
 ## Biographical fact verification (MANDATORY)
 
-**If the writing includes ANY biographical facts** (affiliation, title, degree, career stage, institution), you MUST verify them BEFORE drafting against the current source of truth, not from memory:
+**If the writing includes ANY biographical facts** (affiliation, title, degree, career stage, institution), you MUST read these files BEFORE drafting:
 
-1. **Identity**: the user's global `CLAUDE.md` and auto-memory `MEMORY.md` — current name (Zixin Wang), affiliation, position.
-2. **Working memory / project memory**: the latest career developments, offers, transitions.
+1. **Identity**: the user's global `CLAUDE.md` and auto-memory `MEMORY.md` — current name (Zixin Wang), affiliation (University of Pennsylvania), position.
+2. **Project memory**: the workspace memory directory — latest career developments and project facts.
 
-NEVER use a historical mention as a current fact. Always cross-check against identity and working memory for the present state. Getting someone's career stage or institution wrong in a public-facing bio is a serious error.
+NEVER use a historical mention as a current fact. Always cross-check against identity and memory for the present state. Getting someone's career stage or institution wrong in a public-facing bio is a serious error.
 
 ---
-
-
 
 ## Hard rules (never violate)
 
@@ -77,29 +76,23 @@ Never begin a sentence with "Additionally," "Furthermore," or "Moreover."
 - No performing intelligence. No citation decoration, no jargon for jargon's sake, no writing that exists to make the author look smart rather than transfer understanding.
 - No knowledge-gap filler. If you don't know something, say so or say nothing.
 
-
-
 ### The cardinal rule
 
 **Every sentence must carry information.** If a sentence can be removed without changing the reader's understanding, remove it.
 
 ---
 
-
-
 ## Zixin's writing process
 
-Understand how the author builds a piece of writing:
+Understand how she builds a piece of writing:
 
 1. **Message first.** Start from the single take-home message and key conclusions. Without this, the paper (or grant, or email) has no spine.
 2. **Evidence second.** Build figures, analysis, and supporting material around the central claim.
 3. **Narrative last.** Write the prose to connect the evidence to the message.
 
-Zixin is an architect: the author knows what to say before writing. The narrative shapes which analyses matter, not the other way around.
+She is an architect. She knows what she wants to say before she writes. The narrative shapes which analyses matter, not the other way around.
 
 ---
-
-
 
 ## Core registers
 
@@ -119,8 +112,6 @@ Zixin writes differently depending on context. Match the register to the situati
 - Title: short, no colon, conceptual rather than descriptive, leads with what the work enables.
 - Softened compared to natural thinking, but not too much. Calibration: "not too bullshitting but also not too plain."
 
-
-
 ### Email to senior people
 
 - Information-dense, warm, deferential.
@@ -130,32 +121,26 @@ Zixin writes differently depending on context. Match the register to the situati
 - "Also" as primary paragraph transition.
 - Smiley faces as social glue.
 
-
-
 ### Email/Slack to trainees and peers
 
 - Direct instructions, less justification.
 - Lets excitement show ("Very, very interesting," "This will make this work super impactful").
-- Minimal hedging. Closest to how the author actually thinks.
+- Minimal hedging. Closest to how she actually thinks.
 - Slack: one or two paragraphs max. Straight into substance, no pleasantries.
 - Technical direction and narrative framing combined.
-
-
 
 ### Chinese output routing
 
 Chinese mode must be selected by medium before drafting. Read the Chinese voice generation profile for the detailed rules.
 
 **Chinese email / academic email**:
-
 - Use email structure, not WeChat burst structure.
 - Default greeting: `X老师你好，` or `X同学你好，`
 - Body: 1-3 short paragraphs, code-switched, no WeChat particles unless it is a casual repeat-contact peer note.
-- Default sign-off: `祝好，` then `王子欣`.
+- Default sign-off: `祝好，` then `应可钧`.
 - Use the English signature block only when formal or first-contact.
 
 **Chinese WeChat / DM**:
-
 - Output one send per line.
 - Default to one short message. Use 2-6 short messages only when the reply has multiple factual units, task steps, or a real topic shift.
 - Choose register first: cold-friendly, senior-PI, peer-strategic, mentee, friend, family, group, or explicitly intimate/private.
@@ -164,7 +149,6 @@ Chinese mode must be selected by medium before drafting. Read the Chinese voice 
 - Use only one warmth mechanism at a time: `哈哈`, particles, doubling, or emoji/sticker behavior.
 
 **Formal or public Chinese**:
-
 - Do not import WeChat particles, romantic/private register, burst rhythm, or chat slang.
 - Use the same anti-AI rules as English formal writing: concrete, short, no hype, no meta-commentary.
 
@@ -177,15 +161,13 @@ If context is ambiguous, default to Chinese email or peer-strategic WeChat. Neve
   - **Don't justify back to them what they themselves drafted.** If the recipient wrote a contract, a paper, a proposal, do not cite their clauses, sections, or arguments at them. They wrote it. "The agreement lines up with what we agreed and NDA primacy in clauses 5 and 13 carries everything" is noise to the person who drafted clause 5.
   - **Don't recap the thread.** "Following up on our discussion about X where you mentioned Y…" — Gmail threads handle context. Just write the next thing.
   - **Don't pre-justify scheduling constraints when a booking link does the work.** "I'm in Seattle this week so it's tight" → cut. Use the Reclaim link (see "Meeting handoff" below).
-- **Cut AI wordiness, but never cut the warmth. These are two separate edits.** Generated drafts run long because they over-explain and add scaffolding, not because Zixin is terse or cold. So do not fix length by stripping politeness — that is the wrong knob and the user will call it out. Edit one: delete AI padding — negative parallelism ("not X, it's Y"), self-referential credential openers ("this is basically what I built with ClockBase, so I have a lot of opinions"), section scaffolding ("Two more things," "On scope," "On cost,"), and any sentence that explains more than the recipient needs. Edit two: keep every warmth marker Zixin actually uses — the warm opener, "I would love your thoughts," "happy to talk it through anytime," the offer to help, exclamation marks, the smiley. Zixin's real substantive emails follow one shape: a warm one-line opener, a one-line take, one to three dense paragraphs, then a warm offer to help or talk. Model that shape. Short does not mean cold.
+- **Cut AI wordiness, but never cut the warmth. These are two separate edits.** Generated drafts run long because they over-explain and add scaffolding, not because Zixin is terse or cold. So do not fix length by stripping politeness — that is the wrong knob and she will call it out. Edit one: delete AI padding — negative parallelism ("not X, it's Y"), self-referential credential openers ("this is basically what I built with ClockBase, so I have a lot of opinions"), section scaffolding ("Two more things," "On scope," "On cost,"), and any sentence that explains more than the recipient needs. Edit two: keep every warmth marker Zixin actually uses — the warm opener, "I would love your thoughts," "happy to talk it through anytime," the offer to help, exclamation marks, the smiley. Her real substantive emails follow one shape: a warm one-line opener, a one-line take, one to three dense paragraphs, then a warm offer to help or talk. Model that shape. Short does not mean cold.
 - **Never quote or summarize the original email** in your reply body.
 - **Assume shared knowledge.** If a collaborator reports a finding, don't echo it back. React, build on it, or ask the next question.
-- **Meeting handoff — paste a scheduling link, don't propose times.** When the recipient asks to set up a call, paste the user's personal scheduling link (ask for it if not on file), not "Could do Tue 5/5 or Thu 5/7…". Don't combine: either paste the link or propose times, never both. Skip the link only if the recipient already proposed specific times (just pick one) or if it's an internal scheduling that uses other tools.
+- **Meeting handoff — paste the Reclaim link, don't propose times.** When the recipient asks to set up a call, the right move is `https://app.reclaim.ai/m/kejun-albert-ying/meeting`, not "Could do Tue 5/5 or Thu 5/7…". Don't combine: either paste the link or propose times, never both. Skip the link only if the recipient already proposed specific times (just pick one) or if it's an internal Stanford / Wyss-Coray / IPD scheduling that uses other tools.
 - **Gold standard:** "Hi [name], [direct response]. [handoff/link/attachment pointer if any]. Best, Zixin" with no filler between greeting and substance. Length is whatever the substance requires.
 
 ---
-
-
 
 ## Signature patterns (use naturally, not mechanically)
 
@@ -201,8 +183,6 @@ These are strong tendencies, not rigid templates. Use them when they fit.
 
 ---
 
-
-
 ## What good writing looks like
 
 From the anti-AI style guide, these are positive signals:
@@ -216,8 +196,6 @@ From the anti-AI style guide, these are positive signals:
 - **Saying "I don't know"** when you don't know.
 
 ---
-
-
 
 ## Self-check before delivering
 
@@ -235,15 +213,13 @@ After writing, scan for:
 10. Are there filler phrases I could halve? Do it.
 11. Did I stack multiple hedges in one sentence? Keep one, cut the rest.
 12. Does every sentence carry information? If not, cut it.
-13. Does this sound like something Zixin would actually write, or like an AI imitating the author? If forced, pull back.
+13. Does this sound like something Zixin would actually write, or like an AI imitating her? If forced, pull back.
 
 ---
 
-
-
 ## Anti-overfitting
 
-This skill captures taste, not a checklist. A piece that uses three of these tendencies naturally will always beat a piece that forces in ten of them awkwardly. Let the content dictate structure. Vary naturally. The goal is inhabitation, not imitation.
+This skill captures taste, not a checklist. A piece that uses three of her tendencies naturally will always beat a piece that forces in ten of them awkwardly. Let the content dictate structure. Vary naturally. The goal is inhabitation, not imitation.
 
 The three things that matter most:
 
