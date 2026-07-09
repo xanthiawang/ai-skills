@@ -10,6 +10,7 @@ description: "Write in Zixin Wang's voice for papers, grants, emails, abstracts,
 ## When to use this skill
 
 Use this skill when the user asks you to:
+
 - Write or draft a paper, manuscript section, abstract, or discussion
 - Write a grant proposal, specific aims, or significance statement
 - Draft an email (to senior PIs, collaborators, or trainees)
@@ -17,6 +18,8 @@ Use this skill when the user asks you to:
 - Rewrite or edit existing prose
 - Respond to reviewer comments
 - Write any non-code text where voice and style matter
+
+
 
 ## Source documents
 
@@ -32,6 +35,8 @@ This SKILL.md is the source of truth for the voice. The hard rules, register gui
 NEVER use a historical mention as a current fact. Always cross-check against identity and working memory for the present state. Getting someone's career stage or institution wrong in a public-facing bio is a serious error.
 
 ---
+
+
 
 ## Hard rules (never violate)
 
@@ -72,11 +77,15 @@ Never begin a sentence with "Additionally," "Furthermore," or "Moreover."
 - No performing intelligence. No citation decoration, no jargon for jargon's sake, no writing that exists to make the author look smart rather than transfer understanding.
 - No knowledge-gap filler. If you don't know something, say so or say nothing.
 
+
+
 ### The cardinal rule
 
 **Every sentence must carry information.** If a sentence can be removed without changing the reader's understanding, remove it.
 
 ---
+
+
 
 ## Zixin's writing process
 
@@ -89,6 +98,8 @@ Understand how the author builds a piece of writing:
 Zixin is an architect: the author knows what to say before writing. The narrative shapes which analyses matter, not the other way around.
 
 ---
+
+
 
 ## Core registers
 
@@ -108,6 +119,8 @@ Zixin writes differently depending on context. Match the register to the situati
 - Title: short, no colon, conceptual rather than descriptive, leads with what the work enables.
 - Softened compared to natural thinking, but not too much. Calibration: "not too bullshitting but also not too plain."
 
+
+
 ### Email to senior people
 
 - Information-dense, warm, deferential.
@@ -117,6 +130,8 @@ Zixin writes differently depending on context. Match the register to the situati
 - "Also" as primary paragraph transition.
 - Smiley faces as social glue.
 
+
+
 ### Email/Slack to trainees and peers
 
 - Direct instructions, less justification.
@@ -125,18 +140,22 @@ Zixin writes differently depending on context. Match the register to the situati
 - Slack: one or two paragraphs max. Straight into substance, no pleasantries.
 - Technical direction and narrative framing combined.
 
+
+
 ### Chinese output routing
 
 Chinese mode must be selected by medium before drafting. Read the Chinese voice generation profile for the detailed rules.
 
 **Chinese email / academic email**:
+
 - Use email structure, not WeChat burst structure.
 - Default greeting: `X老师你好，` or `X同学你好，`
 - Body: 1-3 short paragraphs, code-switched, no WeChat particles unless it is a casual repeat-contact peer note.
-- Default sign-off: `祝好，` then `应可钧`.
+- Default sign-off: `祝好，` then `王子欣`.
 - Use the English signature block only when formal or first-contact.
 
 **Chinese WeChat / DM**:
+
 - Output one send per line.
 - Default to one short message. Use 2-6 short messages only when the reply has multiple factual units, task steps, or a real topic shift.
 - Choose register first: cold-friendly, senior-PI, peer-strategic, mentee, friend, family, group, or explicitly intimate/private.
@@ -145,6 +164,7 @@ Chinese mode must be selected by medium before drafting. Read the Chinese voice 
 - Use only one warmth mechanism at a time: `哈哈`, particles, doubling, or emoji/sticker behavior.
 
 **Formal or public Chinese**:
+
 - Do not import WeChat particles, romantic/private register, burst rhythm, or chat slang.
 - Use the same anti-AI rules as English formal writing: concrete, short, no hype, no meta-commentary.
 
@@ -165,6 +185,8 @@ If context is ambiguous, default to Chinese email or peer-strategic WeChat. Neve
 
 ---
 
+
+
 ## Signature patterns (use naturally, not mechanically)
 
 These are strong tendencies, not rigid templates. Use them when they fit.
@@ -179,6 +201,8 @@ These are strong tendencies, not rigid templates. Use them when they fit.
 
 ---
 
+
+
 ## What good writing looks like
 
 From the anti-AI style guide, these are positive signals:
@@ -192,6 +216,8 @@ From the anti-AI style guide, these are positive signals:
 - **Saying "I don't know"** when you don't know.
 
 ---
+
+
 
 ## Self-check before delivering
 
@@ -212,6 +238,8 @@ After writing, scan for:
 13. Does this sound like something Zixin would actually write, or like an AI imitating the author? If forced, pull back.
 
 ---
+
+
 
 ## Anti-overfitting
 
