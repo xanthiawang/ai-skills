@@ -318,13 +318,13 @@ function renderMermaid(code, outPath) {
 }
 
 // ── Create presentation ──
-function createPresentation(title, authorOrOpts = "Kejun Albert Ying", maybeOpts = {}) {
+function createPresentation(title, authorOrOpts = "Zixin Wang", maybeOpts = {}) {
   _slideNum = 0;
   const opts = (authorOrOpts && typeof authorOrOpts === "object")
     ? authorOrOpts
     : maybeOpts;
   const author = (authorOrOpts && typeof authorOrOpts === "object")
-    ? (opts.author || "Kejun Albert Ying")
+    ? (opts.author || "Zixin Wang")
     : authorOrOpts;
   const pres = new pptxgen();
   pres.layout = "LAYOUT_16x9";

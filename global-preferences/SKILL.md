@@ -8,7 +8,7 @@ alwaysApply: true
 
 ## User Identity
 
-- **Name**: Kejun Albert Ying (use "Kejun Albert Ying" or "Kejun Ying" for official/public attribution like commits, PRs, and public-facing content; call them "Albert" in conversation)
+- **Name**: Zixin Wang (use "Zixin Wang" for official/public attribution like commits, PRs, and public-facing content; call them "Zixin" in conversation)
 - When working on public repositories, be aware of their identity for proper attribution.
 
 ## Version Control
@@ -41,7 +41,7 @@ Never simulate, fabricate, or generate artificial data or statistical results un
 
 ## Agent Skill and MCP Sync
 
-`~/programs/ai-skills` is the source of truth for Albert's portable agent skills, safe MCP declarations, and safe agent settings. When changing any skill, Codex or Claude MCP entry, plugin setting, or agent setting, update this repo as part of the same task without waiting for Albert to ask for synchronization.
+`~/programs/ai-skills` is the source of truth for Zixin's portable agent skills, safe MCP declarations, and safe agent settings. When changing any skill, Codex or Claude MCP entry, plugin setting, or agent setting, update this repo as part of the same task without waiting for Zixin to ask for synchronization.
 
 Required workflow:
 1. Make the change in `~/programs/ai-skills` when it belongs to a skill or managed agent setting.
@@ -67,7 +67,7 @@ Tools: `mcp__codex__codex` (new session), `mcp__codex__codex-reply` (continue).
 
 **Cross-check complex plans before executing.** Multi-step implementations, non-trivial refactors, anything where a wrong plan wastes >10 min. Draft the plan yourself, then ask codex *"Review this plan for [task]. Flag risks, missed steps, or better approaches. Do not implement."* Reconcile before touching code. Skip for trivial edits.
 
-**Default to ImageGen for figures.** When Albert asks to make or modify a figure, slide visual, workflow, schematic, diagram, or visual asset, assume he wants Codex `imagegen` in more than 90% of cases. Use ImageGen by default for conceptual and slide figures, including revisions to existing generated diagrams, rather than patching them with native slide shapes. Use a white background unless Albert asks otherwise. When labels, counts, or exact scientific claims must be correct, use ImageGen for the visual base and layer deterministic vector/text annotations over it. Real scientific data figures still go through `nature-figure` (matplotlib on real data), not ImageGen.
+**Default to ImageGen for figures.** When Zixin asks to make or modify a figure, slide visual, workflow, schematic, diagram, or visual asset, assume they want Codex `imagegen` in more than 90% of cases. Use ImageGen by default for conceptual and slide figures, including revisions to existing generated diagrams, rather than patching them with native slide shapes. Use a white background unless Zixin asks otherwise. When labels, counts, or exact scientific claims must be correct, use ImageGen for the visual base and layer deterministic vector/text annotations over it. Real scientific data figures still go through `nature-figure` (matplotlib on real data), not ImageGen.
 
 ## Cursor Agent Raphel Loop
 
@@ -97,32 +97,32 @@ bun run src/cli.ts spawn <kind> --scenario <name> --config '{"title":"...","cont
 
 **Gotchas:** `spawn` not `show`; escape apostrophes as `'"'"'` or write to `/tmp/canvas.json` and pass `--config "$(cat /tmp/canvas.json)"`.
 
-**Skip if** Albert says "inline" / "just tell me".
+**Skip if** Zixin says "inline" / "just tell me".
 
 ## Gmail drafts
 
 The Gmail MCP `create_draft` tool now accepts `replyToMessageId`, which threads the draft under the original message correctly. The 2026-04-29 manual-paste workaround is obsolete as of 2026-05-08 — saving drafts is the new default for replies.
 
 **Body formatting (always):**
-- Always pass `htmlBody` (Albert's compose window is HTML by default; plain-text drafts render awkwardly).
+- Always pass `htmlBody` (Zixin's compose window is HTML by default; plain-text drafts render awkwardly).
 - Use `<p>` for paragraph blocks, `<br>` only for in-block breaks (signatures, address lines).
 - Never use ASCII separators (`---`, `===`) in draft bodies.
 - Do not quote or restate the original message — Gmail threads handle context.
 
 **Default workflow for any reply:**
-1. **Check the sent folder first** for thread freshness. If Albert is the latest sender, don't draft a duplicate — `gmail_search_threads` with `from:me` + thread participant + `newer_than:7d`, then `gmail_get_thread` to verify.
+1. **Check the sent folder first** for thread freshness. If Zixin is the latest sender, don't draft a duplicate — `gmail_search_threads` with `from:me` + thread participant + `newer_than:7d`, then `gmail_get_thread` to verify.
 2. **Pull the original thread** via `gmail_get_thread` to extract the latest sender's email, the CC list, and the exact subject.
 3. **Create the draft** via `gmail_create_draft` with:
-   - `to`: the latest sender (or whoever Albert is responding to directly)
+   - `to`: the latest sender (or whoever Zixin is responding to directly)
    - `cc`: the rest of the original thread (Reply-All by default unless the conversation suggests a private reply)
    - `subject`: `Re: <original subject>`
    - `replyToMessageId`: the message ID of the email being replied to (NOT the thread ID — though they match for single-message threads)
    - `htmlBody`: HTML-formatted body
-4. **Confirm in chat after creating the draft:** draft ID, recipients (to / cc), subject, and one-line note that it's threaded so Albert knows it'll land inline.
+4. **Confirm in chat after creating the draft:** draft ID, recipients (to / cc), subject, and one-line note that it's threaded so Zixin knows it'll land inline.
 
 **When NOT to use a draft:**
-- Brand-new conversations Albert is initiating from scratch (no existing thread to reply to) — same workflow but skip `replyToMessageId`.
-- Albert explicitly says "just give me the body" / "inline" — paste body in chat instead.
+- Brand-new conversations Zixin is initiating from scratch (no existing thread to reply to) — same workflow but skip `replyToMessageId`.
+- Zixin explicitly says "just give me the body" / "inline" — paste body in chat instead.
 
 ## Persistent Memory (MANDATORY)
 
@@ -135,7 +135,7 @@ Use the auto memory system actively in every session. This is not optional.
 After each interaction, evaluate whether memory needs updating. Write immediately when:
 - A task is completed or a meaningful milestone is reached
 - A decision is made or an approach is chosen
-- Albert corrects something or states a preference
+- Zixin corrects something or states a preference
 - New project context, people, or conventions are discovered
 - Previous memory entries become outdated or wrong
 
@@ -144,7 +144,7 @@ Do NOT document every interaction — only write when there's genuine signal wor
 ### What to Track
 - **Active projects**: current status, next steps, blockers
 - **Decisions made**: why a particular approach was chosen
-- **User corrections**: if Albert corrects something, update memory immediately
+- **User corrections**: if Zixin corrects something, update memory immediately
 - **Recurring context**: file paths, environment details, or workflow steps that come up repeatedly
 - **People & collaborators**: who's involved in what, meeting outcomes
 

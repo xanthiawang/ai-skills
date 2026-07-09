@@ -366,7 +366,7 @@ t.addTitleSlide(pres, {
     { text: "A World Model\nfor the Epigenome" },
   ],
   subtitle: "...",
-  speaker: "Kejun Albert Ying",
+  speaker: "Zixin Wang",
   affiliation: "Peking University",
 });
 
@@ -446,7 +446,7 @@ t.addTitleSlide(pres, {
     { text: "Rest of Title" },
   ],
   subtitle: "...",
-  speaker: "Kejun Albert Ying",
+  speaker: "Zixin Wang",
   affiliation: "Peking University · Stanford University · Institute for Protein Design",
   logos: [
     { path: logos + "/stanford_logo.png", w: 1.8 },
@@ -467,7 +467,7 @@ t.addTitleSlide(pres, {
     { text: "AI for Brain Aging:", accent: true, breakLine: true },
     { text: "From Quantification\nto Intervention" },
   ],
-  speaker: "Kejun Albert Ying, PhD",
+  speaker: "Zixin Wang, PhD",
   affiliation: "Stanford · UW",
   logos: [{ path: logos + "/stanford_logo.png", w: 1.6 }, { path: logos + "/ipd_logo.png", w: 1.3 }],
 });

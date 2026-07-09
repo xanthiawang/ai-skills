@@ -9,7 +9,7 @@ plugin {
     id = "org.kejunying.agenttabs",
     name = "Agent Tabs",
     apiVersion = "2.2",
-    author = "Kejun Albert Ying"
+    author = "Zixin Wang"
 }
 
 local function folder_path_for(pane)
