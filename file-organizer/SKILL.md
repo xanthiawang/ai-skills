@@ -3,6 +3,10 @@ name: file-organizer
 description: "Safely route, name, and record Zixin's downloaded or generated files. Use when organizing Downloads/Desktop clutter, handling newly downloaded or created task artifacts, deciding where files belong, renaming important files, recording canonical file locations, or adding a file-intake pass to Dendron sync."
 ---
 
+> **Asset status (Zixin machine, 2026-07-09):** `scripts/fs_drift_scan.py` and
+> `scripts/fs_drift_apply.py` were never committed to the shared snapshot. The drift checklist
+> is therefore manual-only on this machine; `scripts/file_intake_scan.py` is present and works.
+
 # File Organizer
 
 Keep Zixin's filesystem from accumulating untracked intake files. Route files only when the destination is strongly supported by the current task, the File Atlas, or an existing project convention. Broad cleanup is always approval-first.

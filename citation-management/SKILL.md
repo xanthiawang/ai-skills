@@ -7,6 +7,14 @@ metadata:
     skill-author: K-Dense Inc.
 ---
 
+> **Asset status (Zixin machine, 2026-07-09):** the `scripts/` and `references/` files this
+> skill cites were never committed to the shared snapshot and are unrecoverable from Albert's
+> machine. Until rebuilt, run in degraded mode: query CrossRef / OpenAlex / PubMed directly
+> (WebFetch or `curl api.crossref.org/works?query.bibliographic=...`), verify title/author/year
+> against the source, and hand-write BibTeX. The anti-hallucination workflow used for the CHI
+> 2027 bib (69 candidates -> 54 verified, 6 fake matches rejected) lives in
+> StudyChat_Project/paper/phase9_field_study/references.bib history and is the reference example.
+
 # Citation Management
 
 ## Overview
