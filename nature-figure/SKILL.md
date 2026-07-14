@@ -1991,6 +1991,29 @@ text_color = "white" if brightness < 0.5 else INK
 
 Every data point in a figure must come from real analysis outputs. If data is missing, show it honestly (e.g., 0-count bars). Never use templates, simulations, or placeholder values to fill gaps.
 
+## Nature-Parity QA Checklist (distilled from annotation/compactness/QA work)
+
+> Provenance: these are **design rules and methodology** distilled from a focused nature-figure hardening pass (leader-line non-crossing, baked compactness scale, density colormap, overlap-in-`save()`, reference-figure reproduction). The rules are transcribed as guidance; the underlying algorithmic *implementations* (the geometric no-cross solver, per-side column placement, the `FIGURE_SCALE` plumbing) are **not reproduced here** — treat those as "to port from source" when the real diff is available. Everything below you can apply by hand today.
+
+### 9 design rules
+
+1. **Annotation leader lines must never cross** — each other or the data cloud. Split labels by which side of the axis each point sits on; when a side is crowded, stack that side into ONE y-sorted column and place it just past the **local** data at the labels' own y-level (NOT the global data extent, which blows up `xlim` and produces panel-slashing leaders). Put the legend on the side **opposite** the labels — `smart_annotate` cannot see the legend box.
+2. **Density/count colormaps must map dense → dark.** A sequential map whose high end is near-white makes the dense core vanish on a white page; "draw densest on top" makes it worse. Use a reversed map (dense = dark ink) for density scatter / hexbin / count fields.
+3. **To raise text-to-canvas ratio, shrink the canvas ~10% — do NOT enlarge text past 7pt.** 7pt is the Nature floor and is exactly what published references use. Bake the shrink as a single scale knob (one dial for the whole gallery), not a per-figure hand-tune. A smaller canvas raises the ratio; the font never moves.
+4. **"Airy" comes from dead whitespace, not panel size.** Cut it at the theme level: data margins ~0.05 → 0.03, label pad 4 → ~2.5, add tick pad, figure border ~0.08 → 0.02, tighten inter-panel spacing. Kill the dead space before touching anything else.
+5. **Confidence/error bands must carry a visible mean line on top, over sorted x.** A band with no center line reads as a fog; unsorted x produces a step-discontinuity artifact; ≥3 overlapping bands blend to mud — separate them or drop opacity and always keep the mean lines legible.
+6. **Heatmaps have three recurring traps:** (a) an `rcdefaults()` reset context renders heatmap text at ~10pt instead of the 7pt theme — re-assert the font; (b) narrow columns collide tick labels ("Ctrl1Ctrl2Ctrl3", "HbA1cLDL") — abbreviate or rotate; (c) a diverging colormap on all-positive data wastes half the scale — use sequential.
+7. **Significance-bracket stacks must not compress the data.** Stacking brackets pushes `ylim` up until boxes/points are crushed into the bottom ~40% of the panel — reserve headroom deliberately or cap the stack.
+8. **Axis limits hug the data.** No trailing empty log decades, no rounding an x-limit up to the next tick, no stretching an axis just to host label text. Tight limits are part of the ink-to-canvas standard.
+9. **Forest plots need a right-hand P/q value column aligned to each row** — and it must live **inside** the panel (extend `xlim` to open a blank right region, trim the bottom spine to the tick range) so it never collides with the next panel's bold letter label. (Bonus layout rule: dense/irregular mosaics collapse when panels carry heterogeneous decorations — colorbars, log axes, rotated ticks — because auto-padding under-reserves the inter-row gutter; enforce a minimum gutter in **points** and add a cross-row tight-bbox check.)
+
+### 4 methodology practices
+
+1. **Figure TDD — reproduce a real published reference figure with synthetic data.** Rebuilding a known-good target (e.g. a specific Nature figure) is the fastest way to surface skill gaps, and the reproduction doubles as a rich multi-panel example for the gallery.
+2. **Measure, don't eyeball, text size.** Calibrate px-per-pt by rendering known 7pt/10pt text at the target dpi, then measure both the reference and your output the same way. Compare the **text-to-panel-width ratio**, not absolute pixels — and remember the correct lever to close a gap is canvas size, not font size (rule 3).
+3. **Bake `detect_overlaps()` into `save()`.** Run the overlap check on every multipanel at save time and print any collision before writing the file, so a regression can't slip into the gallery unnoticed.
+4. **Separate real overlaps from bbox false-positives.** Text–text collisions are real defects; a curve's full bounding box enclosing text that actually sits in empty space is a false positive. Triage on that distinction before "fixing" anything.
+
 ## Utility Code
 
 Copy `nature_figure_utils.py` from this skill directory into your project. Pure matplotlib — no external theme dependencies. It provides:
