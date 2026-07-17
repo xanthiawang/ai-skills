@@ -259,6 +259,10 @@ apply_desktop_pywal_theme()
 set_key('plugins."slack@claude-plugins-official"', "enabled", "false")
 set_key('plugins."slack@openai-curated"', "enabled", "false")
 set_key('plugins."hugging-face@openai-curated"', "enabled", "false")
+# The Superwhisper Codex hook opens an interactive dictation/edit window at
+# turn boundaries. Keep the standalone Superwhisper app available, but leave
+# this intrusive Codex integration disabled by default.
+set_key('plugins."superwhisper@superwhisper"', "enabled", "false")
 remove_section("mcp_servers.scg")
 
 # Only layer enabled_tools on top of an existing 1password MCP entry. Writing
