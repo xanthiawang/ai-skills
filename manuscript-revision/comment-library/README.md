@@ -1,7 +1,8 @@
 # Revision Comment Library
 
-A local corpus of **real** editor/reviewer decision letters, parsed into a consistent
-structure. It feeds the `manuscript-revision` skill in two ways:
+A local corpus of **real** editor/reviewer decision letters **and coauthor pre-submission
+feedback**, parsed into a consistent structure. It feeds the `manuscript-revision` skill in
+two ways:
 
 1. **Anchors** — real comments calibrate what reviewers actually demand (a journal's
    recurring asks: trial registration, matched-pair analysis, AI-use disclosure, funding
