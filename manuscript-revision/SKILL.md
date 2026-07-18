@@ -37,6 +37,31 @@ paper facts always come from the manuscript/authors. **Privacy:** `entries/` hol
 third-party PII (author names, ms numbers, editor emails) and is gitignored — never commit
 or transmit it.
 
+## Comment-library regression pass (final review ring)
+
+Run the library the **other direction** as the last step before submission: instead of
+answering a new letter, test the manuscript against **every stored comment** to catch a
+recurring problem *before* a reviewer does (negative-preference regression). This is the
+final ring of the review loop — run it after the manuscript is otherwise review-clean.
+
+Procedure:
+1. Build the anchor set = the structured comments across all `entries/*` (each already tagged
+   category + fix-type) plus the per-letter "convergent themes". **Own-paper reject letters on
+   the same topic are the highest-value anchors** — the reasons that killed the sibling paper
+   are the ones most likely to recur; verify each is neutralized.
+2. For each anchor, `grep` the manuscript for the vulnerable pattern (the term, the number, the
+   missing statement) and classify: **HIT** (the problem is present) / **AT-RISK** (a defensible
+   but probeable exposure) / **PASS** (grounded evidence it is defended). Evidence must be quoted
+   from the manuscript, never assumed; declare `CANNOT VERIFY` where it needs human judgment.
+3. Output a prioritized table (HIT → AT-RISK → PASS); route each HIT to its stored fix-type
+   (`add-statement`, `reframe`, `re-analyze`, …) and apply via the normal Workflow.
+
+Recurring required-statement anchors to always check: **GenAI-use disclosure** (research-method
+use vs manuscript-prep, separately), funding statement distinct from Acknowledgements,
+registration line, stand-alone captions. Recurring judgment anchors: mechanism/causal over-claim
+from descriptive data, "non-significant ≠ no effect" (vote-counting), heterogeneous pooling
+without invariance, internal number contradictions, RQ bundling.
+
 ## Workflow
 
 `grep` the exact phrase → edit the manuscript and/or write the response (in **all** P2P copies) → mark substantive new text → rebuild → verify. In a P2P the unit is: reviewer text → author **response** → the **quoted, highlighted** manuscript change.
