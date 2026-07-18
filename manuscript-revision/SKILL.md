@@ -21,6 +21,22 @@ Reviewer/coauthor comments → edits to the manuscript and its point-by-point (P
 4. **Plain published-journal prose** — no coined jargon, pitch-cadence, or AI tells.
 5. **Sync across all copies; mark substantive changes; never touch a reviewer's question.**
 
+## Comment library (anchors)
+
+`comment-library/` is a local corpus of **real** editor/reviewer decision letters, parsed
+into a consistent structure (see its `README.md` + `taxonomy.md`). Before writing a P2P,
+check it for prior letters from the same journal — it pre-loads that journal's fixed
+requirements (e.g. JMIR: prospective trial registration for RCTs or transfer to JMIR
+Formative Research, funding statement distinct from Acknowledgements, mandatory
+generative-AI disclosure, stand-alone captions, restricted figure types, clean+tracked
+dual upload). Each stored comment is tagged with a **category** and a **fix-type**
+(`reframe` / `add-statement` / `re-analyze` / `report-detail` / `revise-artifact` /
+`register-or-justify` / `process`) so a recurring comment routes to a known response shape.
+The library stores the *comment* and the *fix-type*, never an invented response — real
+paper facts always come from the manuscript/authors. **Privacy:** `entries/` holds
+third-party PII (author names, ms numbers, editor emails) and is gitignored — never commit
+or transmit it.
+
 ## Workflow
 
 `grep` the exact phrase → edit the manuscript and/or write the response (in **all** P2P copies) → mark substantive new text → rebuild → verify. In a P2P the unit is: reviewer text → author **response** → the **quoted, highlighted** manuscript change.

@@ -1,0 +1,3 @@
+# Real decision letters contain third-party personal data (author names, ms numbers,
+# editor emails). Per global rule, never push them. Only README/taxonomy are tracked.
+entries/
