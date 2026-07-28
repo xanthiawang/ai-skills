@@ -221,12 +221,39 @@ To re-render specific slides after fixes:
 pdftoppm -jpeg -r 150 -f N -l N output.pdf slide-fixed
 ```
 
+### macOS fallback (Zixin's Mac: no LibreOffice, no Poppler)
+
+Verified working 2026-07-27. PPTX → PDF via Keynote scripting:
+
+```bash
+osascript -e '
+tell application "Keynote"
+  open POSIX file "/abs/path/output.pptx"
+  delay 3
+  export front document to POSIX file "/abs/path/output.pdf" as PDF
+  close front document saving no
+end tell'
+```
+
+PDF → per-slide PNGs via PyMuPDF (installed in `/opt/homebrew/bin/python3`):
+
+```bash
+python3 -c "
+import fitz
+doc = fitz.open('/abs/path/output.pdf')
+for i, page in enumerate(doc):
+    page.get_pixmap(dpi=110).save(f'/abs/path/slide-{i+1:02d}.png')
+"
+```
+
+Caveats: Keynote briefly opens a window; use absolute paths in osascript; Keynote's PPTX import is faithful for pptxgenjs decks but always run the visual QA on its renders (that is the point). Rasterize only changed pages by indexing `doc[i]`.
+
 ---
 
 ## Dependencies
 
-- `pip install "markitdown[pptx]"` - text extraction
+- `pip install "markitdown[pptx]"` - text extraction (NOT currently installed for Zixin's default python3 — text QA via `zipfile` + regex on `ppt/slides/slide*.xml` works without it)
 - `pip install Pillow` - thumbnail grids
-- `npm install -g pptxgenjs` - creating from scratch
-- LibreOffice (`soffice`) - PDF conversion (auto-configured for sandboxed environments via `scripts/office/soffice.py`)
-- Poppler (`pdftoppm`) - PDF to images
+- `npm install -g pptxgenjs` - creating from scratch. Installed globally 2026-07-27, but plain `node` does not search the global root: run build scripts with `NODE_PATH=$(npm root -g) node build.js`
+- LibreOffice (`soffice`) - PDF conversion (auto-configured for sandboxed environments via `scripts/office/soffice.py`). Not installed on Zixin's Mac — use the macOS fallback above
+- Poppler (`pdftoppm`) - PDF to images. Not installed on Zixin's Mac — use the PyMuPDF fallback above

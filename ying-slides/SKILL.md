@@ -47,6 +47,14 @@ and a small IPD mark near the bottom. It replaces the plain white slide
 background for these decks. Do not recreate it with a native line or gradient;
 use the PNG as the slide background.
 
+> **Broken on this machine (found 2026-07-27):** `IPD_BACKGROUND_PATH` in
+> `ying_template.js` still points at the old machine
+> (`/Users/A.Y/Desktop/Projects/2025/presentations/0825_pku/ipd_bg.png`), which
+> does not exist here — `useIpdBackground` will fail. Before building any
+> IPD-branded deck, copy `ipd_bg.png` into this skill directory (e.g.
+> `~/programs/ai-skills/ying-slides/assets/ipd_bg.png`) and update
+> `IPD_BACKGROUND_PATH`. Plain-white decks are unaffected.
+
 In new deck scripts, set it once when creating the presentation:
 
 ```javascript
@@ -353,6 +361,29 @@ For paper figures, also check:
 
 Render the deck to PDF and slide PNGs before final delivery. Inspect figure-heavy slides at rendered size, and make a contact sheet when there are more than a few slides.
 
+On Zixin's Mac (no LibreOffice/Poppler) the render pipeline is Keynote + PyMuPDF, verified 2026-07-27:
+
+```bash
+# PPTX → PDF (Keynote briefly opens a window; absolute paths required)
+osascript -e '
+tell application "Keynote"
+  open POSIX file "/abs/path/deck.pptx"
+  delay 3
+  export front document to POSIX file "/abs/path/deck.pdf" as PDF
+  close front document saving no
+end tell'
+
+# PDF → per-slide PNGs
+python3 -c "
+import fitz
+doc = fitz.open('/abs/path/deck.pdf')
+for i, page in enumerate(doc):
+    page.get_pixmap(dpi=110).save(f'/abs/path/slide-{i+1:02d}.png')
+"
+```
+
+Have a fresh-eyes subagent inspect the PNGs (overlaps, overflow, gutters under 0.3 in, badge/label centering, contrast), fix, and re-verify the affected slides — one fix-and-verify cycle minimum, same as the `pptx` skill's QA loop.
+
 ### Step 4: Build editable deck with ying_template.js
 
 ```javascript
@@ -417,7 +448,9 @@ All files live in this skill directory (`~/programs/ai-skills/ying-slides/`):
 - **Style guide**: `SLIDE_STYLE_GUIDE.md`
 - **Outdated** (legacy NotebookLM pipeline, kept for reference): `outdated/`, `scripts/outdated/`
 
-Symlinked into `~/Desktop/Projects/2026/presentation/` for use in deck scripts.
+Historically symlinked into `~/Desktop/Projects/2026/presentation/` for deck
+scripts — that directory does not exist on this Mac (checked 2026-07-27);
+require the template by its absolute skill path instead.
 
 ### Slide types
 
@@ -473,10 +506,12 @@ t.addTitleSlide(pres, {
 });
 ```
 
-**Logos available** at `~/Desktop/Projects/2026/presentation/_logos/`:
-- `stanford_logo.png` (1024x335)
-- `ipd_logo.png` (800x265)
-- `pku_logo.png` (currently corrupt, needs replacement)
+**Logos** were at `~/Desktop/Projects/2026/presentation/_logos/`
+(`stanford_logo.png` 1024x335, `ipd_logo.png` 800x265, `pku_logo.png` corrupt) —
+that directory does not exist on this Mac (checked 2026-07-27). Locate or
+re-collect logo assets before building a deck that needs them, and prefer
+storing them under `~/programs/ai-skills/ying-slides/assets/` so they travel
+with the skill.
 
 ### Title slide key phrase coloring
 
@@ -515,10 +550,14 @@ The template includes `renderMermaid(code, outPath)` for flowcharts:
 
 ## Dependencies
 
-- `npm install -g pptxgenjs` — slide generation
+- `npm install -g pptxgenjs` — slide generation. Installed globally on Zixin's
+  Mac 2026-07-27; plain `node` does not search the global root, so run deck
+  scripts with `NODE_PATH=$(npm root -g) node build_deck.js`
 - `nature-schematic` — biomedical/scientific workflow figures, mechanism
   cartoons, graphical abstracts, and conceptual panels
 - Image generation — non-biomedical abstract visuals and icons
-- LibreOffice (`soffice`) — PDF conversion for QA (optional)
-- Poppler (`pdftoppm`) — PDF to slide images for QA (optional)
-- `npm install -g @mermaid-js/mermaid-cli` — mermaid diagram rendering (optional)
+- PDF/PNG QA renders — LibreOffice (`soffice`) + Poppler (`pdftoppm`) where
+  available; **neither is installed on Zixin's Mac** — use the Keynote +
+  PyMuPDF pipeline in Step 3 instead
+- `npm install -g @mermaid-js/mermaid-cli` — mermaid diagram rendering
+  (optional; `mmdc` not currently installed on Zixin's Mac)

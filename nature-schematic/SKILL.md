@@ -7,7 +7,7 @@ description: Use when creating or revising biomedical/scientific schematic plots
 
 ## Overview
 
-Create Albert's schematic-figure house style: delicate watercolor and pencil biological elements on a clean white canvas, grounded in real scientific figure references. For comparison, generate both an editable-label version and a direct imagegen-text version.
+Create the lab's schematic-figure house style (inherited from albert-ying's pipeline, now Zixin's default): delicate watercolor and pencil biological elements on a clean white canvas, grounded in real scientific figure references. For comparison, generate both an editable-label version and a direct imagegen-text version.
 
 Use `imagegen` for concept art. Use `nature-figure` for real data panels. If a figure mixes both, make the schematic base here and composite real data panels from `nature-figure`; never let ImageGen invent numeric results.
 
@@ -30,7 +30,7 @@ Use `imagegen` for concept art. Use `nature-figure` for real data panels. If a f
 5. Inspect all imagegen outputs before accepting.
    - Reject pseudo text, fake axes, fake p-values, fake sample sizes, crowded margins, or glossy 3D rendering.
    - For schematic quantification panels, use abstract marks only. No axes or numbers unless they come from real data.
-   - For direct-text versions, reject misspellings, wrong counts, extra claims, and AI-slop phrasing such as "X is not Y, it is Z" unless Albert explicitly asks for that contrast.
+   - For direct-text versions, reject misspellings, wrong counts, extra claims, and AI-slop phrasing such as "X is not Y, it is Z" unless Zixin explicitly asks for that contrast.
 6. Add labels deterministically to the editable-label version.
    - Prefer editable SVG text or slide-native text boxes.
    - For exact claims, sample sizes, panel letters, and annotations, the editable-label version is the authoritative copy.
@@ -101,7 +101,7 @@ python3 ~/programs/ai-skills/nature-schematic/scripts/add_schematic_labels.py \
 ```
 
 Label positions are fractions of image width. `--label-y` is a fraction of image height.
-PNG rendering uses `cairosvg` when it is installed in the active Python. If it is missing, the script still writes the SVG master; use `/opt/homebrew/bin/python3` on Albert's Mac when a PNG preview is needed.
+PNG rendering uses `cairosvg` when it is installed in the active Python. If it is missing, the script still writes the SVG master; use `/opt/homebrew/bin/python3` on Zixin's Mac when a PNG preview is needed.
 
 ## Quality Gate
 

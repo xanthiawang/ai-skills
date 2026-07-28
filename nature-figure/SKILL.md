@@ -456,7 +456,13 @@ PyMuPDF; the text and curves survive, only genuinely-pixel layers stay pixels.
 5. **Render a 600-dpi PNG twin** for the Word/`.qmd` manuscript, which cannot
    place a vector PDF inline (`render_png=`). For `docx → PDF`, convert with
    LibreOffice headless (`soffice --headless --convert-to pdf …`) so the embedded
-   figure is preserved.
+   figure is preserved. (Zixin's Mac has no LibreOffice: render the PDF directly
+   from the `.qmd` via Quarto instead — that is the primary authoring path — or
+   export from Word/WPS by hand.) If `pdffonts`/`pdfimages` (poppler) are
+   missing, run the step-4 vector check with PyMuPDF:
+   `python3 -c "import fitz; d=fitz.open('out.pdf'); p=d[0]; print(p.get_fonts()); print(p.get_images())"`
+   — same discriminator: font rows must exist, and no single image ≈ the whole
+   page at export dpi.
 
 Each `"pdf"` source must be a **single-page** PDF (only page 0 composites; a
 multi-page source raises). SVG/EPS panels have no PDF form — convert first
