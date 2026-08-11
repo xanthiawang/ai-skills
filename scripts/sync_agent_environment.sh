@@ -239,6 +239,18 @@ def set_key(section: str, key: str, value: str) -> None:
 
     lines.insert(end, f"{key} = {value}")
 
+
+def remove_key(section: str, key: str) -> None:
+    start, end = section_bounds(section)
+    if start is None:
+        return
+
+    pattern = re.compile(rf"^\s*{re.escape(key)}\s*=")
+    for index in range(end - 1, start, -1):
+        if pattern.match(lines[index]):
+            del lines[index]
+
+
 def quote(value: str) -> str:
     return json.dumps(value)
 
@@ -361,11 +373,10 @@ for section in (
     if section_bounds(section)[0] is not None:
         set_key(section, "enabled", "true")
 
-# Paperclip's OAuth proxy commonly finishes initialization around the default
-# 10-second MCP startup boundary. Give it enough headroom to finish tools/list
-# without the TUI reporting an interrupted startup.
+# Native Streamable HTTP avoids mcp-remote's shared OAuth cache. Remove the old
+# proxy-specific timeout if it remains from an earlier configuration.
 if section_bounds("mcp_servers.paperclip")[0] is not None:
-    set_key("mcp_servers.paperclip", "startup_timeout_sec", "60.0")
+    remove_key("mcp_servers.paperclip", "startup_timeout_sec")
 
 updated = "\n".join(lines).rstrip() + "\n"
 tomllib.loads(updated)
@@ -411,14 +422,13 @@ ensure_codex_http_mcp() {
 }
 
 ensure_codex_paperclip_mcp() {
-    local expected_args="args: -y mcp-remote https://paperclip.gxl.ai/mcp"
+    local expected_url="https://paperclip.gxl.ai/mcp"
     local details
 
     if codex_has_mcp paperclip; then
         details="$(codex mcp get paperclip 2>/dev/null || true)"
-        if grep -Fq "transport: stdio" <<<"$details" &&
-            grep -Fq "command: npx" <<<"$details" &&
-            grep -Fq -- "$expected_args" <<<"$details"; then
+        if grep -Fq "transport: streamable_http" <<<"$details" &&
+            grep -Fq "url: $expected_url" <<<"$details"; then
             info "codex mcp: paperclip already configured"
             return
         fi
@@ -426,8 +436,7 @@ ensure_codex_paperclip_mcp() {
         info "codex mcp: removed outdated paperclip entry"
     fi
 
-    codex mcp add paperclip -- npx -y mcp-remote https://paperclip.gxl.ai/mcp
-    info "codex mcp: added paperclip via mcp-remote"
+    ensure_codex_http_mcp paperclip "$expected_url"
 }
 
 remove_codex_mcp_if_present() {
@@ -494,6 +503,17 @@ def set_key(section: str, key: str, value: str) -> None:
     lines.insert(end, f"{key} = {value}")
 
 
+def remove_key(section: str, key: str) -> None:
+    start, end = section_bounds(section)
+    if start is None:
+        return
+
+    pattern = re.compile(rf"^\s*{re.escape(key)}\s*=")
+    for index in range(end - 1, start, -1):
+        if pattern.match(lines[index]):
+            del lines[index]
+
+
 for section in (
     "mcp_servers.codex-cli",
     "mcp_servers.1password",
@@ -507,7 +527,7 @@ for section in (
 ):
     set_key(section, "enabled", "true")
 
-set_key("mcp_servers.paperclip", "startup_timeout_sec", "60.0")
+remove_key("mcp_servers.paperclip", "startup_timeout_sec")
 
 updated = "\n".join(lines).rstrip() + "\n"
 tomllib.loads(updated)
