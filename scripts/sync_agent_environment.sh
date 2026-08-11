@@ -25,6 +25,44 @@ have_cmd() {
     command -v "$1" >/dev/null 2>&1
 }
 
+run_with_timeout() {
+    local seconds="$1"
+    shift
+
+    if have_cmd timeout; then
+        timeout "$seconds" "$@"
+        return
+    fi
+    if have_cmd gtimeout; then
+        gtimeout "$seconds" "$@"
+        return
+    fi
+
+    # macOS does not ship GNU `timeout`. Use Python as a portable fallback and
+    # terminate the whole child process group if the deadline is exceeded.
+    python3 - "$seconds" "$@" <<'PY'
+import os
+import signal
+import subprocess
+import sys
+
+seconds = float(sys.argv[1])
+command = sys.argv[2:]
+process = subprocess.Popen(command, start_new_session=True)
+try:
+    return_code = process.wait(timeout=seconds)
+except subprocess.TimeoutExpired:
+    os.killpg(process.pid, signal.SIGTERM)
+    try:
+        process.wait(timeout=1)
+    except subprocess.TimeoutExpired:
+        os.killpg(process.pid, signal.SIGKILL)
+        process.wait()
+    return_code = 124
+raise SystemExit(return_code)
+PY
+}
+
 sync_skills() {
     "$REPO_ROOT/setup.sh" all
 }
@@ -143,6 +181,20 @@ def set_root_key(key: str, value: str) -> None:
     lines.insert(insert_at, f"{key} = {value}")
 
 
+def remove_root_key(key: str) -> None:
+    section_start = len(lines)
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith("[") and stripped.endswith("]"):
+            section_start = index
+            break
+
+    pattern = re.compile(rf"^\s*{re.escape(key)}\s*=")
+    for index in range(section_start - 1, -1, -1):
+        if pattern.match(lines[index]):
+            del lines[index]
+
+
 def section_bounds(section: str):
     header = f"[{section}]"
     start = None
@@ -253,6 +305,14 @@ def remove_section(section: str) -> None:
     del lines[start:end]
 
 
+# This ChatGPT-authenticated Codex account currently advertises Terra, Luna,
+# GPT-5.5, and GPT-5.4 Mini. Sol is not in its entitlement/model cache and
+# fails at request time, so use Terra until Sol is rolled out to this account.
+set_root_key("model", '"gpt-5.6-terra"')
+set_root_key("model_reasoning_effort", '"high"')
+# Do not force an API service tier for ChatGPT-authenticated Codex models. The
+# client will warn and omit unsupported tiers such as the legacy `priority`.
+remove_root_key("service_tier")
 set_root_key("suppress_unstable_features_warning", "true")
 set_key("tui", "theme", '"pywal"')
 apply_desktop_pywal_theme()
@@ -301,6 +361,12 @@ for section in (
     if section_bounds(section)[0] is not None:
         set_key(section, "enabled", "true")
 
+# Paperclip's OAuth proxy commonly finishes initialization around the default
+# 10-second MCP startup boundary. Give it enough headroom to finish tools/list
+# without the TUI reporting an interrupted startup.
+if section_bounds("mcp_servers.paperclip")[0] is not None:
+    set_key("mcp_servers.paperclip", "startup_timeout_sec", "60.0")
+
 updated = "\n".join(lines).rstrip() + "\n"
 tomllib.loads(updated)
 path.write_text(updated, encoding="utf-8")
@@ -309,7 +375,7 @@ PY
 }
 
 codex_has_mcp() {
-    timeout 10 codex mcp get "$1" >/dev/null 2>&1
+    run_with_timeout 10 codex mcp get "$1" >/dev/null 2>&1
 }
 
 ensure_codex_stdio_mcp() {
@@ -335,7 +401,7 @@ ensure_codex_http_mcp() {
     # still persisted, so treat OAuth failure as a soft warning instead of
     # letting `set -e` abort the rest of the sync.
     local oauth_timeout="${AI_SKILLS_MCP_OAUTH_TIMEOUT_SEC:-30}"
-    if timeout "$oauth_timeout" codex mcp add "$name" --url "$url"; then
+    if run_with_timeout "$oauth_timeout" codex mcp add "$name" --url "$url"; then
         info "codex mcp: added $name"
     elif codex_has_mcp "$name"; then
         warn "codex mcp: $name added but auth incomplete — finish login later"
@@ -441,6 +507,8 @@ for section in (
 ):
     set_key(section, "enabled", "true")
 
+set_key("mcp_servers.paperclip", "startup_timeout_sec", "60.0")
+
 updated = "\n".join(lines).rstrip() + "\n"
 tomllib.loads(updated)
 path.write_text(updated, encoding="utf-8")
@@ -477,7 +545,7 @@ sync_codex_mcp() {
 }
 
 claude_has_mcp() {
-    timeout 10 claude mcp get "$1" >/dev/null 2>&1
+    run_with_timeout 10 claude mcp get "$1" >/dev/null 2>&1
 }
 
 ensure_claude_stdio_mcp() {
@@ -519,7 +587,7 @@ ensure_claude_paperclip_mcp() {
 
     if claude mcp add -s user paperclip -- npx -y mcp-remote https://paperclip.gxl.ai/mcp; then
         info "claude mcp: added paperclip via mcp-remote"
-    elif timeout 10 claude mcp list 2>/dev/null | grep -Fq "paperclip"; then
+    elif run_with_timeout 10 claude mcp list 2>/dev/null | grep -Fq "paperclip"; then
         info "claude mcp: paperclip already configured"
     else
         warn "claude mcp: failed to add paperclip"
@@ -549,7 +617,7 @@ sync_claude_mcp() {
     # were created before the scope was narrowed. Use unconditional remove
     # because broken entries can appear in `claude mcp list` even when
     # `claude mcp get` cannot load them.
-    timeout 10 claude mcp remove raphel-loop >/dev/null 2>&1 || true
+    run_with_timeout 10 claude mcp remove raphel-loop >/dev/null 2>&1 || true
     info "claude mcp: ensured raphel-loop absent"
     ensure_claude_paperclip_mcp
 }
