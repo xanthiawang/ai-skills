@@ -240,17 +240,6 @@ def set_key(section: str, key: str, value: str) -> None:
     lines.insert(end, f"{key} = {value}")
 
 
-def remove_key(section: str, key: str) -> None:
-    start, end = section_bounds(section)
-    if start is None:
-        return
-
-    pattern = re.compile(rf"^\s*{re.escape(key)}\s*=")
-    for index in range(end - 1, start, -1):
-        if pattern.match(lines[index]):
-            del lines[index]
-
-
 def quote(value: str) -> str:
     return json.dumps(value)
 
@@ -373,10 +362,12 @@ for section in (
     if section_bounds(section)[0] is not None:
         set_key(section, "enabled", "true")
 
-# Native Streamable HTTP avoids mcp-remote's shared OAuth cache. Remove the old
-# proxy-specific timeout if it remains from an earlier configuration.
+# Screenpipe normally starts quickly from the local npm cache. Paperclip is a
+# remote OAuth server and needs more headroom on intermittent networks.
+if section_bounds("mcp_servers.screenpipe")[0] is not None:
+    set_key("mcp_servers.screenpipe", "startup_timeout_sec", "60.0")
 if section_bounds("mcp_servers.paperclip")[0] is not None:
-    remove_key("mcp_servers.paperclip", "startup_timeout_sec")
+    set_key("mcp_servers.paperclip", "startup_timeout_sec", "120.0")
 
 updated = "\n".join(lines).rstrip() + "\n"
 tomllib.loads(updated)
@@ -437,6 +428,26 @@ ensure_codex_paperclip_mcp() {
     fi
 
     ensure_codex_http_mcp paperclip "$expected_url"
+}
+
+ensure_codex_screenpipe_mcp() {
+    local expected_args="args: --offline -y screenpipe-mcp"
+    local details
+
+    if codex_has_mcp screenpipe; then
+        details="$(codex mcp get screenpipe 2>/dev/null || true)"
+        if grep -Fq "transport: stdio" <<<"$details" &&
+            grep -Fq "command: npx" <<<"$details" &&
+            grep -Fq -- "$expected_args" <<<"$details"; then
+            info "codex mcp: screenpipe already configured for offline startup"
+            return
+        fi
+        codex mcp remove screenpipe
+        info "codex mcp: removed outdated screenpipe entry"
+    fi
+
+    codex mcp add screenpipe -- npx --offline -y screenpipe-mcp
+    info "codex mcp: added screenpipe with offline npm startup"
 }
 
 remove_codex_mcp_if_present() {
@@ -503,17 +514,6 @@ def set_key(section: str, key: str, value: str) -> None:
     lines.insert(end, f"{key} = {value}")
 
 
-def remove_key(section: str, key: str) -> None:
-    start, end = section_bounds(section)
-    if start is None:
-        return
-
-    pattern = re.compile(rf"^\s*{re.escape(key)}\s*=")
-    for index in range(end - 1, start, -1):
-        if pattern.match(lines[index]):
-            del lines[index]
-
-
 for section in (
     "mcp_servers.codex-cli",
     "mcp_servers.1password",
@@ -527,7 +527,8 @@ for section in (
 ):
     set_key(section, "enabled", "true")
 
-remove_key("mcp_servers.paperclip", "startup_timeout_sec")
+set_key("mcp_servers.screenpipe", "startup_timeout_sec", "60.0")
+set_key("mcp_servers.paperclip", "startup_timeout_sec", "120.0")
 
 updated = "\n".join(lines).rstrip() + "\n"
 tomllib.loads(updated)
@@ -547,7 +548,7 @@ sync_codex_mcp() {
     ensure_codex_stdio_mcp codex "$codex_bin" mcp-server
     ensure_codex_stdio_mcp codex-cli npx -y codex-mcp-server
     ensure_codex_stdio_mcp mobile-mcp npx -y @mobilenext/mobile-mcp@latest
-    ensure_codex_stdio_mcp screenpipe npx -y screenpipe-mcp
+    ensure_codex_screenpipe_mcp
     ensure_codex_stdio_mcp 1password npx -y @jrejaud/op-mcp@1.0.0
     ensure_codex_paperclip_mcp
     remove_codex_mcp_if_present scg
