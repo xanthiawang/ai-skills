@@ -306,11 +306,8 @@ def remove_section(section: str) -> None:
     del lines[start:end]
 
 
-# This ChatGPT-authenticated Codex account currently advertises Terra, Luna,
-# GPT-5.5, and GPT-5.4 Mini. Sol is not in its entitlement/model cache and
-# fails at request time, so use Terra until Sol is rolled out to this account.
-set_root_key("model", '"gpt-5.6-terra"')
-set_root_key("model_reasoning_effort", '"high"')
+# Model availability is account- and rollout-dependent. Preserve the user's
+# selected model and reasoning effort instead of pinning a temporary fallback.
 # Do not force an API service tier for ChatGPT-authenticated Codex models. The
 # client will warn and omit unsupported tiers such as the legacy `priority`.
 remove_root_key("service_tier")
