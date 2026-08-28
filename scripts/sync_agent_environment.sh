@@ -672,7 +672,9 @@ sync_claude_mcp() {
     # declaring them is safe even before the host software is installed.
     ensure_claude_stdio_mcp touchdesigner npx -y touchdesigner-mcp-server --stdio
     if have_cmd uvx; then
-        ensure_claude_stdio_mcp rhino uvx rhinomcp
+        # rhinomcp targets the mcp 1.x SDK and breaks on py3.13+/mcp 2.x —
+        # pin both until upstream migrates.
+        ensure_claude_stdio_mcp rhino uvx --python 3.12 --with "mcp<2" rhinomcp
         ensure_claude_stdio_mcp freecad uvx freecad-mcp
     fi
     # AutoCAD MCP (puran-water/autocad-mcp) with the cross-platform ezdxf
