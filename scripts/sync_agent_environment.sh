@@ -67,6 +67,36 @@ sync_skills() {
     "$REPO_ROOT/setup.sh" all
 }
 
+# External skills: third-party skill repos that cannot be vendored into this
+# repo (no redistribution license) but are declared here so a new machine can
+# reproduce the install. Cloned into ~/programs next to their companion tools
+# and symlinked into ~/.claude/skills/.
+sync_external_skills() {
+    # autocad-drafting (puran-water): companion skill for the autocad MCP
+    # server declared in sync_claude_mcp. Upstream repo is archived (frozen
+    # at aa80dbc, consolidated into PuranOS) and carries no license, so it
+    # must stay out of this public repo.
+    local src="$HOME/programs/autocad-drafting"
+    local dst="$HOME/.claude/skills/autocad-drafting"
+    if [ ! -d "$src" ]; then
+        if git clone --depth 1 https://github.com/puran-water/autocad-drafting.git "$src"; then
+            info "external skill: cloned autocad-drafting"
+        else
+            warn "external skill: failed to clone autocad-drafting; skipping"
+            return
+        fi
+    fi
+    if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+        info "external skill: autocad-drafting already linked"
+    elif [ -e "$dst" ] || [ -L "$dst" ]; then
+        warn "external skill: $dst exists and is not the expected symlink; leaving as is"
+    else
+        mkdir -p "$HOME/.claude/skills"
+        ln -s "$src" "$dst"
+        info "external skill: autocad-drafting → $dst"
+    fi
+}
+
 archive_path() {
     local path="$1" archive_root="$2" label="$3"
     if [ ! -e "$path" ] && [ ! -L "$path" ]; then
@@ -748,6 +778,7 @@ case "$MODE" in
     apply)
         sync_skills
         cleanup_legacy_skill_aliases
+        sync_external_skills
         # sync_mcp must run before apply_codex_settings: the latter layers
         # enabled_tools onto MCP sections that the former creates with the
         # required transport. Reversed order can leave a half-formed
@@ -765,6 +796,7 @@ case "$MODE" in
     skills)
         sync_skills
         cleanup_legacy_skill_aliases
+        sync_external_skills
         ;;
     settings)
         install_managed_launchers
