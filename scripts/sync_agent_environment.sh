@@ -667,6 +667,14 @@ sync_claude_mcp() {
     if have_cmd uvx; then
         ensure_claude_stdio_mcp blender uvx blender-mcp
     fi
+    # Design-suite MCP bridges (2026-08-29): each server runs standalone and
+    # connects lazily to its host app (TouchDesigner / Rhino / FreeCAD), so
+    # declaring them is safe even before the host software is installed.
+    ensure_claude_stdio_mcp touchdesigner npx -y touchdesigner-mcp-server --stdio
+    if have_cmd uvx; then
+        ensure_claude_stdio_mcp rhino uvx rhinomcp
+        ensure_claude_stdio_mcp freecad uvx freecad-mcp
+    fi
     # AutoCAD MCP (puran-water/autocad-mcp) with the cross-platform ezdxf
     # headless backend: generates/edits DXF files that open in AutoCAD.
     # Live-AutoCAD control backends are Windows-only, so macOS pins
