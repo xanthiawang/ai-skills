@@ -631,6 +631,12 @@ sync_claude_mcp() {
         info "claude mcp: removed playwright"
     fi
     ensure_claude_stdio_mcp 1password npx -y @jrejaud/op-mcp@1.0.0
+    # Blender MCP (ahujasid/blender-mcp): pairs with the BlenderMCP addon
+    # installed inside Blender; tools only work while Blender's addon server
+    # is running, but the stdio entry is safe to declare unconditionally.
+    if have_cmd uvx; then
+        ensure_claude_stdio_mcp blender uvx blender-mcp
+    fi
     # raphel-loop is Cursor Agent-only. Remove older Claude registrations that
     # were created before the scope was narrowed. Use unconditional remove
     # because broken entries can appear in `claude mcp list` even when
