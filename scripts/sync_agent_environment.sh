@@ -637,6 +637,21 @@ sync_claude_mcp() {
     if have_cmd uvx; then
         ensure_claude_stdio_mcp blender uvx blender-mcp
     fi
+    # AutoCAD MCP (puran-water/autocad-mcp) with the cross-platform ezdxf
+    # headless backend: generates/edits DXF files that open in AutoCAD.
+    # Live-AutoCAD control backends are Windows-only, so macOS pins
+    # AUTOCAD_MCP_BACKEND=ezdxf. Needs a local clone at
+    # ~/programs/autocad-mcp with `uv sync` already run; skipped otherwise.
+    if [ -x "$HOME/programs/autocad-mcp/.venv/bin/python" ]; then
+        if claude_has_mcp autocad; then
+            info "claude mcp: autocad already configured"
+        else
+            claude mcp add -s user autocad \
+                --env AUTOCAD_MCP_BACKEND=ezdxf \
+                -- "$HOME/programs/autocad-mcp/.venv/bin/python" -m autocad_mcp
+            info "claude mcp: added autocad (ezdxf backend)"
+        fi
+    fi
     # raphel-loop is Cursor Agent-only. Remove older Claude registrations that
     # were created before the scope was narrowed. Use unconditional remove
     # because broken entries can appear in `claude mcp list` even when
