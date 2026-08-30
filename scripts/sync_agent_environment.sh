@@ -692,6 +692,40 @@ sync_claude_mcp() {
             info "claude mcp: added autocad (ezdxf backend)"
         fi
     fi
+    # Stata MCP (sepinetam/stata-mcp): drives licensed Stata via its console
+    # CLI (tools: stata_do, get_data_info, help, read_log). StataNow/MP
+    # install on this machine; symlink the CLI into ~/.local/bin (on PATH)
+    # and point STATA_CLI at it. Skipped when Stata is not installed.
+    local stata_cli="/Applications/StataNow/StataMP.app/Contents/MacOS/stata-mp"
+    if [ -x "$stata_cli" ] && have_cmd uvx; then
+        mkdir -p "$HOME/.local/bin"
+        ln -sf "$stata_cli" "$HOME/.local/bin/stata-mp"
+        if claude_has_mcp stata; then
+            info "claude mcp: stata already configured"
+        else
+            claude mcp add -s user stata \
+                --env STATA_CLI="$HOME/.local/bin/stata-mp" \
+                -- uvx stata-mcp
+            info "claude mcp: added stata"
+        fi
+    fi
+    # Zotero MCP (zotero-mcp on PyPI): reads the local Zotero 7 API at
+    # http://localhost:23119 — tools work while Zotero is open. Pairs with
+    # the citation workflow's connector-import convention.
+    if have_cmd uvx; then
+        if claude_has_mcp zotero; then
+            info "claude mcp: zotero already configured"
+        else
+            claude mcp add -s user zotero --env ZOTERO_LOCAL=true -- uvx zotero-mcp
+            info "claude mcp: added zotero"
+        fi
+    fi
+    # Apple MCP (dhravya/apple-mcp): Notes/Reminders/Calendar/Contacts/
+    # Messages/Mail/Maps via AppleScript; each app is gated by a macOS TCC
+    # permission prompt on first use.
+    if have_cmd bunx; then
+        ensure_claude_stdio_mcp apple bunx apple-mcp
+    fi
     # raphel-loop is Cursor Agent-only. Remove older Claude registrations that
     # were created before the scope was narrowed. Use unconditional remove
     # because broken entries can appear in `claude mcp list` even when
