@@ -137,7 +137,7 @@ Chinese mode must be selected by medium before drafting. Read the Chinese voice 
 - Use email structure, not WeChat burst structure.
 - Default greeting: `X老师你好，` or `X同学你好，`
 - Body: 1-3 short paragraphs, code-switched, no WeChat particles unless it is a casual repeat-contact peer note.
-- Default sign-off: `祝好，` then `应可钧`.
+- Default sign-off: `祝好，` then `王子欣`.
 - Use the English signature block only when formal or first-contact.
 
 **Chinese WeChat / DM**:
