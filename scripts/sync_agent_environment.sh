@@ -477,6 +477,88 @@ ensure_codex_screenpipe_mcp() {
     info "codex mcp: added screenpipe with offline npm startup"
 }
 
+find_local_touchdesigner_mcp_cli() {
+    local stable_cli="$HOME/programs/touchdesigner-mcp-server-runtime/node_modules/touchdesigner-mcp-server/dist/cli.js"
+    if [ -f "$stable_cli" ]; then
+        printf '%s\n' "$stable_cli"
+        return
+    fi
+    find "$HOME/.npm/_npx" \
+        -path '*/node_modules/touchdesigner-mcp-server/dist/cli.js' \
+        -type f -print -quit 2>/dev/null || true
+}
+
+ensure_codex_touchdesigner_mcp() {
+    local cached_cli details
+    cached_cli="$(find_local_touchdesigner_mcp_cli)"
+
+    # Prefer the stable local 2.0.0 runtime (falling back to npm's cache).
+    # `npx ...@latest` consults the registry on every startup and can block an
+    # otherwise local MCP session.
+    if [ -n "$cached_cli" ] && have_cmd node; then
+        if codex_has_mcp touchdesigner; then
+            details="$(codex mcp get touchdesigner 2>/dev/null || true)"
+            if grep -Fq "command: node" <<<"$details" &&
+                grep -Fq "args: $cached_cli --stdio" <<<"$details"; then
+                info "codex mcp: touchdesigner already configured for local startup"
+                return
+            fi
+            codex mcp remove touchdesigner
+            info "codex mcp: removed network-dependent touchdesigner entry"
+        fi
+        codex mcp add touchdesigner -- node "$cached_cli" --stdio
+        info "codex mcp: added touchdesigner from local npm cache"
+        return
+    fi
+
+    ensure_codex_stdio_mcp touchdesigner npx -y touchdesigner-mcp-server@2.0.0 --stdio
+}
+
+ensure_codex_design_suite_mcp() {
+    local blender_server="$HOME/programs/blender-mcp-official/.venv/bin/blender-mcp"
+    local autocad_python="$HOME/programs/autocad-mcp/.venv/bin/python"
+
+    # Blender Foundation Lab MCP. The official Blender extension is configured
+    # on 9877 so it can coexist with the older community addon on 9876 during
+    # migration. The server reads these connection details from its env.
+    if [ -x "$blender_server" ]; then
+        if codex_has_mcp blender; then
+            info "codex mcp: blender already configured"
+        else
+            codex mcp add blender \
+                --env BLENDER_MCP_HOST=127.0.0.1 \
+                --env BLENDER_MCP_PORT=9877 \
+                -- "$blender_server"
+            info "codex mcp: added blender (official Blender Lab MCP)"
+        fi
+    else
+        warn "codex mcp: official Blender Lab server not installed; skipping blender"
+    fi
+
+    # TouchDesigner bridge (8beeeaaat/touchdesigner-mcp). The stdio server
+    # connects lazily to mcp_webserver_base.tox on http://127.0.0.1:9981.
+    ensure_codex_touchdesigner_mcp
+
+    # AutoCAD live automation backends are Windows-only. On macOS, pin the
+    # puran-water server to ezdxf for real DXF file creation/editing.
+    if [ -x "$autocad_python" ]; then
+        if codex_has_mcp autocad; then
+            info "codex mcp: autocad already configured"
+        else
+            codex mcp add autocad \
+                --env AUTOCAD_MCP_BACKEND=ezdxf \
+                -- "$autocad_python" -m autocad_mcp
+            info "codex mcp: added autocad (ezdxf backend)"
+        fi
+    else
+        warn "codex mcp: autocad-mcp environment not installed; skipping autocad"
+    fi
+
+    # dcc-mcp-maya embeds a Streamable HTTP MCP server in Maya. The endpoint
+    # is reachable only while Maya is running with its managed plugin loaded.
+    ensure_codex_http_mcp maya http://127.0.0.1:9765/mcp
+}
+
 remove_codex_mcp_if_present() {
     local name="$1"
     if codex_has_mcp "$name"; then
@@ -551,11 +633,27 @@ for section in (
 for section in (
     "mcp_servers.paperclip",
     "mcp_servers.screenpipe",
+    "mcp_servers.blender",
+    "mcp_servers.touchdesigner",
+    "mcp_servers.autocad",
+    "mcp_servers.maya",
 ):
     set_key(section, "enabled", "true")
 
 set_key("mcp_servers.screenpipe", "startup_timeout_sec", "60.0")
 set_key("mcp_servers.paperclip", "startup_timeout_sec", "120.0")
+
+# DCC/CAD tools can execute code or mutate open scenes. Keep them available,
+# but require an explicit approval before each tool call.
+for section in (
+    "mcp_servers.blender",
+    "mcp_servers.touchdesigner",
+    "mcp_servers.autocad",
+    "mcp_servers.maya",
+):
+    set_key(section, "default_tools_approval_mode", '"prompt"')
+    set_key(section, "startup_timeout_sec", "60.0")
+    set_key(section, "tool_timeout_sec", "180.0")
 
 updated = "\n".join(lines).rstrip() + "\n"
 tomllib.loads(updated)
@@ -578,6 +676,7 @@ sync_codex_mcp() {
     ensure_codex_screenpipe_mcp
     ensure_codex_stdio_mcp 1password npx -y @jrejaud/op-mcp@1.0.0
     ensure_codex_paperclip_mcp
+    ensure_codex_design_suite_mcp
     remove_codex_mcp_if_present scg
 
     # raphel-loop is Cursor Agent-only. Remove older Codex registrations that
@@ -615,6 +714,29 @@ ensure_claude_http_mcp() {
         claude mcp add -s user --transport http "$name" "$url"
         info "claude mcp: added $name"
     fi
+}
+
+ensure_claude_touchdesigner_mcp() {
+    local cached_cli details
+    cached_cli="$(find_local_touchdesigner_mcp_cli)"
+
+    if [ -n "$cached_cli" ] && have_cmd node; then
+        if claude_has_mcp touchdesigner; then
+            details="$(claude mcp get touchdesigner 2>/dev/null || true)"
+            if grep -Fq "Command: node" <<<"$details" &&
+                grep -Fq "Args: $cached_cli --stdio" <<<"$details"; then
+                info "claude mcp: touchdesigner already configured for local startup"
+                return
+            fi
+            claude mcp remove touchdesigner
+            info "claude mcp: removed network-dependent touchdesigner entry"
+        fi
+        claude mcp add -s user touchdesigner -- node "$cached_cli" --stdio
+        info "claude mcp: added touchdesigner from local npm cache"
+        return
+    fi
+
+    ensure_claude_stdio_mcp touchdesigner npx -y touchdesigner-mcp-server@2.0.0 --stdio
 }
 
 ensure_claude_paperclip_mcp() {
@@ -670,7 +792,7 @@ sync_claude_mcp() {
     # Design-suite MCP bridges (2026-08-29): each server runs standalone and
     # connects lazily to its host app (TouchDesigner / Rhino / FreeCAD), so
     # declaring them is safe even before the host software is installed.
-    ensure_claude_stdio_mcp touchdesigner npx -y touchdesigner-mcp-server --stdio
+    ensure_claude_touchdesigner_mcp
     if have_cmd uvx; then
         # rhinomcp targets the mcp 1.x SDK and breaks on py3.13+/mcp 2.x —
         # pin both until upstream migrates.
@@ -692,6 +814,9 @@ sync_claude_mcp() {
             info "claude mcp: added autocad (ezdxf backend)"
         fi
     fi
+    # Maya embeds a Streamable HTTP server at this loopback endpoint. It is
+    # expected to be offline whenever Maya is not running.
+    ensure_claude_http_mcp maya http://127.0.0.1:9765/mcp
     # Stata MCP (sepinetam/stata-mcp): drives licensed Stata via its console
     # CLI (tools: stata_do, get_data_info, help, read_log). StataNow/MP
     # install on this machine; symlink the CLI into ~/.local/bin (on PATH)
