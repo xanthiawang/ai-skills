@@ -95,6 +95,34 @@ sync_external_skills() {
         ln -s "$src" "$dst"
         info "external skill: autocad-drafting → $dst"
     fi
+
+    # unity-mcp-orchestrator (CoplayDev/unity-mcp, MIT): the official
+    # companion skill lives inside the big server repo, so keep a sparse
+    # checkout of just that directory and symlink it. `git pull` in
+    # ~/programs/unity-mcp updates the skill.
+    local u_repo="$HOME/programs/unity-mcp"
+    local u_dst="$HOME/.claude/skills/unity-mcp-orchestrator"
+    if [ ! -d "$u_repo" ]; then
+        if git clone --depth 1 --filter=blob:none --sparse \
+                https://github.com/CoplayDev/unity-mcp.git "$u_repo"; then
+            git -C "$u_repo" sparse-checkout set unity-mcp-skill
+            info "external skill: cloned unity-mcp-skill"
+        else
+            warn "external skill: failed to clone unity-mcp; skipping"
+        fi
+    fi
+    if [ -d "$u_repo/unity-mcp-skill" ]; then
+        if [ -L "$u_dst" ] && [ "$(readlink "$u_dst")" = "$u_repo/unity-mcp-skill" ]; then
+            info "external skill: unity-mcp-orchestrator already linked"
+        elif [ -e "$u_dst" ] || [ -L "$u_dst" ]; then
+            warn "external skill: $u_dst exists and is not the expected symlink; leaving as is"
+        else
+            mkdir -p "$HOME/.claude/skills"
+            ln -s "$u_repo/unity-mcp-skill" "$u_dst"
+            info "external skill: unity-mcp-orchestrator → $u_dst"
+        fi
+    fi
+
 }
 
 archive_path() {
@@ -856,6 +884,15 @@ sync_claude_mcp() {
     # permission prompt on first use.
     if have_cmd bunx; then
         ensure_claude_stdio_mcp apple bunx apple-mcp
+    fi
+    # MCP for Unity (CoplayDev, official PyPI dist `mcpforunityserver`).
+    # NOTE: the PyPI package `unity-mcp-server` is an unaffiliated fork
+    # (points at github.com/mzbswh) — do not use it. Claude uses the stdio
+    # transport here; Codex uses the in-Editor HTTP endpoint (see
+    # sync_codex_mcp). Both need the com.coplaydev.unity-mcp UPM package in
+    # the open Unity project and a running Editor bridge.
+    if have_cmd uvx; then
+        ensure_claude_stdio_mcp unity uvx --from mcpforunityserver mcp-for-unity
     fi
     # raphel-loop is Cursor Agent-only. Remove older Claude registrations that
     # were created before the scope was narrowed. Use unconditional remove
