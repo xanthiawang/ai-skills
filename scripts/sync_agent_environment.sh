@@ -891,9 +891,12 @@ sync_claude_mcp() {
     # transport here; Codex uses the in-Editor HTTP endpoint (see
     # sync_codex_mcp). Both need the com.coplaydev.unity-mcp UPM package in
     # the open Unity project and a running Editor bridge.
-    if have_cmd uvx; then
-        ensure_claude_stdio_mcp unity uvx --from mcpforunityserver mcp-for-unity
-    fi
+    # Claude connects over the SAME in-Editor HTTP endpoint as Codex. The
+    # Unity side is pinned to HTTP transport (EditorConfigurationCache
+    # SetUseHttpTransport(true) in UnityMcpConnectOnce.cs), so a stdio server
+    # would find no Editor: stdio discovery needs Unity's TCP bridge, which
+    # HTTP mode does not open. Verified 2026-09-07 via read_console.
+    ensure_claude_http_mcp unity http://127.0.0.1:8080/mcp
     # raphel-loop is Cursor Agent-only. Remove older Claude registrations that
     # were created before the scope was narrowed. Use unconditional remove
     # because broken entries can appear in `claude mcp list` even when
