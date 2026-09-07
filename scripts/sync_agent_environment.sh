@@ -557,6 +557,10 @@ ensure_codex_design_suite_mcp() {
     # dcc-mcp-maya embeds a Streamable HTTP MCP server in Maya. The endpoint
     # is reachable only while Maya is running with its managed plugin loaded.
     ensure_codex_http_mcp maya http://127.0.0.1:9765/mcp
+
+    # CoplayDev MCP for Unity. Start the local HTTP server from
+    # Window > MCP for Unity after installing the editor package.
+    ensure_codex_http_mcp unityMCP http://127.0.0.1:8080/mcp
 }
 
 remove_codex_mcp_if_present() {
@@ -637,6 +641,7 @@ for section in (
     "mcp_servers.touchdesigner",
     "mcp_servers.autocad",
     "mcp_servers.maya",
+    "mcp_servers.unityMCP",
 ):
     set_key(section, "enabled", "true")
 
@@ -650,6 +655,7 @@ for section in (
     "mcp_servers.touchdesigner",
     "mcp_servers.autocad",
     "mcp_servers.maya",
+    "mcp_servers.unityMCP",
 ):
     set_key(section, "default_tools_approval_mode", '"prompt"')
     set_key(section, "startup_timeout_sec", "60.0")
