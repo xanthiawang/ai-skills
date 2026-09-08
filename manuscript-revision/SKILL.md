@@ -37,6 +37,16 @@ paper facts always come from the manuscript/authors. **Privacy:** `entries/` hol
 third-party PII (author names, ms numbers, editor emails) and is gitignored — never commit
 or transmit it.
 
+## Template-conformance pass (final review ring, runs with the regression pass)
+
+Before any conference/journal upload, fetch the venue's official template package (LaTeX
+class + sample source, Word template if provided) and compare the rendered PDF **outline**
+against the sample's section order and numbering: acknowledgments unnumbered (ACM `acks`,
+hidden in anonymous mode), statements unnumbered, references before lettered appendices,
+no one-sentence subsections. Verify with the PDF TOC (`fitz.get_toc()`) and `grep -c
+'\\bibliography{' *.tex` = 1 — do not rely on the CfP page or comparable papers. Record the
+template version and the checklist outcome in the submission manifest.
+
 ## Comment-library regression pass (final review ring)
 
 Run the library the **other direction** as the last step before submission: instead of
