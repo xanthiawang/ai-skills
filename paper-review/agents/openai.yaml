@@ -1,0 +1,7 @@
+interface:
+  display_name: "Paper Review"
+  short_description: "Review contribution, argument, writing, and venue fit"
+  default_prompt: "Use $paper-review to review the latest manuscript as a paper for its target venue."
+
+policy:
+  allow_implicit_invocation: true
