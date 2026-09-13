@@ -696,6 +696,20 @@ PY
 	info "codex mcp: applied default enabled/disabled policy"
 }
 
+# Uizze credentials stay in the local Codex config and are never synchronized.
+ensure_codex_uizze_mcp() {
+    python3 - <<'UIZZE_PY'
+from pathlib import Path
+import re
+p = Path.home() / ".codex/config.toml"
+s = p.read_text() if p.exists() else ""
+if not re.search(r"(?m)^\[mcp_servers\.uizze\]$", s):
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(s + '\n[mcp_servers.uizze]\nurl = "https://uizze.com/mcp"\n')
+print("Uizze endpoint configured; local credentials preserved")
+UIZZE_PY
+}
+
 sync_codex_mcp() {
     if ! have_cmd codex; then
         warn "codex CLI not found; skipping Codex MCP sync"
@@ -711,6 +725,7 @@ sync_codex_mcp() {
     ensure_codex_stdio_mcp 1password npx -y @jrejaud/op-mcp@1.0.0
     ensure_codex_paperclip_mcp
     ensure_codex_design_suite_mcp
+    ensure_codex_uizze_mcp
     remove_codex_mcp_if_present scg
 
     # raphel-loop is Cursor Agent-only. Remove older Codex registrations that
