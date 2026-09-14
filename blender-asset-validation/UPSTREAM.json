@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/ifBars/blender-agent-studio",
+  "commit": "a33fcc5ad46a7e46cd5875322f166778709ade79",
+  "path": "plugins/blender-agent-studio/skills/blender-asset-validation",
+  "license": "MIT",
+  "installed": "2026-09-14"
+}
