@@ -52,8 +52,18 @@ Use these substitutions (all tested working):
 - **Notes vault**: `~/Documents/sci-ideas/notes/` (sci.ideas.*.md, free-form headers).
   Use this as `--notes-dir` everywhere the doc says the Dendron path.
 - **Python**: `/usr/bin/python3` (3.9) with user-site PyYAML + requests installed.
-- **Anchors**: shared `anchors/anchors.yaml` (12 live, missing failed:3 incremental:1) —
-  calibration stays ADVISORY-ONLY; candidate real failed anchor to add: AIED 2026 rejection.
+- **Anchors**: shared `anchors/anchors.yaml` — **20 live (top=8, field=5, failed=3, incremental=4) as of
+  2026-09-15; the gate now PASSES and calibration is NO LONGER advisory.** Verified that day with a blinded
+  leave-one-out pass: Spearman rho = 0.875, 95% CI [0.735, 0.931], n = 20 (rho = 0.868 dropping the one
+  anchor whose label leaked to the judge). Forward verdicts may be certified.
+- **Script invocation**: `scripts/*.py` need `PYTHONPATH=.` — running them by path puts `scripts/` on
+  sys.path rather than the repo root and `idea_forge` fails to import. Use the repo `.venv/bin/python` for
+  anything importing `requests`; the system python3 lacks it.
+- **Retrieval reality (2026-09-15)**: Semantic Scholar and OpenAlex BOTH failed (429 anonymous; polite pool
+  returned empty). Working substitutes: Crossref journal sweeps (`api.crossref.org/journals/<issn>/works`),
+  Europe PMC for abstracts, WebSearch. Venue-based sweeps are BLIND to fast-moving arXiv CS/CSS literature,
+  which is exactly where the scoops landed in the 2026-09-15 run — always run a separate arXiv/web scoop
+  probe against the SHARPENED claim, not only the original one.
 - Wherever this file says "Zixin", read "Zixin" (per global overrides).
 
 ## Prerequisites
