@@ -264,3 +264,27 @@
   cutoff_date: "2026-07-01"
   notes: "Zixin's own (Phase 9 RQ7); tested and abandoned 2026-07-06. Real failed anchor."
   label_status: confirmed_outcome
+
+- id: robot-peer-failure-classroom
+  title: "Observing a robot peer's failures facilitates students' classroom learning"
+  field: cs
+  claim: "Students observe a social robot peer make unsuccessful problem-solving attempts, giving a productive-failure-like preparatory effect without the student having to fail personally; tested in middle-school mathematics classrooms."
+  known_tier: top
+  tier_ordinal: 4
+  failure_mode: ""
+  cutoff_date: "2025-09-01"
+  notes: >-
+    Science Robotics 10(106), 2025-09-10, DOI 10.1126/scirobotics.adu5257.
+    ADDED 2026-09-15 as the first educational-HRI anchor; the set previously had
+    none, so verdicts in this domain were extrapolating from bio/aging and ML anchors.
+    IMPORTANT CALIBRATION SIGNAL: scored blind on this rubric it lands about
+    (novelty 4, feasibility 8, impact 5) -- the nearest prior work, Tanaka & Matsuzoe
+    2012 (J-HRI), already ran classroom field experiments with a deliberately
+    error-making robot -- which the disposition rule maps to 'solid', NOT top-shot.
+    It published in a top venue anyway. Read this anchor as evidence that in
+    educational/social HRI the top venues buy EXECUTION and ECOLOGICAL VALIDITY
+    (named theory, two studies, N=245, a 2-week novelty-effect washout, objective
+    measures) rather than conceptual novelty. Do not let this rubric's novelty axis
+    alone decide go/no-go in this subfield.
+  label_status: proposed_from_venue
+  source_doi: 10.1126/scirobotics.adu5257
