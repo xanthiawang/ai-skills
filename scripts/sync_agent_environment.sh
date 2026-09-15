@@ -724,6 +724,8 @@ sync_codex_mcp() {
     ensure_codex_screenpipe_mcp
     ensure_codex_stdio_mcp 1password npx -y @jrejaud/op-mcp@1.0.0
     ensure_codex_paperclip_mcp
+    # Official hosted endpoint; OAuth stays in the client's local credential store.
+    ensure_codex_http_mcp elevenlabs https://api.elevenlabs.io/v1/mcp
     ensure_codex_design_suite_mcp
     ensure_codex_uizze_mcp
     remove_codex_mcp_if_present scg
