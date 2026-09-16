@@ -369,7 +369,9 @@ def remove_section(section: str) -> None:
 # Do not force an API service tier for ChatGPT-authenticated Codex models. The
 # client will warn and omit unsupported tiers such as the legacy `priority`.
 remove_root_key("service_tier")
+set_root_key("sandbox_mode", '"workspace-write"')
 set_root_key("suppress_unstable_features_warning", "true")
+set_key("sandbox_workspace_write", "network_access", "true")
 set_key("tui", "theme", '"pywal"')
 apply_desktop_pywal_theme()
 set_key('plugins."slack@claude-plugins-official"', "enabled", "false")
