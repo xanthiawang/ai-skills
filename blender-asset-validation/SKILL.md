@@ -10,6 +10,14 @@ for autonomous decisions, evidence cadence, and long-task continuity.
 
 Validate both the authored scene and the exported deliverable. A clean export or low triangle count is not proof of visual or functional quality.
 
+## Model-first production gate
+
+For reference-driven character/robot refinement, production topology, rigging,
+or story-animation readiness, read [model-first production gates](references/model-production-gates.md)
+before editing assets. Unresolved proportions, moving-part separation or runtime
+topology block formal animation production, not further modeling. A motion test
+does not replace high/low-poly work or establish a completed story clip.
+
 ## Run deterministic inspection
 
 Prefer the `blender_inspect_asset` MCP tool when available. Otherwise run:

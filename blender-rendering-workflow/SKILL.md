@@ -11,6 +11,12 @@ for autonomous decisions, evidence cadence, and long-task continuity.
 Treat a render as a reproducible deliverable, not a screenshot that happened to
 look acceptable once.
 
+For reference-driven character/robot production animations, first read the
+[model-first production gates](../blender-asset-validation/references/model-production-gates.md).
+Unfinished geometry may receive bounded mechanism tests, not a batch of formal
+story animations. Static beauty renders and explicit motion studies remain
+allowed; label them accurately and do not use them to bypass model acceptance.
+
 For architecture, daylight shafts or fabric-heavy scenes, read
 [interiors and atmosphere](references/interiors-and-atmosphere.md).
 For photorealistic materials or environment lighting, use
