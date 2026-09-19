@@ -97,6 +97,10 @@ She is an architect. She knows what she wants to say before she writes. The narr
 
 ## Writing a paper on an exemplar paper (Zixin, 2026-09-19)
 
+Zixin's instruction, verbatim (2026-09-19):
+
+> 更仔细的学习他们的每一章节的组成，和每一段落的段首句是在表达什么 用了什么句式。每一段的段首和段位句要和他们用完全一样的表达和句式。并研究每一段的表达目的 和段落之间如何承接的；完全照搬他们的句式 但不照搬内容 尽可能的用他们的单词词组和表达，修改我们的现在的全文结构和写作，；我不是跟你说了，不能用不是业内通用术语的、不能有我们自己说法的、不能有别人没听过的东西吗
+
 When Zixin names an exemplar paper ("按这篇的写法改", "照搬他们的句式"), the exemplar decides the structure and the sentence patterns, and our results decide the content. Work in this order.
 
 1. **Read the exemplar's full text**, not its abstract. Keep a local copy and cite its path in the imitation map.
