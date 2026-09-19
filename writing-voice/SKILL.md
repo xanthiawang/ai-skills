@@ -95,6 +95,27 @@ She is an architect. She knows what she wants to say before she writes. The narr
 
 ---
 
+## Writing a paper on an exemplar paper (Zixin, 2026-09-19)
+
+When Zixin names an exemplar paper ("按这篇的写法改", "照搬他们的句式"), the exemplar decides the structure and the sentence patterns, and our results decide the content. Work in this order.
+
+1. **Read the exemplar's full text**, not its abstract. Keep a local copy and cite its path in the imitation map.
+2. **Dissect every section.** For each section list its paragraphs, the question the section answers, and what it hands to the next section. Note what the exemplar does not have (for example no contribution list, no separate limitations section) and keep those absences.
+3. **Dissect every paragraph.** Record, for every paragraph in order:
+   - the first sentence verbatim, what it states (background, current practice, gap, design, finding, setup, result, mechanism, robustness check, implication), and its sentence pattern with every content word replaced by a `[slot]` and every function word, connective, verb frame and clause order kept;
+   - the last sentence verbatim, what it states, and its pattern in the same form;
+   - the purpose of the paragraph in one line;
+   - how it follows from the previous paragraph and leads into the next (the connective, the repeated noun, the question it opens or answers).
+4. **Map and restructure.** Assign each of our paragraphs to the exemplar paragraph with the same function. Make our section order, section titles (same grammatical form, e.g. question titles), paragraph count and paragraph functions match the exemplar. Material with no counterpart moves to an appendix; do not invent paragraphs the exemplar does not have.
+5. **Copy the first and last sentence of every paragraph.** Write them on the exemplar's pattern with the same expressions: the same function words, connectives, verb frames, hedges and word order, with only the slots filled by our content. Never copy the exemplar's content, claims or numbers.
+6. **Reuse the exemplar's vocabulary inside paragraphs.** Build a word list from the exemplar (verbs, reporting phrases, hedges, connectives, section and metric names) and prefer those words wherever our content allows.
+7. **Terminology gate (no coined terms).** Every noun phrase in the draft must be either a term the field already uses (found in the exemplar, the cited literature or a standard textbook) or a plain description that a first-time reader understands. No names we made up for our own quantities, no abbreviations we invented, no shorthand from our own notes. Before sending any text, list every multi-word noun phrase, mark where the field uses it, and replace each one that has no source with a plain description. This applies to chat replies and reports as well as papers.
+8. **Hard-rule conflicts.** Keep the exemplar's sentence pattern, but when it relies on a device banned above, use the nearest allowed form with the same words: a colon before a question becomes "the following question." with the question on its own line; a colon before a list becomes "the following." or a new sentence; en or em dashes around a list become commas; bullets become run-in sentences that each start with the bullet's own pattern. A list of three is allowed when the exemplar's structure has three items and our content has three real units.
+9. **Deliverables.** (a) An imitation map with one row per paragraph: exemplar first and last sentence, their patterns, purpose, transition, and our two sentences side by side; (b) the rewritten draft as a new dated file unless Zixin says to overwrite; (c) a number check showing that every number in the new draft appears in the audited source; (d) the Chinese twin when the draft has one.
+10. **Self-check.** Compare the two sentence columns of the map row by row. A missing function word, a changed connective or a changed clause order is a defect; fix it before delivering.
+
+---
+
 ## Core registers
 
 Zixin writes differently depending on context. Match the register to the situation.
@@ -215,6 +236,7 @@ After writing, scan for:
 11. Did I stack multiple hedges in one sentence? Keep one, cut the rest.
 12. Does every sentence carry information? If not, cut it.
 13. Does this sound like something Zixin would actually write, or like an AI imitating her? If forced, pull back.
+14. Is every noun phrase a term the field already uses, or a plain description? Replace any name, label or abbreviation we made up.
 
 ---
 
