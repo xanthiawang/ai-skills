@@ -38,6 +38,13 @@ constitutes a submittable paper. No MPP → not active-paper.
 ## Core Empirical Claim
 The single most important empirical proposition. What result makes the paper stand?
 
+## Experiments / Evidence Needed
+What data / experiments / benchmark / proof / case study does the Core Empirical Claim
+require — and can you actually get it? This is where **evidence accessibility** is judged:
+list each evidence block and mark it accessible-now / obtainable-with-effort / gated
+(needs data you can't reach, hardware you don't have, or a cohort you can't recruit).
+A claim whose evidence is gated stays at `inbox` until the gate is named and a path exists.
+
 ## Best Anchor
 Which successful paper is it most like, and why?
 
@@ -59,3 +66,13 @@ top-shot / moonshot / field-solid / solid+fix / near-miss / dormant / rejected
 ```
 
 Concept background for the whole funnel: `references/idea-evolve-system.md`.
+
+**How the 7 Pareto dimensions map onto the scored machine** (only 3 are numeric axes; the
+other 4 are folded in as signals/gates so the panel never collapses into a weighted sum):
+`novelty` / `feasibility` / `impact` = the three scored 0–10 axes; **evidence accessibility**
+= the *Experiments / Evidence Needed* section + `feasibility` blocks + `grounding_confidence`;
+**mechanistic sharpness** = `novelty` 6–7 band + the adversary's concrete-mechanism requirement
++ the *Core Empirical Claim*; **field-level surprise** = `impact` top bands + `tier_potential`;
+**reviewer defensibility** = the *Reviewer Kill Pass* + Step 4 grounded adversary (a gate, not a
+score). Keep `moonshot` in the Verdict enum: high-novelty × high-impact × low-feasibility ideas
+are pursued, not killed.
