@@ -24,7 +24,9 @@ The original full source documents (voice profile, anti-AI style guide, Chinese 
 profile) live on the original author's machine and are not present here. The distilled
 reference below IS the operative source of truth on this machine. Supplementary
 calibration from Zixin's own submissions lives in `zixin-voice-profile.md` in this
-skill directory; read it when drafting papers.
+skill directory; read it when drafting papers. The reviewer's de-AI revision
+requirements that the "De-AI revision pass" section below is built from are kept
+verbatim in `de-ai-source_2026-10-01.md`.
 
 ## Biographical fact verification (MANDATORY)
 
@@ -54,7 +56,7 @@ Never begin a sentence with "Additionally," "Furthermore," or "Moreover."
 ### Banned constructions
 
 - No em dashes. Use commas, parentheses, colons, or periods instead.
-- No negative parallelism in any form. Banned: "Not X, but Y," "It is not X, it is Y," "Not only X, but also Y," and the soft variants ("While X may seem...," "At first glance, X...," "Most people think X...," "Conventional wisdom says X..."). The ban applies across sentence boundaries (no "Most teams think they have a hiring problem. They have a standards problem.") and to rhetorical-question setups ("Is this X? No. It's Y."). Reframe headings ("The real X," "Beyond X," "Not X. Y.") are also banned. Fix: delete the rejected half, state the positive claim directly. Contrast is allowed only for factual corrections (date, number, name, scope). The ban extends to the trailing hedge "A, not B" / "A rather than B" ("a proxy, not a risk-of-bias instrument") and, in Chinese manuscripts, to 是……不是……/而不是/而非/并非 (Zixin, 2026-09-07). Fix: state A; if the boundary matters, give it its own clause or sentence ("The rating is a study-level proxy; risk-of-bias assessment would need a separate instrument"). Plain negation ("we did not pool effect sizes") and category names ("not reported") are fine.
+- No negative parallelism in any form. Banned: "Not X, but Y," "It is not X, it is Y," "Not only X, but also Y," and the soft variants ("While X may seem...," "At first glance, X...," "Most people think X...," "Conventional wisdom says X..."). The ban applies across sentence boundaries (no "Most teams think they have a hiring problem. They have a standards problem.") and to rhetorical-question setups ("Is this X? No. It's Y."). Reframe headings ("The real X," "Beyond X," "Not X. Y.") are also banned. Fix: delete the rejected half, state the positive claim directly. Contrast is allowed only for factual corrections (date, number, name, scope). The ban extends to the trailing hedge "A, not B" / "A rather than B" ("a proxy, not a risk-of-bias instrument") and, in Chinese manuscripts, to 是……不是……/而不是/而非/并非 (Zixin, 2026-09-07). Fix: state A; if the boundary matters, give it its own clause or sentence ("The rating is a study-level proxy; risk-of-bias assessment would need a separate instrument"). Plain negation ("we did not pool effect sizes") and category names ("not reported") are fine. The ban also covers "not merely X, but Y," "not because X, but because Y," "instead of X, Y," and "The question is not X, but Y" (de-AI review, 2026-10-01); worked rewrites are in the De-AI revision pass section.
 - No colons in manuscript prose, either language, abstract included (Zixin, 2026-09-07). End a label with a period, introduce a list with "the following." or "namely/即", join an explanation with a semicolon or "in which/其中", and write question labels as "(G)"/"(S)". Structural colons that never render as text (YAML keys, caption prefixes, fenced divs) are fine.
 - No analogies or metaphors as default. Zero in pieces under 800 words. Banned setups: "Think of it as," "Imagine," "Picture," "It is like," "A bridge between," "A lens for," "The engine of," "The DNA of." Banned metaphor verbs for abstract work: baked in, distilled, unpacked, woven, anchored, sanded down, bolted on, sparked, surfaced, threaded, sculpted. Use literal verbs.
 - No engagement bait ("Let that sink in," "Read that again," "Full stop," "This changes everything") or hype language (10x, game-changer, cutting-edge, unlock, supercharge, revolutionize).
@@ -117,6 +119,67 @@ When Zixin names an exemplar paper ("按这篇的写法改", "照搬他们的句
 8. **Hard-rule conflicts.** Keep the exemplar's sentence pattern, but when it relies on a device banned above, use the nearest allowed form with the same words: a colon before a question becomes "the following question." with the question on its own line; a colon before a list becomes "the following." or a new sentence; en or em dashes around a list become commas; bullets become run-in sentences that each start with the bullet's own pattern. A list of three is allowed when the exemplar's structure has three items and our content has three real units.
 9. **Deliverables.** (a) An imitation map with one row per paragraph: exemplar first and last sentence, their patterns, purpose, transition, and our two sentences side by side; (b) the rewritten draft as a new dated file unless Zixin says to overwrite; (c) a number check showing that every number in the new draft appears in the audited source; (d) the Chinese twin when the draft has one.
 10. **Self-check.** Compare the two sentence columns of the map row by row. A missing function word, a changed connective or a changed clause order is a defect; fix it before delivering.
+
+---
+
+## De-AI revision pass for manuscripts (2026-10-01)
+
+Run this pass whenever Zixin asks to revise, polish or "de-AI" a paper draft. It adds to the hard rules above and never relaxes them. Source text, verbatim, is in `de-ai-source_2026-10-01.md`.
+
+### 1. Contrastive constructions
+
+The hard rule bans negative parallelism outright. The reviewer allowed sparing use "when analytically necessary"; Zixin's ban is stricter and wins. Rewrite by stating the positive claim with the authors as subject, and vary the frame from instance to instance.
+
+- Before: "Multi-agent systems are not merely a scaling strategy, but organizational structures designed to compensate for bounded agent capacity."
+  After: "We treat multi-agent systems as organizational structures that may compensate for bounded agent capacity while also introducing coordination costs."
+- Before: "The question is not whether more agents are better, but under what conditions additional agents improve collective performance."
+  After: "We therefore examine the conditions under which additional agents improve collective performance."
+
+### 2. Constructive framing of prior literature
+
+Name limitations clearly and keep the tone respectful. A limitations section still lists what prior work leaves open; it does not sound dismissive.
+
+- Replace "existing studies fail to," "the literature lacks," "current work does not," "these studies ignore," "prior research has not theorized," and "this is inadequate."
+- Use "existing studies have made important progress, while leaving open ...," "a remaining limitation is ...," "less attention has been paid to ...," "the organizational implications remain underdeveloped," "this literature creates an opportunity to ...," "we build on this literature by ...," and "our framework complements this work by ...."
+
+### 3. Authors' position and calibrated certainty
+
+- Mark analytical choices as the authors' own with "we propose," "we examine," "we conceptualize," "we treat," "we suggest," "we expect," "we argue," "we draw on," "we develop this framework to," "our approach emphasizes," and "our proposal is to." Use them where they clarify that the paper advances a framework; do not open every paragraph with "we."
+- Give a context-dependent claim one moderator, chosen from "may," "can," "could," "is likely to," "under some conditions," "in this setting," "a plausible implication is," and "this creates the possibility that." The hedge-stacking ban still applies, so one qualifier per claim.
+- Remove universal claims ("X always," "Y necessarily," "Z proves," "the best structure is," "this shows that"). Prefer "X may," "Y is likely to," "Z suggests," "one expected pattern is," and "this framework implies."
+- When the paper uses a metaphor deliberately as an analytical device, signal it once with "we use this metaphor to ...." The default ban on metaphors covers every other case.
+
+### 4. Hedge the claims, keep the theory sharp
+
+Moderation applies to empirical and predictive claims. Definitions and conceptual distinctions stay crisp. After softening a paragraph, check that every core distinction is still stated explicitly. For the multi-agent organization-theory manuscript the reviewer named these distinctions, which must stay sharp:
+bounded rationality and context-window limitation;
+span of control and number of agents;
+search diversity and coordination cost;
+consensus-based deliberation, voting-based aggregation and orchestrator-centered authority;
+high-verifiability and low-verifiability tasks;
+pooled, sequential and reciprocal interdependence;
+mechanistic and organic organization;
+coding tasks, GAIA-style knowledge and tool-use tasks, and open-ended writing tasks.
+
+### 5. Paragraph flow
+
+- Each paragraph opens with a topic sentence and follows one conceptual progression.
+- A paragraph that reads as a list of claims becomes a connected argument.
+- Two paragraphs that make the same point merge into one.
+- An overlong paragraph splits at its natural turn.
+- Transitions between the source theory (for example organization theory) and the application domain (for example AI systems) are written out, never left for the reader to infer.
+
+### 6. Stock phrases that mark AI prose
+
+Limit "This study ...," "This framework ...," "The core claim ...," "In this sense ...," "This suggests that ...," "The key point is ...," "The central expectation is ...," "Taken together ...," and "In other words ...." Keep one only where it adds clarity, and never repeat one within a few paragraphs. Vary sentence structure and transitions, but keep key terms identical; the thesaurus-cycling ban still holds, so vary the frame and leave the term alone.
+
+### 7. Citations survive revision
+
+- Keep every author-year citation and every reference-list entry. Delete a citation only when the claim it supports is deleted.
+- Move a misplaced citation to the sentence it supports.
+- Mark a bibliography entry that is no longer cited in the text with `[CHECK: cited?]`.
+- Mark a claim that needs support but has none with `[CITATION NEEDED]`. Never invent a source; verify any new reference through CrossRef or OpenAlex per the global authoring pipeline.
+- This refines the paper-register rule that every citation does argumentative work. During a revision, flag a citation that looks decorative for Zixin instead of deleting it silently.
 
 ---
 
@@ -205,7 +268,7 @@ These are strong tendencies, not rigid templates. Use them when they fit.
 - "Here, we [what was done]" as the standard contribution claim in papers
 - Parenthetical asides in casual writing for examples and qualifications
 - Cross-domain analogies in informal communication and paper discussions (when scientifically precise)
-- Shows limitations of prior work rather than attacking it. "Here's what they couldn't do, and here's what we can." The reader connects the dots.
+- Shows limitations of prior work without attacking it. "Here's what they couldn't do, and here's what we can." The reader connects the dots.
 
 ---
 
@@ -241,6 +304,10 @@ After writing, scan for:
 12. Does every sentence carry information? If not, cut it.
 13. Does this sound like something Zixin would actually write, or like an AI imitating her? If forced, pull back.
 14. Is every noun phrase a term the field already uses, or a plain description? Replace any name, label or abbreviation we made up.
+15. Did I describe prior work as failing, lacking, ignoring or inadequate? Rewrite it as a remaining limitation or an opening our work builds on.
+16. Did I make a universal claim ("always," "necessarily," "proves," "this shows that") about something empirical? Give it one moderator. Definitions stay crisp.
+17. Did a stock phrase ("This study," "In this sense," "Taken together," "In other words," "The key point is") appear more than once in a few paragraphs? Change the frame, keep the key term.
+18. In a revision, did every citation survive, with uncited bibliography entries marked `[CHECK: cited?]` and unsupported claims marked `[CITATION NEEDED]`?
 
 ---
 
