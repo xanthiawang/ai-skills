@@ -83,8 +83,9 @@ restrained accent, legend for every color, paper-scale type checks).
 On this Mac: run its scripts with `python3` (the SKILL.md shows Windows
 PowerShell paths); PNG/PDF export needs the draw.io desktop CLI
 (`/Applications/draw.io.app/Contents/MacOS/draw.io`) and `autolayout.py` needs
-Graphviz `dot`. Neither was installed on 2026-10-07; without them, author and
-validate the XML and preview through `serve_drawio_preview.py`.
+Graphviz `dot`. Both installed via Homebrew on 2026-10-07 (draw.io 31.7.0,
+Graphviz 16.1.0); the validate → CLI export → `repair_png.py` chain was tested
+end to end on this machine.
 
 ## Style Setup (REQUIRED)
 
