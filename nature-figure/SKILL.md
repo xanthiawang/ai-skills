@@ -62,6 +62,30 @@ schematic with `imagegen` and composite the real-data panels (made here with
 matplotlib) over it — never let `imagegen` draw fabricated data points, bars, or
 curves.
 
+### Exception: editable ML/AI method figures go to `academic-figures-drawer`
+
+When the figure is a model or method diagram for an ML/HCI venue (framework
+overview, module detail, tensor/attention flow, training vs inference pipeline,
+agent architecture) AND it must be editable vector for camera-ready revision,
+use the `academic-figures-drawer` skill (draw.io XML as source of truth, PNG/PDF
+derived, static validators plus screenshot review loop). Its optional concept
+pass is where `imagegen` still fits: generate a no-text composition reference
+first, then redraw the semantics as vectors. Vendored from
+`github.com/M1n-n9/academic-figures-drawer` at `b2661ea` (2026-10-07).
+
+Override its default palette with the lab palette so draw.io figures match the
+matplotlib panels: paper contribution / hero = RUST `#B3796D` (2–3 px stroke);
+standard or prior components = GRAY `#8E8680`; alternative or comparison path =
+BLUE `#7689A0`; text, arrows and main flow = INK `#181114`; GOLD `#A08344` /
+SAGE `#5C8F82` only for a genuine 4th/5th role. Keep its other rules (one
+restrained accent, legend for every color, paper-scale type checks).
+
+On this Mac: run its scripts with `python3` (the SKILL.md shows Windows
+PowerShell paths); PNG/PDF export needs the draw.io desktop CLI
+(`/Applications/draw.io.app/Contents/MacOS/draw.io`) and `autolayout.py` needs
+Graphviz `dot`. Neither was installed on 2026-10-07; without them, author and
+validate the XML and preview through `serve_drawio_preview.py`.
+
 ## Style Setup (REQUIRED)
 
 Every figure script MUST call `retro_style()` once at the top. This applies the Ying Lab visual identity: floating trimmed spines, outward ticks, no minor ticks, warm mauve ink (#705B66), warm linen background (#EEEAE0), Arial font. Pure matplotlib — no external theme packages.

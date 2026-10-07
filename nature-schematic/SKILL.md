@@ -9,7 +9,7 @@ description: Use when creating or revising biomedical/scientific schematic plots
 
 Create the lab's schematic-figure house style (inherited from albert-ying's pipeline, now Zixin's default): delicate watercolor and pencil biological elements on a clean white canvas, grounded in real scientific figure references. For comparison, generate both an editable-label version and a direct imagegen-text version.
 
-Use `imagegen` for concept art. Use `nature-figure` for real data panels. If a figure mixes both, make the schematic base here and composite real data panels from `nature-figure`; never let ImageGen invent numeric results.
+Use `imagegen` for concept art. Use `nature-figure` for real data panels. If a figure mixes both, make the schematic base here and composite real data panels from `nature-figure`; never let ImageGen invent numeric results. For ML/AI model or method architecture diagrams that must stay editable as vector (ICLR/NeurIPS/CHI-style framework and module figures), use `academic-figures-drawer` with the lab palette override described in `nature-figure`.
 
 ## Default Workflow
 
