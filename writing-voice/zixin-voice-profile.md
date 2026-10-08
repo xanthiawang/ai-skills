@@ -37,6 +37,7 @@ Emails to PIs/collaborators, grant aims, blog posts: insufficient samples as of 
 
 ## Anti-patterns observed and corrected in her own drafts (avoid re-introducing)
 
+- Chinese: no 「这是……的内容／这是……的领域」 appositive sentences that tag a fact with its provenance or category ("机械转导由 PIEZO2 主导，这是 2021 年诺贝尔生理学或医学奖的内容"). State the fact and cite it; if the provenance matters, make it the subject of its own sentence (Zixin, 2026-10-08).
 - Overclaiming a marginal result as significant (the OR 2.62→2.32 lesson: verify exposure counting before citing).
 - Citing a number whose provenance batch differs from the canonical snapshot (always name the snapshot/appendix).
 - "Validated instrument" language before human coding exists (say "machine-referenced, human validation in progress").
