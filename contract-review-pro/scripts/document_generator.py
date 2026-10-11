@@ -14,6 +14,7 @@ from typing import Dict, List, Optional
 from datetime import datetime
 
 from docx import Document
+from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.oxml import OxmlElement
@@ -178,7 +179,8 @@ class DocumentGenerator:
             for i, risk in enumerate(top_risks, 1):
                 p = doc.add_paragraph()
                 self._label_run(p, f"{i}. ", CLR_LABEL)
-                p.add_run(risk.get("description", "")[:80])
+                # 本机修正（2026-10-11）：速览页优先用零法条术语的 brief，且不截断
+                p.add_run(risk.get("brief") or risk.get("description", ""))
         else:
             doc.add_paragraph("未发现致命/重要级别风险。")
 
@@ -247,18 +249,24 @@ class DocumentGenerator:
         doc.add_heading("（二）合同基本信息", level=1)
         self._meta_card(doc, [
             ("合同类型", analysis_result.get("identified_type", "未知")),
-            ("起草方", user_context.get("party", "未识别")),
+            ("起草方", user_context.get("drafter", "未识别")),
             ("审核深度", user_context.get("review_depth", "标准审核")),
         ])
 
         # ------------------------------------------------------------------
         # （三）逐条审核意见（七列表格）
         # ------------------------------------------------------------------
+        # 本机修正（2026-10-11）：七列表在纵向页上每列只有约 2.3cm，一条意见即占满一页。
+        # 改为横向分节，并对每一行的单元格设列宽（只设表头行时渲染器会忽略）。
+        land = doc.add_section(WD_SECTION.NEW_PAGE)
+        land.orientation = WD_ORIENT.LANDSCAPE
+        land.page_width, land.page_height = land.page_height, land.page_width
         doc.add_heading("（三）逐条审核意见", level=1)
         cols = ["序号", "位置", "风险类型", "被审条款原文", "风险描述", "修改建议", "风险等级"]
-        widths = [1.0, 1.8, 1.8, 3.6, 3.2, 3.2, 1.4]  # 内容列加宽
+        widths = [1.0, 2.2, 2.2, 5.5, 6.3, 6.3, 1.2]  # 横向页可用宽约 24.7cm，内容列加宽
         table = doc.add_table(rows=1, cols=len(cols))
         table.style = "Table Grid"
+        table.autofit = False
         for j, (h, w) in enumerate(zip(cols, widths)):
             cell = table.rows[0].cells[j]
             cell.width = Cm(w)
@@ -273,12 +281,27 @@ class DocumentGenerator:
                 cells[0].paragraphs[0].add_run(str(idx))
                 cells[1].paragraphs[0].add_run(risk.get("location", "—")[:20])
                 cells[2].paragraphs[0].add_run(risk.get("risk_label", "—")[:12])
-                cells[3].paragraphs[0].add_run(risk.get("original_text", "")[:60])
-                cells[4].paragraphs[0].add_run(risk.get("description", "")[:80])
-                cells[5].paragraphs[0].add_run(risk.get("suggestion", "")[:80])
+                # 本机修正（2026-10-11）：原版截断到 60/80 字，会切断条款原文与修改措辞
+                cells[3].paragraphs[0].add_run(risk.get("original_text", ""))
+                cells[4].paragraphs[0].add_run(risk.get("description", ""))
+                cells[5].paragraphs[0].add_run(risk.get("suggestion", ""))
                 self._label_run(cells[6].paragraphs[0],
                                 LEVEL_TEXT.get(level, "低"), LEVEL_COLOR.get(level, CLR_LOW))
                 idx += 1
+
+        for row in table.rows:
+            for cell, w in zip(row.cells, widths):
+                cell.width = Cm(w)
+        # 渲染器（LibreOffice / WPS）按 tblGrid 的 gridCol 分配列宽，需同步写入并固定布局
+        for gc, w in zip(table._tbl.tblGrid.findall(qn("w:gridCol")), widths):
+            gc.set(qn("w:w"), str(int(w / 2.54 * 1440)))
+        layout = OxmlElement("w:tblLayout")
+        layout.set(qn("w:type"), "fixed")
+        table._tbl.tblPr.append(layout)
+
+        port = doc.add_section(WD_SECTION.NEW_PAGE)
+        port.orientation = WD_ORIENT.PORTRAIT
+        port.page_width, port.page_height = port.page_height, port.page_width
 
         # ------------------------------------------------------------------
         # （四）总体评价与签约利弊分析
@@ -295,8 +318,8 @@ class DocumentGenerator:
             f"其中高风险 {summary.get('致命风险', 0)} 个、中风险 {summary.get('重要风险', 0)} 个。")
         for risk in risks_by_level.get("致命风险", []):
             p = doc.add_paragraph(style="List Bullet")
-            self._label_run(p, risk.get("description", "")[:60] + "：", CLR_HIGH)
-            p.add_run(risk.get("impact", "")[:60])
+            self._label_run(p, (risk.get("brief") or risk.get("description", "")) + "：", CLR_HIGH)
+            p.add_run(risk.get("impact", ""))
 
         doc.add_heading("谈判建议（三层优先级）", level=2)
         p = doc.add_paragraph()
@@ -328,7 +351,8 @@ class DocumentGenerator:
                 "④ 连锁效应（本合同对客户其他合同/融资/担保安排的影响）。")
 
         doc.add_heading("签署后注意事项", level=2)
-        for item in ["妥善保存合同签署版本及往来沟通记录",
+        for item in user_context.get("post_signing") or [
+                     "妥善保存合同签署版本及往来沟通记录",
                      "注意合同约定的通知期限和异议期限",
                      "关注对方重大事项变化对合同履行的影响"]:
             doc.add_paragraph(item, style="List Bullet")
@@ -350,13 +374,16 @@ class DocumentGenerator:
             doc.add_paragraph("见逐条审核意见表中的依据列。")
 
         doc.add_paragraph()
-        doc.add_paragraph(f"审核律师：{author}")
+        # 本机修正（2026-10-11）：原版固定写"审核律师"并声明"全部内容均经承办律师逐项审核"，
+        # 在没有律师参与时属于虚假陈述。改为"审核人"，声明由调用方按实际情况提供，默认如实说明未经律师审核。
+        doc.add_paragraph(f"审核人：{author}")
         doc.add_paragraph(f"审核日期：{today}")
         p = doc.add_paragraph()
         self._label_run(
             p,
-            "声明：本意见书制作过程中使用了人工智能工具辅助起草，全部内容均经承办律师逐项审核、"
-            "修改与确认，律师对文件内容承担全部专业责任。律师分析利弊，最终决策权在客户。",
+            user_context.get("disclaimer") or
+            "声明：本意见书由人工智能工具辅助生成，未经执业律师审核，不构成正式法律意见；"
+            "签署前请由执业律师复核。分析利弊，最终决策权在委托方。",
             CLR_LABEL, bold=False)
 
         doc.save(str(filepath))
