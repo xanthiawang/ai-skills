@@ -1,0 +1,366 @@
+"""
+Word Track Changes 生成器
+将审核结果转化为 Word 修订模式文档。
+
+双引擎设计（自包含）：
+- 增强引擎：环境中存在 Anthropic docx skill 时，使用其 Document library
+  （通过 DOCX_SKILL_ROOT 环境变量或 ~/.claude/skills/docx 自动检测）
+- 内置引擎：ooxml_lite（标准库 zipfile + minidom），零外部依赖，默认兜底
+"""
+
+import importlib.util
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+from typing import Dict, List, Optional
+from datetime import datetime
+
+from ooxml_lite import LiteDocument, pack_docx, unpack_docx
+
+RISK_LEVEL_MAP = {
+    "致命风险": "P0",
+    "重要风险": "P1",
+    "一般风险": "P2",
+    "轻微瑕疵": "P3",
+}
+
+
+def _find_docx_skill() -> Optional[Path]:
+    """检测环境中是否存在 docx skill 的 OOXML 工具链（可选增强，非依赖）"""
+    candidates = [
+        os.environ.get("DOCX_SKILL_ROOT", ""),
+        str(Path.home() / ".claude" / "skills" / "docx"),
+    ]
+    for cand in candidates:
+        if cand and (Path(cand) / "ooxml" / "scripts" / "unpack.py").exists():
+            return Path(cand)
+    return None
+
+
+class DocxTrackChangesGenerator:
+    """将审核结果写入 Word 文档，生成带 Track Changes 和 Comments 的 .docx"""
+
+    # 常用条款自动插入优先级
+    STANDARD_CLAUSES = [
+        {"keyword": "实现债权费用", "suggest": "因实现债权而产生的一切费用（包括但不限于公证费、鉴定费、律师费、诉讼费、仲裁费、保全费、担保费等）由违约方承担。"},
+        {"keyword": "送达确认", "suggest": "双方确认以下地址为有效送达地址，通知以邮寄/快递/电子邮件方式送达，寄出之日起第3日视为送达。"},
+        {"keyword": "签章生效", "suggest": "本合同自双方签字并加盖公章之日起生效，合同一式[数量]份，各方各执[数量]份，具有同等法律效力。"},
+    ]
+
+    def __init__(
+        self,
+        original_docx_path: str,
+        risk_report: Dict,
+        output_dir: str,
+        author: str = "Claude（AI 辅助审核）",
+        initials: str = "CS",
+        revision_router=None,
+    ):
+        self.original_docx = Path(original_docx_path)
+        self.risk_report = risk_report
+        self.output_dir = Path(output_dir)
+        self.author = author
+        self.initials = initials
+        self.revision_router = revision_router  # RevisionRouter instance
+
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+
+    def generate(self, contract_name: str) -> Optional[str]:
+        """生成带修订标记的 Word 文档，返回输出文件路径。失败返回 None。"""
+        if not self.original_docx.exists():
+            print(f"[docx_generator] 原始文件不存在: {self.original_docx}")
+            return None
+
+        tmp_dir = None
+        try:
+            tmp_dir = tempfile.mkdtemp(prefix="contract_review_")
+            unpacked_dir = Path(tmp_dir) / "unpacked"
+
+            # 1. unpack 原始 docx（引擎自动分派）
+            self._unpack(self.original_docx, unpacked_dir)
+
+            # 2. 打开文档（引擎自动分派：docx skill Document / 内置 LiteDocument）
+            doc = self._open_document(unpacked_dir)
+
+            # 3. 遍历风险项，生成修订和批注
+            self._apply_all_changes(doc, self.risk_report)
+
+            # 4. 保存（写回 unpacked_dir）
+            doc.save(validate=False)
+
+            # 5. 打包为 .docx
+            output_filename = f"{contract_name}-审核修订版.docx"
+            output_path = self.output_dir / output_filename
+            self._pack(unpacked_dir, output_path)
+
+            print(f"[docx_generator] 审核修订版已生成: {output_path}")
+            return str(output_path)
+
+        except Exception as e:
+            print(f"[docx_generator] 生成失败: {e}")
+            import traceback
+
+            traceback.print_exc()
+            return None
+        finally:
+            if tmp_dir:
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+
+    def _open_document(self, unpacked_dir: Path):
+        """打开 unpacked 文档：docx skill 可用时返回其 Document，否则返回内置 LiteDocument"""
+        skill_root = _find_docx_skill()
+        if skill_root is None:
+            return LiteDocument(
+                str(unpacked_dir),
+                author=self.author,
+                initials=self.initials,
+                track_revisions=True,
+            )
+
+        # 增强引擎：docx skill Document library
+        # 核心问题：contract-review-pro 的 scripts/ 与 docx skill 的 scripts/ 包名冲突
+        # 解决方案：临时清除 sys.modules 中的 scripts 包缓存，重新加载
+        saved_modules = {}
+        for key in list(sys.modules.keys()):
+            if key.startswith("scripts") or key.startswith("ooxml"):
+                saved_modules[key] = sys.modules.pop(key)
+
+        try:
+            if str(skill_root) in sys.path:
+                sys.path.remove(str(skill_root))
+            sys.path.insert(0, str(skill_root))
+
+            from scripts.document import Document
+        finally:
+            pass
+
+        return Document(
+            str(unpacked_dir),
+            author=self.author,
+            initials=self.initials,
+            track_revisions=True,
+        )
+
+    def _unpack(self, docx_path: Path, output_dir: Path):
+        """解压 docx：docx skill 可用时走其 unpack.py，否则走内置 zipfile 实现"""
+        skill_root = _find_docx_skill()
+        if skill_root is None:
+            unpack_docx(str(docx_path), str(output_dir))
+            print(f"[docx_generator] Unpack 完成（内置引擎）: {output_dir}")
+            return
+        unpack_script = skill_root / "ooxml" / "scripts" / "unpack.py"
+        result = subprocess.run(
+            [sys.executable, str(unpack_script), str(docx_path), str(output_dir)],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            raise RuntimeError(f"Unpack 失败: {result.stderr}")
+        print(f"[docx_generator] Unpack 完成: {output_dir}")
+
+    def _pack(self, unpacked_dir: Path, output_path: Path):
+        """打包 docx：docx skill 可用时走其 pack.py，否则走内置 zipfile 实现"""
+        skill_root = _find_docx_skill()
+        if skill_root is None:
+            pack_docx(str(unpacked_dir), str(output_path))
+            return
+        pack_script = skill_root / "ooxml" / "scripts" / "pack.py"
+        spec = importlib.util.spec_from_file_location("pack_mod", pack_script)
+        pack_mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(pack_mod)
+        pack_mod.pack_document(str(unpacked_dir), str(output_path), validate=False)
+
+    def _apply_all_changes(self, doc, risk_report: Dict):
+        """遍历所有风险项，应用修订和批注"""
+        risks_by_level = risk_report.get("risks_by_level", {})
+        total = 0
+        applied = 0
+
+        for level in ["致命风险", "重要风险", "一般风险", "轻微瑕疵"]:
+            risks = risks_by_level.get(level, [])
+            for risk in risks:
+                total += 1
+                if self._apply_single_risk(doc, risk, level):
+                    applied += 1
+
+        print(f"[docx_generator] 风险项处理: {applied}/{total} 成功应用")
+
+    def _apply_single_risk(self, doc, risk: Dict, level: str) -> bool:
+        """对单个风险项应用修订 + 批注。返回是否成功。"""
+        original_text = risk.get("original_text", "")
+        suggestion = risk.get("suggestion", "")
+        analysis = risk.get("analysis", "")
+        legal_basis = risk.get("legal_basis", "")
+        description = risk.get("description", "")
+
+        if not original_text:
+            return False
+
+        # 构建批注内容
+        priority = RISK_LEVEL_MAP.get(level, "P?")
+        comment_parts = [f"[{priority}] {description}"]
+        if analysis:
+            comment_parts.append(f"分析: {analysis}")
+        if legal_basis:
+            comment_parts.append(f"依据: {legal_basis}")
+        comment_text = "\n".join(comment_parts)
+
+        try:
+            editor = doc["word/document.xml"]
+
+            # 尝试定位原文中的文本节点
+            # 截取前 60 个字符用于匹配，避免全文匹配失败
+            search_text = original_text.strip()[:60]
+            if not search_text:
+                return False
+
+            node = editor.get_node(tag="w:r", contains=search_text)
+
+            if node is None:
+                # 尝试按段落匹配
+                try:
+                    node = editor.get_node(tag="w:p", contains=search_text)
+                except Exception:
+                    pass
+
+            if node is None:
+                print(f"[docx_generator] 未找到匹配文本: {search_text[:30]}...")
+                return False
+
+            # 如果有修改建议，生成 Track Changes
+            if suggestion and suggestion.strip() not in ["无", "无建议", ""]:
+                self._apply_track_change(editor, doc, node, original_text, suggestion)
+
+                # Track Change 之后，用新插入的内容节点添加批注
+                try:
+                    clean_suggestion = suggestion.strip()
+                    for prefix in ["修改为：", "修改为:", "建议修改为：", "建议修改为:"]:
+                        if clean_suggestion.startswith(prefix):
+                            clean_suggestion = clean_suggestion[len(prefix):].strip()
+                    ins_node = editor.get_node(tag="w:ins", contains=clean_suggestion[:30])
+                    if ins_node is not None:
+                        doc.add_comment(start=ins_node, end=ins_node, text=comment_text)
+                except Exception as e:
+                    print(f"[docx_generator] 批注添加失败（Track Change 后）: {e}")
+            else:
+                # 无修改建议时，直接对原节点添加批注
+                try:
+                    doc.add_comment(start=node, end=node, text=comment_text)
+                except Exception as e:
+                    print(f"[docx_generator] 批注添加失败: {e}")
+
+            return True
+
+        except Exception as e:
+            print(f"[docx_generator] 处理风险项失败 [{description[:20]}]: {e}")
+            return False
+
+    def _apply_track_change(self, editor, doc, node, original_text: str, suggestion: str):
+        """对文本节点应用 Track Change（删除原文 + 插入建议）"""
+        try:
+            # 获取节点的格式信息
+            rpr = ""
+            try:
+                rpr_nodes = node.getElementsByTagName("w:rPr")
+                if rpr_nodes:
+                    rpr = rpr_nodes[0].toxml()
+            except Exception:
+                pass
+
+            # 清理建议文本
+            clean_suggestion = suggestion.strip()
+            # 如果建议中包含 "修改为：" 等前缀，提取实际内容
+            for prefix in ["修改为：", "修改为:", "建议修改为：", "建议修改为:"]:
+                if clean_suggestion.startswith(prefix):
+                    clean_suggestion = clean_suggestion[len(prefix) :].strip()
+
+            # 截取用于匹配的原文片段（node 中实际包含的文本）
+            actual_text = self._get_node_text(node)
+            if not actual_text:
+                return
+
+            replacement = (
+                f'<w:del><w:r>{rpr}<w:delText>{self._escape(actual_text)}</w:delText></w:r></w:del>'
+                f'<w:ins><w:r>{rpr}<w:t>{self._escape(clean_suggestion)}</w:t></w:r></w:ins>'
+            )
+
+            editor.replace_node(node, replacement)
+
+        except Exception as e:
+            print(f"[docx_generator] Track Change 应用失败: {e}")
+
+    def generate_comments_json(self, output_path: Optional[str] = None) -> Optional[str]:
+        """生成 Comments 数据 JSON（数据与脚本分离，中文安全）"""
+        import json
+        comments = []
+        risks_by_level = self.risk_report.get("risks_by_level", {})
+        for level in ["致命风险", "重要风险", "一般风险", "轻微瑕疵"]:
+            for risk in risks_by_level.get(level, []):
+                desc = risk.get("description", "")
+                method = "comment"
+                if self.revision_router:
+                    decision = self.revision_router.determine_revision_method(desc)
+                    method = decision.method
+                comments.append({
+                    "description": desc,
+                    "original": risk.get("original_text", ""),
+                    "suggestion": risk.get("suggestion", ""),
+                    "risk_level": level,
+                    "method": method,
+                    "legal_basis": risk.get("legal_basis", ""),
+                })
+        if output_path:
+            with open(output_path, "w", encoding="utf-8") as f:
+                json.dump(comments, f, ensure_ascii=False, indent=2)
+            print(f"[docx_generator] Comments JSON: {output_path}")
+        return json.dumps(comments, ensure_ascii=False, indent=2)
+
+    def apply_standard_clause_insertions(self, doc, contract_text: str) -> List[str]:
+        """自动插入缺失的常用条款，返回已插入条款列表"""
+        inserted = []
+        for clause in self.STANDARD_CLAUSES:
+            if clause["keyword"] not in contract_text:
+                # 在文档末尾插入条款
+                try:
+                    editor = doc["word/document.xml"]
+                    # 找到最后一个段落并在其后插入
+                    body = editor.get_node(tag="w:body")
+                    if body is not None:
+                        para_elements = body.getElementsByTagName("w:p")
+                        if para_elements:
+                            last_para = para_elements[-1]
+                            insertion = (
+                                f'<w:p><w:pPr><w:rPr><w:b/></w:rPr></w:pPr>'
+                                f'<w:ins w:author="{self._escape(self.author)}" w:date="{datetime.now().isoformat()}">'
+                                f'<w:r><w:rPr><w:b/></w:rPr><w:t>{self._escape(clause["suggest"])}</w:t></w:r>'
+                                f'</w:ins></w:p>'
+                            )
+                            editor.insert_after(last_para, insertion)
+                            inserted.append(clause["keyword"])
+                except Exception:
+                    pass
+        if inserted:
+            print(f"[docx_generator] 自动插入常用条款: {inserted}")
+        return inserted
+
+    @staticmethod
+    def _get_node_text(node) -> str:
+        """提取 w:r 或 w:p 节点中的纯文本"""
+        texts = []
+        for t_node in node.getElementsByTagName("w:t"):
+            if t_node.firstChild and t_node.firstChild.nodeType == t_node.firstChild.TEXT_NODE:
+                texts.append(t_node.firstChild.data)
+        return "".join(texts)
+
+    @staticmethod
+    def _escape(text: str) -> str:
+        """XML 转义"""
+        return (
+            text.replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace('"', "&quot;")
+        )
