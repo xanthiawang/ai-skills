@@ -45,3 +45,13 @@ Taken with headless Chrome computed styles and pixel sampling. Starting point fo
 ## Fonts
 - ABC Oracle / Exposure VAR / ABC Favorit Mono (commercial). Open mapping used:
   Fraunces + Noto Serif SC (display), DM Sans + Noto Sans SC (body), DM Mono (numbers)
+
+## Home hero layout (1440×900, measured 2026-10-12)
+- section: height 100svh, min 640px, overflow hidden; background #FFCB30 + leaf-shadow image (object-cover) + canvas
+- h1: Exposure VAR 500, 38.8px, white, centred, top 116 (class top-[104px]), one line
+- wordmark: inline SVG, width 763 (53vw), height 284, top 198 (`top: max(180px, 50svh − 50.5vw + 31px)`), white
+- product: autoplay video, width 1115 (77vw), top 398 (≈44svh), rounded 16px, overlaps the lower half of the wordmark, cut by the curve
+- glow: ellipse #FFE48C, blur 40px, opacity .7, width 70%, aspect 5:1, ~200px above the bottom
+- curve: white region ~150px tall at the bottom, large ellipse
+- CTA: black pill ≈ 445×56, 18px text, caption 14px below, bottom ≈ 20px
+- Prototype mapping that passed: h1 38px top 104; tag 20px; wordmark clamp(150px, 26vw, 380px); product min(77vw, 1115px) at max(230px, 44svh), rgba(255,255,255,.72) + backdrop blur 22px, mask fade from 58%; curve 200px; button 56px / 18px

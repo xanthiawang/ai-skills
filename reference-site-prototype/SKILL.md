@@ -81,6 +81,10 @@ come from a row in it.
   (nothing). Dia: home/apps/changelog/early-birds painted, for-work/help mist, security/release
   notes/windows paper. Assign the same mix to the prototype; a prototype that learned only the
   home page makes every page look the same.
+- Measure the **hero composition** too, not just components: section height, each element's
+  top offset and width as a fraction of the viewport, overlap order, translucency and blur
+  of the product window, glow and curve geometry (see the Dia reference file). Our hero at
+  the right colours but the wrong proportions was rejected: "元素的大小和 Dia 的也不一样".
 - Measure, never eyeball: pill nav (top offset, height, radius, blur, shadow, padding, logo
   size, link size, no CTA inside), buttons (height, radius, hover colour, no lift), transition
   durations and easings, reveal timing, marquee, sticky showcase. Computed styles come from
