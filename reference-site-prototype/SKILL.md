@@ -121,6 +121,19 @@ come from a row in it.
 - Scenarios come from the company's own buyer list and vertical use cases; "why us" from its
   stated selling points; news items from facts in its materials, with dates marked as pending
   rather than invented.
+- Write copy **pain first, fix second**: a one-sentence problem statement under the hero
+  tagline, feature titles that name the relief ("别人涨价排队的时候，你的价格不动"), scenario
+  card titles that are the customer's pain in their words. Solution-only copy was called
+  "不够吸引人，痛点也没有写清楚".
+- Chinese labels for "What's New": 新闻中心 / 新闻动态 (无问芯穹), 新闻资讯 / 公司动态 (PPIO).
+  "动态" alone is not used as a top-level nav label; use 新闻动态.
+- Footer is four columns on every reference: 产品 · 资源 · 公司 (about, news, careers, contact,
+  legal) · 关注 (social, newsletter). A prototype without the 公司 column is missing an
+  About page too.
+- Keep a **claims ledger** for the whole site and be ready to hand it over on request: A from
+  company materials, B from public sources with date, C example numbers (labelled 示例 on the
+  page), D placeholders (toast on click), E your own assumptions (labelled, listed for the
+  client to confirm). Fix any claim that is none of these.
 
 ### 6. Content pages
 
