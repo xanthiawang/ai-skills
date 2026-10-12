@@ -223,6 +223,9 @@ come from a row in it.
   the menu; set the hash, wait, then click.
 - `.top{display:contents}` written after the mobile media query overrode the mobile layout;
   scope desktop-only rules with `@media (min-width:801px)`.
+- A dark-mode token block from an early round can silently swap the signed-off palette on a
+  dark-mode OS. Before sign-off, verify under emulated `prefers-color-scheme: dark`
+  (`Emulation.setEmulatedMedia`) and force the light theme if the design is light-only.
 - Headless Chrome on a reused port/profile returns a wrong count or blank shots; `pkill` the
   old instance and delete the profile dir before rerunning.
 - Two sessions editing one prototype file: message the other session, let it finish, use
