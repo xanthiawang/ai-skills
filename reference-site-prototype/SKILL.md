@@ -106,6 +106,11 @@ come from a row in it.
   White stays the dominant base; a dark scheme touches the hero and accents, not the whole site.
 - Compute WCAG contrast for text colours (`scripts/color_tools.py`) and put the numbers in the audit.
 - Put a scheme switcher in the footer ("配色（评审用）") so A/B/C can be compared in one build.
+  At sign-off, fix the chosen scheme in code, delete the switcher, and hand over a palette +
+  type spec page: swatches in groups with usage, a computed WCAG table (compute greys as
+  alpha-blended colours, not guessed), three type families with a size ladder and the
+  component text sizes, the hero composition numbers, and the CSS tokens. Client-facing, so
+  no reference names.
 - **Keep rejected directions as a selectable scheme instead of deleting them.** The painted
   hero was called ugly in one round and asked back as "方案三" two rounds later.
 - Do not fake artwork with filters. Procedural "oil paint" (SVG turbulence + displacement) was
