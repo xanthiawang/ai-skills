@@ -210,6 +210,18 @@ come from a row in it.
 - Publish with the same `file_path` to keep the URL; `open -a Dia <url>`; append the round to
   the audit file and memory.
 
+### 8. Handoff deck
+
+- When asked for a design handoff document, follow the LifeWire handoff structure Zixin
+  used before (cover · contents · tools · moodboard · colours · typography · buttons ·
+  navigation web + mobile · footer · homepage · assets · notes), compressed to the page
+  limit given (ten pages: merge contents with tools, assets with notes). Build it with
+  pptxgenjs from fresh screenshots of the final prototype; crop images to the exact
+  aspect ratio you place them at (Keynote ignores pptxgenjs `cover` sizing and stretches),
+  crop the footer from the footer's measured top edge, and never place a thumbnail you
+  cannot keep legible. Render through Keynote → PDF → PyMuPDF and run the pptx skill's
+  subagent QA before delivering; put the pptx, the PDF and the build script in the project.
+
 ## Pitfalls (each one cost a round)
 
 - In-page anchors: `href="#id"` is a route in a hash-router site and falls back to home. Use
