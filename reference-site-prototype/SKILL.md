@@ -121,10 +121,15 @@ come from a row in it.
 - Scenarios come from the company's own buyer list and vertical use cases; "why us" from its
   stated selling points; news items from facts in its materials, with dates marked as pending
   rather than invented.
-- Write copy **pain first, fix second**: a one-sentence problem statement under the hero
-  tagline, feature titles that name the relief ("别人涨价排队的时候，你的价格不动"), scenario
-  card titles that are the customer's pain in their words. Solution-only copy was called
-  "不够吸引人，痛点也没有写清楚".
+- Write copy **pain first, fix second**, but in the reference's register, not in slogans.
+  Dia's feature copy (measured 2026-10-12): a plain title ("Dia reads between the tabs"), then
+  two sentences: a concrete moment ("Before the day kicks in…", "Ask once."), what the product
+  does with named specifics in parentheses ("(calendar, inbox, key links)"), and the outcome
+  with "so you…" ("so you know exactly what you're walking into"). Scenario cards are full
+  sentences about the moment, ending in a short payoff ("All you have to do is show up.").
+  Clever-but-opaque titles ("别人涨价排队的时候，你的价格不动", "老板只认结果，不认 token") were
+  rejected as "写得都看不懂"; the plain versions ("高峰时段，价格还是那个价格", "按结果付费，而不是按 token")
+  passed. Solution-only copy was earlier rejected as "不够吸引人，痛点也没有写清楚".
 - Chinese labels for "What's New": 新闻中心 / 新闻动态 (无问芯穹), 新闻资讯 / 公司动态 (PPIO).
   "动态" alone is not used as a top-level nav label; use 新闻动态.
 - Footer is four columns on every reference: 产品 · 资源 · 公司 (about, news, careers, contact,
