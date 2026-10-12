@@ -114,6 +114,18 @@ come from a row in it.
   one. The shared narrative on 2026-10-12: one-sentence solution → product / core capability
   (with a showcase) → why us or technology → scenarios or industries → proof (customers, news)
   → CTA. Dia: tagline → "reads between the tabs" → six work scenarios → privacy → CTA.
+- **Pick the hook from what buyers compare, not from the company's favourite concept.**
+  Survey the competitors' heroes and "why us" lists first (2026-10-12: OpenRouter "Better
+  prices, better uptime"; 硅基流动 高速 / 高性价比 / 高稳定 / 高安全; PPIO 高性价比 / 超弹性 / 低延迟;
+  nobody sells green power). The hero then leads with the dimension where the company wins
+  (price and capacity at peak) and keeps the signature concept (绿电) as the reason it is
+  credible plus a bonus (ESG receipt). A green-first hero was rejected: "消费者并不是特别关心绿电".
+- Scenario cards state the **problem and the answer as two labelled lines** ("问题 …" /
+  "沐仞 …"); a single paragraph that mixes both was read as unclear. Section labels like
+  "六个场景 · 示例" are placeholders and never appear on the page.
+- Partner strips use **real logos** from the company's own decks (extract `ppt/media` from the
+  pptx, check which slide they sit on, crop, greyscale, 2× height), not text; universities stay
+  as serif wordmarks. Note what each logo actually says (NVIDIA's was "Inception Program").
 - **The first line says what the product is**, in the category's plain words (Dia: "More than a
   browser"; 无问芯穹: "通用人工智能基础设施服务商"; 英灵殿: "给生物分子一个世界模型"). The brand
   line or slogan goes second, smaller. A slogan-first hero ("谷时发电，峰时平价") was rejected as
