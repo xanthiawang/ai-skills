@@ -43,8 +43,19 @@ come from a row in it.
 - Nav holds **content pages only**, 3 to 5 items. Merge pages whose content overlaps
   (models + pricing became one page with a `#pricing` alias that scrolls to the section).
 - The account entry is **secondary**: lighter colour, hairline divider, right end of the pill,
-  label "登录" that becomes "控制台" once a key exists in this browser. Mobile: the grey button
-  at the bottom of the menu.
+  label "登录" that becomes "控制台" once signed in. Mobile: the grey button at the bottom of
+  the menu.
+- "登录" lands on a **sign-in page** (phone or email + code, one entrance for personal and
+  enterprise, a link to the registration wizard), never straight into the console. The console
+  is a signed-in state: route `#console` to the sign-in page when the demo state is signed out,
+  treat finishing the registration wizard as signed in, and give the console a sign-out.
+  PPIO's "控制台" link resolves to its login page when signed out; 硅基流动 has one unified
+  login page; OpenRouter puts Sign Up top-right. Dumping visitors into a mock console was
+  the complaint ("只会显示这个控制台，但是我们有地方 sign in 和注册呀").
+- Be ready to say, section by section, where a page's logic came from: the company's own
+  materials (BP, sales deck), a measured reference (which page), or an industry pattern
+  (name the sites). Anything that is an assumption (e.g. an "individual vs enterprise"
+  comparison table) is labelled 示例 and listed for the client to confirm.
 - A language switch is a secondary utility next to it, only when an overseas segment exists.
   It must **translate the current page in place**, never navigate to a separate English page
   (that was rejected as "切换之后就会跳到别的页面"). Pattern: a dictionary of exact text-node
