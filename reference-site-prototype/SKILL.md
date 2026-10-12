@@ -118,9 +118,11 @@ come from a row in it.
   browser"; 无问芯穹: "通用人工智能基础设施服务商"; 英灵殿: "给生物分子一个世界模型"). The brand
   line or slogan goes second, smaller. A slogan-first hero ("谷时发电，峰时平价") was rejected as
   "没有写清楚我们这产品是什么".
-- Under the hero, a strip of **who stands behind it**: founding team origin and partner /
-  ecosystem names. Take partners only from the company's own site or materials, and label
-  the relationship as unconfirmed if the material does not say customer / partner / vendor.
+- Under the hero, a strip of **who stands behind it**: one scrolling row of names, founding
+  team origin first (清华大学, 北京大学), then partner / ecosystem names from the company's own
+  site or materials; repeat the list three times so the loop has no gap. No static label row.
+  **Internal caveats never go on the page** ("来自商业计划书，关系待公司确认" was rejected with
+  "你这算什么呀"); they go in the audit file / claims ledger for the client to confirm.
   A live-data ticker there was replaced by this strip on request.
 - **No guides, tutorials or events on the home page.** None of ten references does it; the
   closest is OpenRouter's three-step "How it works". The home section that listed guides was
