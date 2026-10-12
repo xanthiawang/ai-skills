@@ -40,6 +40,13 @@ come from a row in it.
 
 ### 2. Navigation rules
 
+- Decide the nav from a **frequency table over every reference site** (list each site's items in
+  order, then count categories: product/models, pricing, docs, solutions/enterprise, news,
+  about, security, login). On 2026-10-12 across ten sites: product on all, pricing and docs on
+  every API platform, news in the nav on five (Dia's "What's New", PPIO, 无问芯穹, Emerald,
+  Soluna), enterprise in the nav only at 无问芯穹 (footer elsewhere), login top-right on all but
+  Dia. Read Dia's three items as categories, not labels: What's New = news/updates, Apps =
+  what the product does, Security = trust.
 - Nav holds **content pages only**, 3 to 5 items. Merge pages whose content overlaps
   (models + pricing became one page with a `#pricing` alias that scrolls to the section).
 - The account entry is **secondary**: lighter colour, hairline divider, right end of the pill,
@@ -101,7 +108,21 @@ come from a row in it.
   rejected on the home page; if a page needs a painting, use a real image (image generation
   needs Zixin's explicit go-ahead because of cost) or an illustrator.
 
-### 5. Content pages
+### 5. Home page narrative
+
+- Pull the h1/h2/h3 order of every reference home page (`scripts/headings.py`) before writing
+  one. The shared narrative on 2026-10-12: one-sentence solution → product / core capability
+  (with a showcase) → why us or technology → scenarios or industries → proof (customers, news)
+  → CTA. Dia: tagline → "reads between the tabs" → six work scenarios → privacy → CTA.
+- **No guides, tutorials or events on the home page.** None of ten references does it; the
+  closest is OpenRouter's three-step "How it works". The home section that listed guides was
+  rejected ("Dia 也没有在这放指南，他们放的是功能"). Guides live under Docs and in the footer;
+  events live inside a News / What's new page.
+- Scenarios come from the company's own buyer list and vertical use cases; "why us" from its
+  stated selling points; news items from facts in its materials, with dates marked as pending
+  rather than invented.
+
+### 6. Content pages
 
 - **Card covers are content previews** generated from the card's own data: first checklist
   items with boxes, a mini price curve with the window shaded, a two-line diff, a two-row
@@ -118,7 +139,7 @@ come from a row in it.
 - Every number is an example and says so (示例); prices come from live or official pages with
   the date; client-facing files never name the reference site or competitors.
 
-### 6. Build conventions
+### 7. Build conventions
 
 - Single file, hash router (`#home #models #model-<id> …`), `data-route` sections, `data-nav`
   links, tokens on `:root` with `:root[data-scheme="B"]` overrides, `prefers-reduced-motion`.
@@ -159,6 +180,8 @@ come from a row in it.
   path; other scripts take its path as the first argument.
 - `scripts/capture_site.py <cdp_client.py> <url> <out_prefix> <port> [width]` — header/footer
   links, CTAs with colours, first-screen PNG, long JPEG, JSON.
+- `scripts/headings.py <cdp_client.py> <url> <port>` — h1/h2/h3 of a page in document order with
+  y offsets, for reading a reference home page's narrative.
 - `scripts/walkthrough.py <prototype.html> <outdir> route[:js] …` — wraps the fragment, runs
   desktop and mobile, reports JS errors and overflow, saves screenshots and `walkthrough.json`.
 - `scripts/color_tools.py '#hex' '#hex' …` — CIEDE2000 distances, WCAG contrast against white
