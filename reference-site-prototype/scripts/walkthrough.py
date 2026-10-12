@@ -148,4 +148,6 @@ def main(html_path, out_dir, routes):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print(__doc__); sys.exit(1)
     main(sys.argv[1], sys.argv[2], sys.argv[3:])
