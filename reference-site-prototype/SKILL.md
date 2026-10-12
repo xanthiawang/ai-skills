@@ -114,6 +114,14 @@ come from a row in it.
   one. The shared narrative on 2026-10-12: one-sentence solution → product / core capability
   (with a showcase) → why us or technology → scenarios or industries → proof (customers, news)
   → CTA. Dia: tagline → "reads between the tabs" → six work scenarios → privacy → CTA.
+- **The first line says what the product is**, in the category's plain words (Dia: "More than a
+  browser"; 无问芯穹: "通用人工智能基础设施服务商"; 英灵殿: "给生物分子一个世界模型"). The brand
+  line or slogan goes second, smaller. A slogan-first hero ("谷时发电，峰时平价") was rejected as
+  "没有写清楚我们这产品是什么".
+- Under the hero, a strip of **who stands behind it**: founding team origin and partner /
+  ecosystem names. Take partners only from the company's own site or materials, and label
+  the relationship as unconfirmed if the material does not say customer / partner / vendor.
+  A live-data ticker there was replaced by this strip on request.
 - **No guides, tutorials or events on the home page.** None of ten references does it; the
   closest is OpenRouter's three-step "How it works". The home section that listed guides was
   rejected ("Dia 也没有在这放指南，他们放的是功能"). Guides live under Docs and in the footer;
