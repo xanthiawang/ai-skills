@@ -46,8 +46,13 @@ come from a row in it.
   label "登录" that becomes "控制台" once a key exists in this browser. Mobile: the grey button
   at the bottom of the menu.
 - A language switch is a secondary utility next to it, only when an overseas segment exists.
-  It leads to an English landing page (overview, models, cross-border sales flow, sales form);
-  nav and button labels swap via `data-zh` / `data-en`; deeper pages may stay Chinese, say so on the page.
+  It must **translate the current page in place**, never navigate to a separate English page
+  (that was rejected as "切换之后就会跳到别的页面"). Pattern: a dictionary of exact text-node
+  strings plus a phrase list for names inside composite strings; a TreeWalker over text nodes
+  and `placeholder` attributes that stores the original on the node (`node.__zh`) so it can
+  switch back; a `MutationObserver` (childList only) that re-applies after JS renders; guards
+  so label updates never write identical text (observer loops). Long-form bodies that stay
+  untranslated get a one-line notice via `html[lang=en] .article:before`.
 - Before adding any nav item, write the user flow it serves. If you cannot, it does not exist.
 
 ### 3. Walk every page of the reference, then measure
@@ -65,7 +70,9 @@ come from a row in it.
 - Colour fields: sample pixels at several points **and measure the geometry** (apex height,
   edge sag, band widths). "晨昏" in Dia's Early Birds page is not parallel bands; it is a planet
   horizon: a large-radius radial gradient, charcoal inside, dusk → mauve → pink → pale → sky
-  blue outward. Matching the colours but not the shape was rejected.
+  blue outward. Matching the colours but not the shape was rejected; so was a version with the
+  right shape but the wrong proportions (glow band 330px wide pushed the blue sky off-screen,
+  "黑色占比太多"). Measure all three: shape, band widths, and how much sky sits under the nav.
 - Measured values for Dia (2026-10-12) are in `references/dia-measured-2026-10-12.md`; reuse
   them as a starting point for the "paper editorial" look.
 
