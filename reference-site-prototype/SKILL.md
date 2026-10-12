@@ -161,6 +161,14 @@ come from a row in it.
 - Footer is four columns on every reference: 产品 · 资源 · 公司 (about, news, careers, contact,
   legal) · 关注 (social, newsletter). A prototype without the 公司 column is missing an
   About page too.
+- **Contact details get their own footer column at body size**, labelled by purpose, the way
+  PPIO (媒体垂询 / 资源合作 / 投资者关系 / 业务咨询 + QR) and 无问芯穹 (业务 / 媒体 / 人才 emails,
+  phone, addresses) do; the copyright line is not the place for the email. "写得太小了".
+- **Before building any new module, open the references' version of that module first**
+  (Zixin: "你每做一个新的模块之前，你要先参考一下我们的案例"). Home-page blocks on B2B API sites
+  are 产品 / 为什么选我们 / 行业与场景 (short tiles by industry) / 客户案例与伙伴 / 新闻; Dia's
+  six narrative scenario cards are a consumer-product device. Problem/answer story cards were
+  replaced by industry tiles plus a project-cases row on request.
 - Keep a **claims ledger** for the whole site and be ready to hand it over on request: A from
   company materials, B from public sources with date, C example numbers (labelled 示例 on the
   page), D placeholders (toast on click), E your own assumptions (labelled, listed for the
