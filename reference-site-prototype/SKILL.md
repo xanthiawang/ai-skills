@@ -208,6 +208,14 @@ come from a row in it.
   Clever-but-opaque titles ("别人涨价排队的时候，你的价格不动", "老板只认结果，不认 token") were
   rejected as "写得都看不懂"; the plain versions ("高峰时段，价格还是那个价格", "按结果付费，而不是按 token")
   passed. Solution-only copy was earlier rejected as "不够吸引人，痛点也没有写清楚".
+- **News items must be verifiable on the open web, each with its source link and date.**
+  Company decks (BP, investor sheets) are not news: a licence, a filing, a project or an
+  award that only the company's own material states stays off the news list. Search the
+  company name, English name, founder plus project keywords, and the named TV shows or
+  competitions; open the episode articles to confirm who is named and what is actually
+  claimed (2026-10-13: one CCTV episode preview named the founder and the project, but no
+  ranking and not the company). Invented changelogs, events and newsletter issues go, data
+  and links both, rather than staying behind a 示例 label.
 - Chinese labels for "What's New": 新闻中心 / 新闻动态 (无问芯穹), 新闻资讯 / 公司动态 (PPIO).
   "动态" alone is not used as a top-level nav label; use 新闻动态.
 - Footer is four columns on every reference: 产品 · 资源 · 公司 (about, news, careers, contact,
