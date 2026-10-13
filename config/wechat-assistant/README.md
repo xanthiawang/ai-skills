@@ -18,6 +18,13 @@ installation declarations only. It must never contain credentials or chat data.
 - Model: `openai/gpt-6-astra` using owner-authorized ChatGPT/Codex subscription
   OAuth. Credentials remain only in the local profile; no API-key billing
   fallback is configured. Codex runtime: `@openclaw/codex@2026.10.3`.
+- Gateway `env.vars` uses the owner's existing local HTTP/HTTPS proxy at
+  `http://127.0.0.1:7890`, with `NODE_USE_ENV_PROXY=1`. `NO_PROXY` includes
+  localhost, loopback, and Weixin/WeChat domains. This is machine-specific;
+  verify the system proxy before reproducing it on another computer.
+- 2026-10-13: a real subscription-backed agent test completed and the reply was
+  sent to the owner's WeChat. This validates basic question answering and
+  outbound delivery, not access to other chats or the daily briefing.
 
 ```sh
 npm install --prefix "$HOME/.local/share/wechat-assistant/runtime" openclaw@2026.10.3
