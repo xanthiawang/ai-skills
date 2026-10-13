@@ -226,6 +226,28 @@ come from a row in it.
   page), D placeholders (toast on click), E your own assumptions (labelled, listed for the
   client to confirm). Fix any claim that is none of these.
 
+### 5b. Products page when the company has several product lines
+
+- A models-and-pricing table is not a products page; it reads as "we have one product"
+  ("感觉你没说清楚我们有哪些产品"). When the company's materials list several lines (here:
+  three in the storefront, two in the factory), the page is an **overview first**, then
+  the details, in this order (2026-10-13, references captured in `b2b/prod_*`):
+  1. one headline that names the two halves (前店卖词元，后厂造词元) and says "pick by who
+     you are";
+  2. an Every-Studio product grid: one card per product with group label, name, one line,
+     three or four capability tags, "适合谁", and a destination link that scrolls to the
+     product's section (`data-scrollto`); a tinted last card for the shared technology;
+  3. one layered architecture diagram the way 无问芯穹's product-line page does it (five rows,
+     each with a tag on the right), layer names taken from the company's own four-layer
+     slide plus an access layer;
+  4. numbered per-product sections 01–05 in Theo's two-column rows (claim left, explanation
+     right, hairlines between), each ending with a link to its door page; the API product's
+     section keeps the model table and pricing, and the `#pricing` alias still scrolls there;
+  5. the footer PRODUCT column lists the products, not the pages.
+- Every new sentence on such a page gets a dictionary entry at once, or the EN switch shows
+  half-translated lines; wrap eyebrow labels that sit next to a link in their own span so the
+  text node matches.
+
 ### 6. Content pages
 
 - **Card covers are content previews** generated from the card's own data: first checklist
@@ -276,7 +298,12 @@ come from a row in it.
 - An absolutely positioned colour band paints above static content: give the content wrapper
   `position:relative; z-index:1` and the band `z-index:0`.
 - Class-name collisions inside one file (`.code` was already the dark docs code block). Prefix
-  new utility classes.
+  new utility classes. **State classes too**: the reveal state `.in` collided with the input
+  class `.in`, so every revealed section silently became an input-styled white card (border,
+  12px radius, 15px font, 12/14px padding) for thirty versions; the client's "frame" complaints
+  were symptoms. Name states `.shown` / `.is-open`, and when a box appears that no rule you
+  wrote explains, ask the engine (`CSS.getMatchedStylesForNode` or `el.matches(rule)` scan)
+  which rule paints it before touching spacing.
 - Mobile wordmark wrapped inside a 40px logo box: `white-space:nowrap` and `width:auto` on mobile.
 - Opening the mobile menu in a test: setting `location.hash` fires `hashchange`, which closes
   the menu; set the hash, wait, then click.
