@@ -46,6 +46,22 @@ npm install --prefix "$HOME/.local/share/wechat-assistant/runtime" openclaw@2026
 
 ## Data adapter status
 
+Mac reader preparation (not executed):
+
+- Source: https://gist.github.com/acmerfight/0a01249ef72970d07a2603dbb629e80f
+- Pinned revision: `c98dbb10cf23c30e83d5d744905101b0880887a0`
+- Downloaded directly into `~/.local/share/wechat-assistant/mac-reader-source`.
+- SQLCipher library and Apple Python LLDB import verified available.
+- Local WeChat is 4.1.13; upstream reports verification on 4.1.15.
+- `bootstrap_local_reader.py` requires explicit temporary-copy confirmation,
+  backs up encrypted databases, verifies source hashes, recovers only the exact
+  private-copy process, and rejects partial key capture. It has been statically
+  reviewed; bootstrap has not run. No synthetic tests were executed.
+- Successful capture must be followed by independent HMAC/schema verification,
+  coverage auditing and original WeChat usability confirmation. Never infer all
+  chats from a successful exit code or silently omit missing media/history.
+- Keys, database backups and extracted chats remain private local state.
+
 The existing `dendron/sync/wechat-sync` recipe requires WeFlow and a local HTTP
 API token. Neither is configured on this machine. Current WeFlow requires a
 separately supplied native database component. Installing its UI alone does not

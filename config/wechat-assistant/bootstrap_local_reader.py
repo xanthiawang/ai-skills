@@ -34,18 +34,35 @@ def recover(state, before):
     """Stop only executables inside this newly created private app copy."""
     shadow = state / 'WeChat-trial.app'
     disabled = state / 'WeChat-trial.disabled'
-    table = run(['ps', '-axo', 'pid=,comm='])
-    for line in table.splitlines():
-        fields = line.strip().split(None, 1)
-        if len(fields) == 2 and fields[1].startswith(str(shadow) + '/'):
-            pid = int(fields[0])
-            try:
-                os.kill(pid, signal.SIGTERM)
-            except ProcessLookupError:
-                pass
-    time.sleep(2)
-    table = run(['ps', '-axo', 'pid=,comm='])
-    if str(shadow) + '/' in table:
+    def processes():
+        rows = []
+        for line in run(['ps', '-axo', 'pid=,comm=']).splitlines():
+            fields = line.strip().split(None, 1)
+            if len(fields) == 2:
+                rows.append((int(fields[0]), fields[1]))
+        return rows
+    def owned():
+        return [(pid, path) for pid, path in processes()
+                if path.startswith(str(shadow) + '/')]
+    for pid, _ in owned():
+        try:
+            os.kill(pid, signal.SIGCONT)
+            os.kill(pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+    deadline = time.monotonic() + 5
+    while owned() and time.monotonic() < deadline:
+        time.sleep(0.25)
+    # Recheck exact private-copy paths before escalating; never kill by name.
+    for pid, _ in owned():
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+    deadline = time.monotonic() + 3
+    while owned() and time.monotonic() < deadline:
+        time.sleep(0.25)
+    if owned():
         raise RuntimeError('temporary copy still running; manual recovery required')
     if original_signature() != before:
         raise RuntimeError('original signature changed; manual recovery required')
@@ -55,11 +72,16 @@ def recover(state, before):
         if disabled.exists():
             raise RuntimeError('disabled-copy path already exists; refusing overwrite')
         shadow.rename(disabled)
-    if subprocess.run(['pgrep', '-x', 'WeChat'], capture_output=True).returncode != 0:
-        subprocess.Popen(['/Applications/WeChat.app/Contents/MacOS/WeChat'],
+    original_exe = '/Applications/WeChat.app/Contents/MacOS/WeChat'
+    if not any(path == original_exe for _, path in processes()):
+        subprocess.Popen([original_exe],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                          start_new_session=True)
-    print('Recovery: original signature unchanged; original-app launch requested.', flush=True)
+    time.sleep(1)
+    original_running = any(path == original_exe for _, path in processes())
+    print(f'Recovery: original signature unchanged; original process detected={original_running}; login/UI usability still requires confirmation.', flush=True)
+    if not original_running:
+        raise RuntimeError('original-app process was not detected; manual recovery required')
 
 
 def main():
@@ -90,6 +112,7 @@ def main():
     run(['codesign', '--verify', '--deep', '--strict', '/Applications/WeChat.app'])
     shutil.copytree(roots[0], state / 'encrypted-database-backup')
     print('Encrypted database backup completed; keys never printed.', flush=True)
+    capture_error = None
     try:
         proc = subprocess.Popen([
             sys.executable, str(source / 'bootstrap_keys.py'),
@@ -99,15 +122,27 @@ def main():
         try:
             returncode = proc.wait(timeout=420)
         except BaseException:
-            os.killpg(proc.pid, signal.SIGTERM)
+            try:
+                os.killpg(proc.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
             try:
                 proc.wait(timeout=15)
             except subprocess.TimeoutExpired:
-                os.killpg(proc.pid, signal.SIGKILL)
+                try:
+                    os.killpg(proc.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
                 proc.wait(timeout=10)
             raise
-    finally:
+    except BaseException as error:
+        capture_error = error
+    try:
         recover(state, before)
+    except Exception as recovery_error:
+        raise RuntimeError(f'capture error: {type(capture_error).__name__ if capture_error else "none"}; recovery error: {recovery_error}') from recovery_error
+    if capture_error is not None:
+        raise capture_error
     key_file = state / 'keys.json'
     if not key_file.exists():
         raise RuntimeError('no captured keys; data connection remains unavailable')
