@@ -843,6 +843,10 @@ sync_claude_mcp() {
     if have_cmd uvx; then
         ensure_claude_stdio_mcp blender uvx blender-mcp
     fi
+    # Hyper3D Rodin official remote MCP (2026-09-17; endpoint from
+    # DeemosTech/hyper3d-cli). OAuth per machine: run
+    # `claude mcp login hyper3d` once. Generation spends Hyper3D credits.
+    ensure_claude_http_mcp hyper3d https://api.hyper3d.com/api/mcp
     # Design-suite MCP bridges (2026-08-29): each server runs standalone and
     # connects lazily to its host app (TouchDesigner / Rhino / FreeCAD), so
     # declaring them is safe even before the host software is installed.
