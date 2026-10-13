@@ -313,6 +313,12 @@ come from a row in it.
   status is `built` and HTTP 200, then load the live URL in headless Chrome and check each
   route's h1 plus every `<img>` has `naturalWidth > 0` before announcing it. Hash routes
   work on Pages without any config. The claude.ai artifact stays the review copy.
+- **After deploy, the repository is the only source.** Hand people the repo link and the
+  Pages link, not a zip or an artifact review copy (Zixin: "不能直接给他github吗 … 我的编辑
+  还能实时同步"). Other sessions and collaborators edit `index.html` in the repo, so never
+  regenerate it from the old prototype file: retire the generator, `git pull` before every
+  edit, and shoot deck screenshots from the repo copy. Put design files (handoff deck,
+  palette page) in `design/` so Pages serves them too.
 - **The client is in mainland China.** github.io is often unreachable there, and a
   render-blocking `<link rel="stylesheet" href="https://fonts.googleapis.com/…">` turns an
   unreachable Google into a white page: measured 13.2 s to first paint with the font hosts
