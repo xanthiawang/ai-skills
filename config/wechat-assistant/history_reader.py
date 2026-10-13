@@ -101,7 +101,7 @@ def read(query='', day=None, days=7, offset=0, limit=60, full=False):
                                 continue
                             matched += 1
                             rows.append({'source': f'{path.name}/{table}/{cursor}', 'chat': label, 'chat_id':chat,
-                                         'sender':names.get(sender,sender), 'time':datetime.fromtimestamp(int(r['create_time']), TZ).isoformat(),
+                                         'sender':names.get(sender,sender), 'from_self':sender==config['self_id'], 'time':datetime.fromtimestamp(int(r['create_time']), TZ).isoformat(),
                                          'server_id':r['server_id'], 'text':body})
                         if len(batch) < 1000:
                             break

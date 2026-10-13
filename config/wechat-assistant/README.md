@@ -12,8 +12,8 @@ installation declarations only. It must never contain credentials or chat data.
 - Local credential/config state: `~/.openclaw-zixin-wechat` (never synchronized)
 - Gateway: loopback only, port `18791`, locally generated token authentication.
 - LaunchAgent: `ai.openclaw.zixin-wechat` (local state only).
-- Agent tools: deny all during channel setup; enable only required retrieval
-  capabilities once the source and model have been verified.
+- Agent tools: allow only `wechat_history`; arbitrary shell, filesystem and
+  message-sending tools remain unavailable to the model.
 - Default heartbeat is disabled (`agents.defaults.heartbeat.every: "0m"`).
 - Model: `openai/gpt-6-astra` using owner-authorized ChatGPT/Codex subscription
   OAuth. Credentials remain only in the local profile; no API-key billing
@@ -41,12 +41,12 @@ npm install --prefix "$HOME/.local/share/wechat-assistant/runtime" openclaw@2026
 - Only communicate with the owner; do not reply to other contacts or groups.
 - Summarize new messages incrementally. Retrieve relevant history for questions.
 - Owner selected ChatGPT/Codex subscription processing on 2026-10-13, including
-  sending relevant chat content to OpenAI. Data-source connection remains pending.
+  sending relevant chat content to OpenAI.
 - Do not enable a schedule until real data ingestion and delivery are verified.
 
 ## Data adapter status
 
-Mac reader preparation (not executed):
+Mac reader verified 2026-10-14:
 
 - Source: https://gist.github.com/acmerfight/0a01249ef72970d07a2603dbb629e80f
 - Pinned revision: `c98dbb10cf23c30e83d5d744905101b0880887a0`
@@ -56,11 +56,34 @@ Mac reader preparation (not executed):
 - `bootstrap_local_reader.py` requires explicit temporary-copy confirmation,
   backs up encrypted databases, verifies source hashes, recovers only the exact
   private-copy process, and rejects partial key capture. It has been statically
-  reviewed; bootstrap has not run. No synthetic tests were executed.
-- Successful capture must be followed by independent HMAC/schema verification,
-  coverage auditing and original WeChat usability confirmation. Never infer all
-  chats from a successful exit code or silently omit missing media/history.
+  reviewed. A second initialization captured all 20 database keys; independent
+  SQLCipher/schema checks passed 20/20 with query_only=1. No synthetic data or
+  synthetic dataset tests were executed. Original signature unchanged; owner
+  confirmed the restored original WeChat works normally.
+- Real source inventory: 643 ordinary message tables and 548 business message
+  tables, 204743 total locally available rows at initialization. For 2026-10-13:
+  2523 messages across 318 active tables; 1440 readable text, 1083 unsupported
+  nontext. The official phone backup remains untouched and is not a readable
+  history source. This does not establish complete phone/server history.
 - Keys, database backups and extracted chats remain private local state.
+- `history_reader.py` uses short read-only transactions including live WAL,
+  fixed queries and pagination. Queries rescan the requested time window, so
+  stored edits/deletions are reflected without a stale increment-only index.
+  `from_self` uses the local account identity checked against contact data.
+- `history-plugin` registers one owner-route-only optional tool. Narrow tool
+  execution against real data completed in 1.21 seconds; a nonowner denial
+  check rejected access before reading. The real Codex runtime queried the
+  source, returned exact coverage totals, and delivered the result to the owner.
+  The setup conversation was reset to refresh its thread-scoped tool catalog;
+  historical setup transcripts remain retained by OpenClaw.
+- `daily_briefing.py` snapshots every available text in the prior calendar day,
+  segments long messages without dropping text, bounds each model batch to
+  180000 UTF-8 bytes, and combines every completed batch. Failure prevents
+  a success claim. A pending-before-send record prevents blind resend after an
+  ambiguous delivery. Model processing uses the owner's subscription quota.
+- Daily schedule declaration: `zixin-wechat:daily-briefing`, Asia/Shanghai 09:00,
+  no staggering. Initially disabled until the complete real-data trial sends.
+  Gateway must run on an awake, connected Mac; generation takes several minutes.
 
 The existing `dendron/sync/wechat-sync` recipe requires WeFlow and a local HTTP
 API token. Neither is configured on this machine. Current WeFlow requires a
