@@ -72,6 +72,27 @@ sync_skills() {
 # reproduce the install. Cloned into ~/programs next to their companion tools
 # and symlinked into ~/.claude/skills/.
 sync_external_skills() {
+    # Dreamina is distributed by its official installer, not vendored here.
+    # Install CLI + Skill: curl -fsSL https://jimeng.jianying.com/canvas-cli/install.sh | bash
+    # Keep OAuth credentials in the CLI's OS credential store.
+    local dreamina_src="$HOME/.agents/skills/dreamina-canvas-cli"
+    local dreamina_target
+    if [ -f "$dreamina_src/SKILL.md" ]; then
+        for dreamina_target in "$HOME/.codex/skills/dreamina-canvas-cli" "$HOME/.claude/skills/dreamina-canvas-cli"; do
+            if [ -L "$dreamina_target" ] && [ "$(readlink "$dreamina_target")" = "$dreamina_src" ]; then
+                info "external skill: Dreamina already linked"
+            elif [ -e "$dreamina_target" ] || [ -L "$dreamina_target" ]; then
+                warn "external skill: $dreamina_target exists; leaving as is"
+            else
+                mkdir -p "$(dirname "$dreamina_target")"
+                ln -s "$dreamina_src" "$dreamina_target"
+                info "external skill: Dreamina linked"
+            fi
+        done
+    else
+        warn "external skill: Dreamina not installed; use its official installer"
+    fi
+
     # autocad-drafting (puran-water): companion skill for the autocad MCP
     # server declared in sync_claude_mcp. Upstream repo is archived (frozen
     # at aa80dbc, consolidated into PuranOS) and carries no license, so it
