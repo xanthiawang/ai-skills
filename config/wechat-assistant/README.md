@@ -82,8 +82,17 @@ Mac reader verified 2026-10-14:
   a success claim. A pending-before-send record prevents blind resend after an
   ambiguous delivery. Model processing uses the owner's subscription quota.
 - Daily schedule declaration: `zixin-wechat:daily-briefing`, Asia/Shanghai 09:00,
-  no staggering. Initially disabled until the complete real-data trial sends.
+  no staggering. Enabled after the complete real-data trial returned confirmed
+  `payload.deliveryStatus=sent`. Next occurrence verified: 2026-10-14 09:00+08:00.
   Gateway must run on an awake, connected Mac; generation takes several minutes.
+- Trial delivery processed all 1440 readable texts in four bounded batches;
+  final message was 1769 characters. The successful trial directory was renamed
+  to `~/.local/share/wechat-assistant/reports/2026-10-13-initial-test` (no overwrite)
+  so it remains separate from the first regular morning run. Daily sent markers
+  suppress duplicates; ambiguous sends require manual delivery reconciliation.
+- 2026-10-14 managed environment sync: `apply` and `check` both exit 0. Existing
+  unrelated connector authentication/protocol warnings remain; they do not
+  prevent this isolated WeChat deployment.
 
 The existing `dendron/sync/wechat-sync` recipe requires WeFlow and a local HTTP
 API token. Neither is configured on this machine. Current WeFlow requires a
