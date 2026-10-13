@@ -55,3 +55,31 @@ Taken with headless Chrome computed styles and pixel sampling. Starting point fo
 - curve: white region ~150px tall at the bottom, large ellipse
 - CTA: black pill ≈ 445×56, 18px text, caption 14px below, bottom ≈ 20px
 - Prototype mapping that passed: h1 38px top 104; tag 20px; wordmark clamp(150px, 26vw, 380px); product min(77vw, 1115px) at max(230px, 44svh), rgba(255,255,255,.72) + backdrop blur 22px, mask fade from 58%; curve 200px; button 56px / 18px
+
+## Footer (home, 1440×900, measured 2026-10-13)
+- four link columns at x = 130 / 328 / 517 / 770, company logo at the right; whole footer 266px tall, no form
+- headings 13px ABC Favorit Mono uppercase, letter-spacing 1.3px, colour rgba(0,0,0,.85)
+- links 13px/16px mono uppercase, letter-spacing 1.3px, colour rgba(0,0,0,.424), hover .85 over .2s cubic-bezier(.4,0,.2,1); 26px between baselines
+- bottom row after a hairline: "COPYRIGHT © 2026" left, "DESIGNED AND BUILT BY …" centred
+- OpenRouter (for a newsletter): last footer row, text left, input + button right
+
+## For Work FAQ accordion (1440×900, measured 2026-10-13)
+- question rows 800px wide centred (x 320), height 44 + 10px margin, 65px pitch, 16px ABC Oracle 400, colour .85
+- 12px "+" svg at the left (text indented 24px), opacity .4, hover 1, rotates 45° when open (.4s cubic-bezier(.4,0,.2,1))
+- per-item hairline rgba(0,0,0,.1), hover .3, .2s
+- answer region: `display:grid; grid-template-rows:0fr → 1fr`, transition .4s cubic-bezier(.76,0,.24,1); inner `overflow:hidden`; text black/60, padding-left 24, padding-bottom 32
+- no card behind the list; the section sits far from the previous block
+
+## Motion inventory (2026-10-13, stylesheet + computed styles + forced :hover)
+- nav links: opacity .3 → 1 on hover, .2s cubic-bezier(.4,0,.2,1); current page black
+- buttons: `.button--primary` background-color .2s cubic-bezier(.215,.61,.355,1) + color .2s; `.button--cta` background-color .2s ease-in-out; no lift
+- `.sunrise-cta-pill` (white pill): transform .22s + box-shadow .42s cubic-bezier(.22,1,.36,1)
+- underline links: text-decoration-color .25s cubic-bezier(.77,0,.175,1)
+- reveal on scroll: elements start opacity 0 / translateY(5px), script-driven (transition reads `all 0s`), ≈1s cubic-bezier(0,0,.2,1)
+- `page-enter`: opacity 0 → 1, .4s cubic-bezier(.87,0,.13,1) both
+- `pulse`: opacity 0 → 1, scale .5 → 1, blur 2px → 0, 1.25s cubic-bezier(.87,0,.13,1) infinite alternate
+- `chroma-sweep` .9s / `chroma-expand-bidirectional` .85s / `fade-to-black-sweep` 1.2s: background-position sweeps on headline text
+- app tour (sticky showcase): list items `all .3s`, 3px indicator `all .3s`, tour pieces opacity/transform .5s cubic-bezier(.22,1,.36,1), query caret blink 1.1s step-end
+- marquee keyframes L/R/U/D (translate3d ±100%), pause on hover
+- arrow in links: child span translateX on group-hover, transform .3s
+- hero: full-viewport canvas behind, autoplay muted looping product video (1115px)

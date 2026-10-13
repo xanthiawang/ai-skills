@@ -297,6 +297,18 @@ come from a row in it.
   `tbody{display:table;width:100%;min-width:640px}` so tables scroll inside themselves.
 - A `file://` URL built from a relative output path navigates nowhere and the page reads as
   empty (scrollHeight = viewport). `os.path.abspath` the output dir first.
+- When a complaint mentions a frame or box ("太顶着线框了"), first find which rule paints it
+  (read the element's computed background/radius) before adjusting spacing. The FAQ's white
+  card came from a rule the section inherited; the block had side padding only, so the title
+  sat on the card's top edge. A native `<details>` list cannot animate; the reference uses a
+  button + `grid-template-rows: 0fr → 1fr` region (see the Dia reference file).
+- Zixin reviews the artifact in a narrow window (screenshots at 760–1000 CSS px). Check
+  those widths too, not only 1440 and 390: a six-column footer that fits at 1440 collapses to
+  155px columns at 1000 ("太挤了"). Keep ≤5 columns and put a newsletter form in its own row.
+- Hover and motion are measured, not guessed: `CSS.forcePseudoState` for hover diffs, the
+  stylesheet's `@keyframes` + computed `transition`/`animation` grouped by value, opacity
+  before vs after a scroll pass for reveals, and a frame-by-frame height sample after a
+  click for accordions (`scripts/dia_motion.py` pattern in the audit).
 
 ## Scripts
 
