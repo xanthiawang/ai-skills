@@ -16,8 +16,55 @@ through nine rounds of correction. Follow this file before the first pixel, and 
 - A research board with **screenshots** of every reference page (Zixin: "我需要有它的截图，而不只是你的话语阐述").
 - An audit file in the project (`…自检_<date>.md`) that records each round: what was asked, what changed, why.
 - Memory entries: project profile + feedback file. Write them the moment a direction is rejected or confirmed.
+- When the visual is signed off and functions are re-examined: an internal function and
+  architecture board (section 0), published as an Artifact, with a change list per route
+  awaiting sign-off.
 
 ## Workflow
+
+### 0. Function and architecture pass (when Zixin hands over a process board)
+
+Zixin's own product-design process (Figma boards from an earlier project) runs: feature
+brief → users → scenarios → user journey → user flows per role → list of problems /
+comments / key features / possible features → priority × effort matrix → UI component
+sheet → system framework. When asked to "按这个逻辑重新看功能和架构，风格和大框架不变",
+produce an **internal board in the same paper style** that walks that order for this
+product, and change nothing visual until the board is signed off. One section each:
+
+- **Brief**: product in two sentences, the problem on both sides (buyer and supplier),
+  goals per door, in / out of scope, how to measure (metric names only, no numbers),
+  constraints already decided (no fabricated data, no internal caveats on the site, no dark
+  mode, white base, visual and frame unchanged).
+- **Users**: derive roles from the company's participant table (BP buyers, suppliers,
+  energy parties) and merge by what they do on the site. Role cards with goal / worry /
+  where on site / frequency; no invented names, ages or numbers. Map roles → doors.
+- **Scenarios**: who · when and what happened · what they need to do · where on site ·
+  status against the prototype and the live site.
+- **Journey**: one line per role in the board's format (我是一个…的用户 / 作为…，我想要… /
+  以便…), then stages (知道 / 判断 / 试用 / 购买 / 使用 / 续用) × doors with 断 tags where
+  it breaks.
+- **Flows**: one per role as node chains; every node carries a status badge (原型 / 测试站 /
+  占位 / 缺); grey nodes for off-site steps; branches for failure cases. Take form fields from
+  the company's own sales process (e.g. the three items the EN sales deck asks buyers for).
+- **Features**: numbered problem list with source tags (live site / prototype / company
+  material / competitors); comments split into Zixin's standing rules and new evidence; key
+  features per door mapped to flow ids; possible features listed in full; then the 2×2 with
+  the board's labels (DO IT NOW / DO IT NEXT / DO IT WHEN THERE IS TIME / DON'T DO IT),
+  each item citing problem ids. Effort is estimated for design + front end only.
+- **Component sheet**: low-fi grey-block wireframes per route (fixed four per row so no
+  card is orphaned), dashed blocks for 新增 and tinted blocks for 改内容, then a table of
+  existing components → new uses. New components reuse tokens only.
+- **System framework**: Inputs → Perception → Reasoning → Tools → Outputs with the
+  company's orchestrator named on top, then a table "page / module → which layer it exposes
+  → data source → status". Rule to keep: a feature that cannot name its layer and data source
+  is a feature not to build.
+- **Change list** per route (what · from which P / S / F ids · quadrant), explicitly visual-
+  free, waiting for sign-off; plus the list of content the company must supply.
+
+Internal boards may name competitors and carry caveats; the prototype may not. While
+writing the board, grep the prototype for leftover demo notes ("示例", "来自商业计划书") and
+list them as a problem instead of fixing them silently. Worked example:
+`品牌竞品调研_2026-10-12/沐仞功能与架构设计_2026-10-13.html` (2026-10-13).
 
 ### 1. Products × customers → doors (before any UI)
 
@@ -245,6 +292,11 @@ come from a row in it.
 - `t:'…'` replacements must not match `fmt:'…'`; anchor regexes on a preceding non-word char.
 - Reference pages gate content behind IntersectionObserver; scroll through the page before
   capturing or infer from the stylesheet.
+- Wide tables on a board expand the mobile layout viewport (innerWidth read 525 instead of
+  390). Under the mobile query use `table{display:block;overflow-x:auto}` with
+  `tbody{display:table;width:100%;min-width:640px}` so tables scroll inside themselves.
+- A `file://` URL built from a relative output path navigates nowhere and the page reads as
+  empty (scrollHeight = viewport). `os.path.abspath` the output dir first.
 
 ## Scripts
 
