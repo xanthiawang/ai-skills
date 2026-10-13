@@ -14,6 +14,7 @@ installation declarations only. It must never contain credentials or chat data.
 - LaunchAgent: `ai.openclaw.zixin-wechat` (local state only).
 - Agent tools: deny all during channel setup; enable only required retrieval
   capabilities once the source and model have been verified.
+- Default heartbeat is disabled (`agents.defaults.heartbeat.every: "0m"`).
 
 ```sh
 npm install --prefix "$HOME/.local/share/wechat-assistant/runtime" openclaw@2026.10.3
