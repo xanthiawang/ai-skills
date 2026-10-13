@@ -298,6 +298,16 @@ come from a row in it.
   status is `built` and HTTP 200, then load the live URL in headless Chrome and check each
   route's h1 plus every `<img>` has `naturalWidth > 0` before announcing it. Hash routes
   work on Pages without any config. The claude.ai artifact stays the review copy.
+- **The client is in mainland China.** github.io is often unreachable there, and a
+  render-blocking `<link rel="stylesheet" href="https://fonts.googleapis.com/…">` turns an
+  unreachable Google into a white page: measured 13.2 s to first paint with the font hosts
+  black-holed (`--host-resolver-rules="MAP fonts.googleapis.com 10.255.255.1, MAP
+  fonts.gstatic.com 10.255.255.1" --no-proxy-server`), 0.18 s after the fix. The build
+  script self-hosts the Latin families (latin + latin-ext woff2 slices from the Google CSS,
+  ~400 KB) and loads the CJK Noto families through `<link rel="preload" as="style"
+  onload="this.rel='stylesheet'">` with a `<noscript>` fallback, so Chinese falls back to
+  system fonts when Google is slow. Always run the black-hole test before announcing a
+  public address, and hand the company a zip of `site/` for their own ICP-registered host.
 
 ### 8. Handoff deck
 
