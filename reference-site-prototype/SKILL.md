@@ -233,7 +233,14 @@ come from a row in it.
   the docs page, sign-in and sign-up (which fields, which account types), and for new-api
   style gateways `/api/status` (server_address, login methods, top-up, enabled modules).
   Record the capture date per item; a test site changes day to day (six models on 10-12,
-  two on 10-13). Put the date in the prototype's footer note instead of 示例. What the
+  two on 10-13). **Read the page's JavaScript before calling anything "real"**: on the
+  沐仞 test site the node ratings, price factors, reviews and stability figures were
+  constants in `shared-data.js`, the live trade ticker came from `Math.random`, and the
+  "our price" was `marketPrice * 0.5`; only `fetch('/api/…')` results are backend data.
+  Grep the bundles for hard-coded arrays, `Math.random` and `fetch(` and label anything
+  not fetched as interface mock data. Also check the company's latest internal deck (here a
+  product / brand / marketing report) for the product list before structuring a products
+  page; it overrides the BP's sales-strategy labels. Put the date in the prototype's footer note instead of 示例. What the
   platform does not publish (its own price, trial policy, error codes) stays unstated, with
   a pointer to the platform page, never a made-up number.
 
