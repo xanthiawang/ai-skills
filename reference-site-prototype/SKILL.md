@@ -289,6 +289,15 @@ come from a row in it.
   side with the reference crop before publishing.
 - Publish with the same `file_path` to keep the URL; `open -a Dia <url>`; append the round to
   the audit file and memory.
+- **Public deploy, once Zixin says 部署**: build a `site/` folder next to the project (the
+  fragment wrapped in doctype + charset + viewport as `index.html`, the `art/` assets it
+  references by relative path, a `.nojekyll`, a README with the edit map and the live
+  address), `git init` with Zixin's name and GitHub email, `gh repo create <owner>/<name>
+  --public --source=. --push`, then `gh api --method POST repos/<owner>/<name>/pages` with
+  `{"build_type":"legacy","source":{"branch":"main","path":"/"}}`; poll until the Pages
+  status is `built` and HTTP 200, then load the live URL in headless Chrome and check each
+  route's h1 plus every `<img>` has `naturalWidth > 0` before announcing it. Hash routes
+  work on Pages without any config. The claude.ai artifact stays the review copy.
 
 ### 8. Handoff deck
 
