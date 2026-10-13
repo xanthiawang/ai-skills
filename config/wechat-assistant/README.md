@@ -10,6 +10,10 @@ installation declarations only. It must never contain credentials or chat data.
 - Runtime prefix: `~/.local/share/wechat-assistant/runtime`
 - Isolated OpenClaw profile: `zixin-wechat`
 - Local credential/config state: `~/.openclaw-zixin-wechat` (never synchronized)
+- Gateway: loopback only, port `18791`, locally generated token authentication.
+- LaunchAgent: `ai.openclaw.zixin-wechat` (local state only).
+- Agent tools: deny all during channel setup; enable only required retrieval
+  capabilities once the source and model have been verified.
 
 ```sh
 npm install --prefix "$HOME/.local/share/wechat-assistant/runtime" openclaw@2026.10.3
