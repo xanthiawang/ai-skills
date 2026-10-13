@@ -225,6 +225,17 @@ come from a row in it.
   company materials, B from public sources with date, C example numbers (labelled 示例 on the
   page), D placeholders (toast on click), E your own assumptions (labelled, listed for the
   client to confirm). Fix any claim that is none of these.
+- **Scrape the client's live or test product before inventing any example data.** The
+  2026-10-13 round replaced a whole invented pricing model (per-model 沐仞 prices, cache
+  prices, windows, per-model CO₂, trial credit, phone sign-up, Anthropic format, Kimi) with
+  what the platform really shows. Where to look: every nav route (content often sits in an
+  iframe such as `/pages/<app>/<page>.html?embed=1`, so read the iframe, not the shell),
+  the docs page, sign-in and sign-up (which fields, which account types), and for new-api
+  style gateways `/api/status` (server_address, login methods, top-up, enabled modules).
+  Record the capture date per item; a test site changes day to day (six models on 10-12,
+  two on 10-13). Put the date in the prototype's footer note instead of 示例. What the
+  platform does not publish (its own price, trial policy, error codes) stays unstated, with
+  a pointer to the platform page, never a made-up number.
 
 ### 5b. Products page when the company has several product lines
 
