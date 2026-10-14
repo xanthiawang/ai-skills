@@ -1,4 +1,5 @@
 import Cocoa
+import ScreenCaptureKit
 import CryptoKit
 
 let base=FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".local/share/wechat-assistant")
@@ -151,20 +152,81 @@ final class CalibrationView:NSImageView {
     // Selection and completion stay manual until the overlay can be verified.
     try await Task.sleep(for:.milliseconds(700))
 }
+@MainActor func screenshotOverlayDiagnostic() async throws {
+    guard CGPreflightScreenCaptureAccess(),AXIsProcessTrusted() else {throw fail("screen_recording_and_accessibility_permissions_required")}
+    let accountConfig=try config()
+    guard let accountRoot=accountConfig["db_root"] as? String else {throw fail("expected_account_missing")}
+    guard let app=NSRunningApplication.runningApplications(withBundleIdentifier:"com.tencent.xinWeChat").first,
+          app.bundleURL?.path=="/Applications/WeChat.app" else {throw fail("original_wechat_required")}
+    try await activateWeChat(app)
+    let ax=AXUIElementCreateApplication(app.processIdentifier)
+    var value:CFTypeRef?
+    guard AXUIElementCopyAttributeValue(ax,kAXFocusedWindowAttribute as CFString,&value) == .success,
+          let value,CFGetTypeID(value)==AXUIElementGetTypeID() else {throw fail("focused_window_missing")}
+    let window=unsafeBitCast(value,to:AXUIElement.self)
+    var pos:CFTypeRef?,size:CFTypeRef?,title:CFTypeRef?
+    guard AXUIElementCopyAttributeValue(window,kAXPositionAttribute as CFString,&pos) == .success,
+          AXUIElementCopyAttributeValue(window,kAXSizeAttribute as CFString,&size) == .success,
+          AXUIElementCopyAttributeValue(window,kAXTitleAttribute as CFString,&title) == .success,
+          ["微信","WeChat","Weixin"].contains(title as? String ?? ""),
+          let pos,let size,CFGetTypeID(pos)==AXValueGetTypeID(),CFGetTypeID(size)==AXValueGetTypeID() else {throw fail("focused_chat_geometry_missing")}
+    var point=CGPoint.zero,dimensions=CGSize.zero
+    guard AXValueGetValue(unsafeBitCast(pos,to:AXValue.self),.cgPoint,&point),
+          AXValueGetValue(unsafeBitCast(size,to:AXValue.self),.cgSize,&dimensions) else {throw fail("focused_chat_geometry_missing")}
+    let rect=CGRect(origin:point,size:dimensions)
+    let before=try await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true)
+    let oldIDs=Set(before.windows.map(\.windowID))
+    guard let display=before.displays.first(where:{$0.frame.contains(rect)}) else {throw fail("chat_must_fit_one_display")}
+    guard let rows=CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]] else {throw fail("window_inventory_missing")}
+    var found=false
+    for row in rows {
+        guard let pid=row[kCGWindowOwnerPID as String] as? Int32,
+              let bounds=row[kCGWindowBounds as String] as? NSDictionary,
+              let frame=CGRect(dictionaryRepresentation:bounds) else {throw fail("window_bounds_missing")}
+        if pid==app.processIdentifier,abs(frame.minX-rect.minX)<=1,abs(frame.minY-rect.minY)<=1,
+           abs(frame.width-rect.width)<=1,abs(frame.height-rect.height)<=1 {found=true;break}
+        if (row[kCGWindowAlpha as String] as? Double ?? 1)>0,frame.intersects(rect) {throw fail("chat_obscured_before_native_screenshot_layer_\(row[kCGWindowLayer as String] as? Int ?? -1)")}
+    }
+    guard found else {throw fail("visible_chat_not_found")}
+    try await beginWeChatScreenshot()
+    let after=try await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true)
+    let overlays=after.windows.filter { !oldIDs.contains($0.windowID) && $0.owningApplication?.processID==app.processIdentifier && $0.frame.contains(rect) }
+    guard overlays.count==1 else {throw fail("native_screenshot_overlay_not_unique; no_selection_or_return")}
+    try requireFrontmost(app.processIdentifier)
+    let config=SCStreamConfiguration();config.width=Int(rect.width);config.height=Int(rect.height);config.showsCursor=false
+    config.sourceRect=CGRect(x:rect.minX-display.frame.minX,y:rect.minY-display.frame.minY,width:rect.width,height:rect.height)
+    let image=try await SCScreenshotManager.captureImage(contentFilter:SCContentFilter(display:display,including:[overlays[0]]),configuration:config)
+    try requireFrontmost(app.processIdentifier)
+    var currentPos:CFTypeRef?,currentSize:CFTypeRef?
+    guard AXUIElementCopyAttributeValue(window,kAXPositionAttribute as CFString,&currentPos) == .success,
+          AXUIElementCopyAttributeValue(window,kAXSizeAttribute as CFString,&currentSize) == .success,
+          let currentPos,let currentSize,CFGetTypeID(currentPos)==AXValueGetTypeID(),CFGetTypeID(currentSize)==AXValueGetTypeID() else {throw fail("chat_geometry_changed")}
+    var finalPoint=CGPoint.zero,finalSize=CGSize.zero
+    guard AXValueGetValue(unsafeBitCast(currentPos,to:AXValue.self),.cgPoint,&finalPoint),
+          AXValueGetValue(unsafeBitCast(currentSize,to:AXValue.self),.cgSize,&finalSize),finalPoint==point,finalSize==dimensions else {throw fail("chat_geometry_changed")}
+    try requireAccount(app.processIdentifier,root:accountRoot)
+    guard !isBlank(pixels(image)) else {throw fail("native_screenshot_overlay_blank; no_selection_or_return")}
+    let width=min(750,Double(image.width),520*Double(image.width)/Double(image.height)),height=width*Double(image.height)/Double(image.width)
+    let view=NSImageView(frame:NSRect(x:0,y:0,width:width,height:height));view.image=NSImage(cgImage:image,size:NSSize(width:width,height:height));view.imageScaling = .scaleProportionallyUpOrDown
+    let preview=NSAlert();preview.messageText="原生截图范围只读预览";preview.informativeText="没有输入或发送消息。没有完成截图选区。图片不保存到文件。";preview.accessoryView=view;preview.addButton(withTitle:"关闭")
+    NSApp.activate(ignoringOtherApps:true);_=preview.runModal()
+}
 @main struct ReplyBridge {
     @MainActor static func main() {
         let app=NSApplication.shared;app.setActivationPolicy(.regular)
         Task { @MainActor in
             do {
-                if CommandLine.arguments.contains("--wechat-screenshot") {try await beginWeChatScreenshot()}
+                if CommandLine.arguments.contains("--snapshot-diagnose") {try await screenshotOverlayDiagnostic()}
+                else if CommandLine.arguments.contains("--wechat-screenshot") {try await beginWeChatScreenshot()}
                 else if CommandLine.arguments.contains("--setup") {try await configure()}
                 else if CommandLine.arguments.contains("--diagnose") {try await diagnoseCapture()}
                 else if let i=CommandLine.arguments.firstIndex(of:"--request"),i+1<CommandLine.arguments.count {try await review(CommandLine.arguments[i+1])}
                 else {
-                    let choice=dialog("微信回复确认","先在原版微信打开文件传输助手。“微信自带截图”只触发 ⌘4，框选和完成由你操作；不输入、不发送。",["检查窗口捕获","首次设置","微信自带截图","关闭"])
+                    let choice=dialog("微信回复确认","先在原版微信打开文件传输助手。“微信自带截图”只触发 ⌘4，框选和完成由你操作；不输入、不发送。",["检查窗口捕获","首次设置","微信自带截图","截图范围诊断","关闭"])
                     if choice == .alertFirstButtonReturn {try await diagnoseCapture()}
                     else if choice == .alertSecondButtonReturn {try await configure()}
                     else if choice.rawValue == NSApplication.ModalResponse.alertFirstButtonReturn.rawValue+2 {try await beginWeChatScreenshot()}
+                    else if choice.rawValue == NSApplication.ModalResponse.alertFirstButtonReturn.rawValue+3 {try await screenshotOverlayDiagnostic()}
                 }
             } catch { _=dialog("发送未完成",error.localizedDescription+"\n请查看微信，程序不会自动重试。") }
             app.terminate(nil)
