@@ -72,9 +72,25 @@ final class CaptureSession: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     private var callbacks = 0
     private var incomplete = 0
     private var stream: SCStream?
+    private var visibleWindow: SCWindow?
+    private var blockedFrames = 0
+    private func regionIsClear() -> Bool {
+        guard let window = visibleWindow else { return true }
+        guard NSWorkspace.shared.frontmostApplication?.processIdentifier == window.owningApplication?.processID,
+              let rows = CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]] else { return false }
+        for row in rows {
+            guard let number = row[kCGWindowNumber as String] as? UInt32,
+                  let bounds = row[kCGWindowBounds as String] as? NSDictionary,
+                  let rect = CGRect(dictionaryRepresentation:bounds) else { return false }
+            if number == window.windowID { return rect == window.frame }
+            if (row[kCGWindowAlpha as String] as? Double ?? 1) > 0 && rect.intersects(window.frame) { return false }
+        }
+        return false
+    }
     var key = ""
     func stream(_ stream: SCStream, didOutputSampleBuffer sample: CMSampleBuffer, of type: SCStreamOutputType) {
         guard type == .screen, sample.isValid, let pixel = sample.imageBuffer else { return }
+        guard regionIsClear() else { lock.lock(); image=nil;blockedFrames += 1;lock.unlock();return }
         lock.lock();callbacks += 1;lock.unlock()
         let attachments=CMSampleBufferGetSampleAttachmentsArray(sample,createIfNecessary:false) as? [[SCStreamFrameInfo:Any]]
         guard let status=attachments?.first?[.status] as? Int,status==SCFrameStatus.complete.rawValue else {
@@ -82,6 +98,7 @@ final class CaptureSession: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         }
         let input = CIImage(cvPixelBuffer: pixel)
         guard let frame = context.createCGImage(input, from: input.extent) else { return }
+        guard regionIsClear() else { lock.lock();image=nil;blockedFrames += 1;lock.unlock();return }
         lock.lock(); image = frame; sequence += 1; lock.unlock()
     }
     func stream(_ stream: SCStream, didStopWithError error: Error) {
@@ -90,10 +107,11 @@ final class CaptureSession: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     func serial() -> Int { lock.lock(); defer { lock.unlock() }; return sequence }
     func diagnostics() -> [String:Any] {
         lock.lock();defer {lock.unlock()}
-        return ["callbacks":callbacks,"incomplete":incomplete,"complete_frames":sequence,
+        return ["callbacks":callbacks,"incomplete":incomplete,"complete_frames":sequence,"blocked_frames":blockedFrames,
                 "width":image?.width ?? 0,"height":image?.height ?? 0,"stream_error":failure != nil]
     }
     func latest() throws -> CGImage? {
+        guard regionIsClear() else { throw fail("visible_region_obscured_or_window_changed") }
         lock.lock(); defer { lock.unlock() }
         if let failure { throw failure }
         return image
@@ -114,6 +132,10 @@ final class CaptureSession: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         case "appCrop","appThenWindow":initial=SCContentFilter(display:display,including:[app],exceptingWindows:[])
         case "windowCrop":initial=SCContentFilter(display:display,including:[window])
         case "independentWindow":initial=SCContentFilter(desktopIndependentWindow:window)
+        case "visibleRegion":
+            visibleWindow=window
+            guard regionIsClear() else { throw fail("visible_region_obscured_or_window_changed") }
+            initial=SCContentFilter(display:display,excludingWindows:[])
         default:throw fail("unsupported_capture_route")
         }
         let active = SCStream(filter:initial, configuration:config, delegate:self)

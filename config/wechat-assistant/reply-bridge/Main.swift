@@ -72,7 +72,7 @@ final class CalibrationView:NSImageView {
     _=app.activate(options:[.activateAllWindows]);try await Task.sleep(for:.milliseconds(350))
     let (w,d)=try await targetWindow()
     var results:[[String:Any]]=[];var selected:String?
-    for route in ["appThenWindow","appCrop","windowCrop","independentWindow"] {
+    for route in ["visibleRegion","appThenWindow","appCrop","windowCrop","independentWindow"] {
         let capture=CaptureSession();var result:[String:Any]=["route":route,"header_verified":false]
         do {
             try await capture.start(window:w,display:d,interval:0.25,route:route)
@@ -96,7 +96,7 @@ final class CalibrationView:NSImageView {
     s["capture_route"]=selected;s["enabled"]=false;s.removeValue(forKey:"calibration_route");c["mac_sender"]=s
     try JSONSerialization.data(withJSONObject:c,options:[.sortedKeys]).write(to:base.appendingPathComponent("reader-config.json"),options:.atomic)
     try FileManager.default.setAttributes([.posixPermissions:0o600],ofItemAtPath:base.appendingPathComponent("reader-config.json").path)
-    _=dialog("已找到可用捕获方式",selected+"\n只捕获微信应用或指定窗口，没有扩大到整个屏幕。现在重新校准输入区。")
+    _=dialog("已找到可用捕获方式",selected+"\n捕获范围限定为微信窗口矩形；可见区域模式在窗口被遮挡时停止。现在重新校准输入区。")
     try await configure()
 }
 @MainActor func review(_ code:String) async throws {
