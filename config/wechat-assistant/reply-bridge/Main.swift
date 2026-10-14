@@ -94,7 +94,9 @@ final class CalibrationView:NSImageView {
             do {
                 if CommandLine.arguments.contains("--setup") {try await configure()}
                 else if let i=CommandLine.arguments.firstIndex(of:"--request"),i+1<CommandLine.arguments.count {try await review(CommandLine.arguments[i+1])}
-                else { _=dialog("微信回复确认","用 --setup 完成首次权限与输入区设置；回复草稿由微信助手准备。每条发送都需本人在此核对收件人与完整正文。") }
+                else {
+                    if dialog("微信回复确认","首次设置需要辅助功能与屏幕录制，用于核对微信窗口并在你逐条确认后输入发送。回复草稿由微信助手准备。",["首次设置","关闭"]) == .alertFirstButtonReturn {try await configure()}
+                }
             } catch { _=dialog("发送未完成",error.localizedDescription+"\n请查看微信，程序不会自动重试。") }
             app.terminate(nil)
         }
