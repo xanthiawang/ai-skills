@@ -33,3 +33,9 @@ Full notice: `THIRD_PARTY_LICENSE`. Upstream generated-data tests are not includ
 `config/wechat-assistant/reply-bridge/`; queue state, private calibration and
 native app belong under `~/.local/share/wechat-assistant/`. Public redistribution
 must use a reviewed allowlist and must exclude personal voice samples/profiles.
+
+## Scoped capture diagnostics (2026-10-14)
+
+The app provides a read-only diagnostic action before any send request. It activates original WeChat, reacquires geometry, and tries app-to-window filter switching, app-only cropping, window-only cropping and desktop-independent single-window capture. Only frame counters/status/dimensions and header-match booleans are written locally. Chat pixels/text are not saved. Successful capture-mode selection invalidates prior input calibration. Full-display fallback is not included. Current real diagnostic: three routes produced no callbacks, the independent-window route produced complete frames but no usable image; sending remains disabled. WeChat demonstration-hide preferences and same-app window ordering still require checking.
+
+Related existing source recipes: writing-voice/SKILL.md; dendron/sync/wechat-sync/SKILL.md; dendron/sync/session-sync/scripts/session_sync.py; dendron/command-center/scripts/session_index.py. Session indexing covers local Claude Code/Codex transcripts, not all web ChatGPT or Claude Desktop history. Inherited author paths must be adapted before deployment.
