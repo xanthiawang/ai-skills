@@ -153,6 +153,36 @@ final class CalibrationView:NSImageView {
     // Selection and completion stay manual until the overlay can be verified.
     try await Task.sleep(for:.milliseconds(700))
 }
+func progressHUD(_ row:[String:Any]) -> CGRect? {
+    guard let pid=row[kCGWindowOwnerPID as String] as? Int32,
+          let app=NSRunningApplication(processIdentifier:pid),app.bundleIdentifier=="com.codeisland.app",
+          let bounds=row[kCGWindowBounds as String] as? NSDictionary,
+          let frame=CGRect(dictionaryRepresentation:bounds) else {return nil}
+    var windows:CFTypeRef?
+    guard AXUIElementCopyAttributeValue(AXUIElementCreateApplication(pid),kAXWindowsAttribute as CFString,&windows) == .success,
+          let list=windows as? [AXUIElement] else {return nil}
+    var matches=0
+    for w in list {
+        var p:CFTypeRef?,s:CFTypeRef?,title:CFTypeRef?
+        guard AXUIElementCopyAttributeValue(w,kAXPositionAttribute as CFString,&p) == .success,
+              AXUIElementCopyAttributeValue(w,kAXSizeAttribute as CFString,&s) == .success,
+              AXUIElementCopyAttributeValue(w,kAXTitleAttribute as CFString,&title) == .success,
+              (title as? String ?? "").isEmpty,let p,let s,CFGetTypeID(p)==AXValueGetTypeID(),CFGetTypeID(s)==AXValueGetTypeID() else {continue}
+        var point=CGPoint.zero,size=CGSize.zero
+        guard AXValueGetValue(unsafeBitCast(p,to:AXValue.self),.cgPoint,&point),AXValueGetValue(unsafeBitCast(s,to:AXValue.self),.cgSize,&size),
+              abs(point.x-frame.minX)<=1,abs(point.y-frame.minY)<=1,abs(size.width-frame.width)<=1,abs(size.height-frame.height)<=1 else {continue}
+        var queue=[w],count=0,verified=false
+        while !queue.isEmpty,count<24 {
+            let node=queue.removeFirst();count += 1
+            var value:CFTypeRef?,children:CFTypeRef?
+            if AXUIElementCopyAttributeValue(node,kAXValueAttribute as CFString,&value) == .success,
+               let text=value as? String,text.count<=80,text.range(of:"^[A-Za-z ]+ [0-9]+ / [0-9]+$",options:.regularExpression) != nil {verified=true}
+            if AXUIElementCopyAttributeValue(node,kAXChildrenAttribute as CFString,&children) == .success,let next=children as? [AXUIElement] {queue.append(contentsOf:next.prefix(24-count))}
+        }
+        if verified {matches += 1}
+    }
+    return matches==1 ? frame : nil
+}
 @MainActor func screenshotOverlayDiagnostic() async throws {
     guard CGPreflightScreenCaptureAccess(),AXIsProcessTrusted() else {throw fail("screen_recording_and_accessibility_permissions_required")}
     let accountConfig=try config()
@@ -178,7 +208,7 @@ final class CalibrationView:NSImageView {
     let before=try await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true)
     let oldIDs=Set(before.windows.map(\.windowID))
     guard let display=before.displays.first(where:{$0.frame.contains(rect)}) else {throw fail("chat_must_fit_one_display")}
-    var found=false,lastObstruction="visible_chat_not_found"
+    var found=false,lastObstruction="visible_chat_not_found",hud:[String:Any]?
     for _ in 0..<100 {
         try requireFrontmost(app.processIdentifier)
         guard let rows=CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]] else {throw fail("window_inventory_missing")}
@@ -190,12 +220,13 @@ final class CalibrationView:NSImageView {
             if pid==app.processIdentifier,abs(frame.minX-rect.minX)<=1,abs(frame.minY-rect.minY)<=1,
                abs(frame.width-rect.width)<=1,abs(frame.height-rect.height)<=1 {found=true;break}
             if (row[kCGWindowAlpha as String] as? Double ?? 1)>0,frame.intersects(rect) {
+                if hud==nil,progressHUD(row) != nil {hud=row;continue}
                 let owner=NSRunningApplication(processIdentifier:pid)?.bundleIdentifier ?? "system"
                 obstruction="chat_obscured_layer_\(row[kCGWindowLayer as String] as? Int ?? -1); owner=\(owner)";break
             }
         }
         if found,obstruction==nil {break}
-        found=false;lastObstruction=obstruction ?? "visible_chat_not_found"
+        found=false;hud=nil;lastObstruction=obstruction ?? "visible_chat_not_found"
         try await Task.sleep(for:.milliseconds(200))
     }
     guard found else {throw fail(lastObstruction)}
@@ -206,7 +237,20 @@ final class CalibrationView:NSImageView {
     try requireFrontmost(app.processIdentifier)
     let config=SCStreamConfiguration();config.width=Int(rect.width);config.height=Int(rect.height);config.showsCursor=false
     config.sourceRect=CGRect(x:rect.minX-display.frame.minX,y:rect.minY-display.frame.minY,width:rect.width,height:rect.height)
-    let image=try await SCScreenshotManager.captureImage(contentFilter:SCContentFilter(display:display,including:[overlays[0]]),configuration:config)
+    var image=try await SCScreenshotManager.captureImage(contentFilter:SCContentFilter(display:display,including:[overlays[0]]),configuration:config)
+    if let hud,let id=hud[kCGWindowNumber as String] as? UInt32,let pid=hud[kCGWindowOwnerPID as String] as? Int32,
+       let originalFrame=progressHUD(hud) {
+        guard let now=CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]],
+              let same=now.first(where:{($0[kCGWindowNumber as String] as? UInt32)==id}),
+              (same[kCGWindowOwnerPID as String] as? Int32)==pid,progressHUD(same)==originalFrame else {throw fail("progress_hud_changed; image_discarded")}
+        let hidden=originalFrame.intersection(rect)
+        guard let context=CGContext(data:nil,width:image.width,height:image.height,bitsPerComponent:8,bytesPerRow:image.width*4,
+              space:CGColorSpaceCreateDeviceRGB(),bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue) else {throw fail("mask_context_failed")}
+        context.draw(image,in:CGRect(x:0,y:0,width:image.width,height:image.height))
+        context.setFillColor(NSColor.gray.cgColor)
+        context.fill(CGRect(x:hidden.minX-rect.minX,y:Double(image.height)-(hidden.maxY-rect.minY),width:hidden.width,height:hidden.height).insetBy(dx:-2,dy:-2))
+        guard let masked=context.makeImage() else {throw fail("mask_image_failed")};image=masked
+    } else if hud != nil {throw fail("progress_hud_not_verified; image_discarded")}
     try requireFrontmost(app.processIdentifier)
     var currentPos:CFTypeRef?,currentSize:CFTypeRef?
     guard AXUIElementCopyAttributeValue(window,kAXPositionAttribute as CFString,&currentPos) == .success,
@@ -219,7 +263,7 @@ final class CalibrationView:NSImageView {
     guard !isBlank(pixels(image)) else {throw fail("native_screenshot_overlay_blank; no_selection_or_return")}
     let width=min(750,Double(image.width),520*Double(image.width)/Double(image.height)),height=width*Double(image.height)/Double(image.width)
     let view=NSImageView(frame:NSRect(x:0,y:0,width:width,height:height));view.image=NSImage(cgImage:image,size:NSSize(width:width,height:height));view.imageScaling = .scaleProportionallyUpOrDown
-    let preview=NSAlert();preview.messageText="原生截图范围只读预览";preview.informativeText="没有输入或发送消息。没有完成截图选区。图片不保存到文件。";preview.accessoryView=view;preview.addButton(withTitle:"关闭")
+    let preview=NSAlert();preview.messageText="原生截图范围只读预览";preview.informativeText="没有输入或发送消息。灰色遮挡区不可核验。没有完成截图选区。图片不保存到文件。";preview.accessoryView=view;preview.addButton(withTitle:"关闭")
     NSApp.activate(ignoringOtherApps:true);_=preview.runModal();preview.window.orderOut(nil)
 }
 @main struct ReplyBridge {
