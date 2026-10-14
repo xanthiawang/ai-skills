@@ -125,3 +125,7 @@ establish access to all chats. Never weaken macOS protections automatically.
 runtime prefix. This declaration was created directly in the managed settings
 repository at `~/programs/ai-skills/config/wechat-assistant/README.md`, as authorized
 by the user's install/configure request. No existing files were moved.
+
+## Local learning memory (2026-10-14)
+
+Generic source lives in the public wechat-chat-assistant repository, app/local_memory.py and app/memory_refresh.py. The owner-only wechat_memory tool stores account-bound SQLite state locally, uses genuine sourced self messages and changed draft/message pairs, and keeps relationship extractions as candidates. Daily 09:00 briefing refreshes bounded memory first; no resident graph/model server or embedding API. Generic skill recipes are adapted from writing-voice, wechat-sync and screenpipe-customer-context. No inherited account paths or personal profiles are copied into public source. Actual profiles remain private. Sender remains disabled pending genuine approved trial.
