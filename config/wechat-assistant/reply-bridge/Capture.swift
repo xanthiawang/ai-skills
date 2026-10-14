@@ -74,17 +74,25 @@ final class CaptureSession: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     private var stream: SCStream?
     private var visibleWindow: SCWindow?
     private var blockedFrames = 0
+    private var regionFailure = ""
+    private let regionLock = NSLock()
     private func regionIsClear() -> Bool {
+        regionLock.lock();defer {regionLock.unlock()}
         guard let window = visibleWindow else { return true }
-        guard NSWorkspace.shared.frontmostApplication?.processIdentifier == window.owningApplication?.processID,
-              let rows = CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]] else { return false }
+        guard NSWorkspace.shared.frontmostApplication?.processIdentifier == window.owningApplication?.processID else { regionFailure="foreground";return false }
+        guard let rows = CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]] else { regionFailure="inventory";return false }
         for row in rows {
             guard let number = row[kCGWindowNumber as String] as? UInt32,
                   let bounds = row[kCGWindowBounds as String] as? NSDictionary,
-                  let rect = CGRect(dictionaryRepresentation:bounds) else { return false }
-            if number == window.windowID { return rect == window.frame }
-            if (row[kCGWindowAlpha as String] as? Double ?? 1) > 0 && rect.intersects(window.frame) { return false }
+                  let rect = CGRect(dictionaryRepresentation:bounds) else { regionFailure="bounds";return false }
+            if number == window.windowID {
+                let frame=window.frame
+                let same=abs(rect.minX-frame.minX)<=1 && abs(rect.minY-frame.minY)<=1 && abs(rect.width-frame.width)<=1 && abs(rect.height-frame.height)<=1
+                regionFailure=same ? "" : "geometry";return same
+            }
+            if (row[kCGWindowAlpha as String] as? Double ?? 1) > 0 && rect.intersects(window.frame) { regionFailure="overlap_layer_\(row[kCGWindowLayer as String] as? Int ?? -1)";return false }
         }
+        regionFailure="target_missing"
         return false
     }
     var key = ""
@@ -106,9 +114,10 @@ final class CaptureSession: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     }
     func serial() -> Int { lock.lock(); defer { lock.unlock() }; return sequence }
     func diagnostics() -> [String:Any] {
+        regionLock.lock();let reason=regionFailure;regionLock.unlock()
         lock.lock();defer {lock.unlock()}
         return ["callbacks":callbacks,"incomplete":incomplete,"complete_frames":sequence,"blocked_frames":blockedFrames,
-                "width":image?.width ?? 0,"height":image?.height ?? 0,"stream_error":failure != nil]
+                "width":image?.width ?? 0,"height":image?.height ?? 0,"stream_error":failure != nil,"region_failure":reason]
     }
     func latest() throws -> CGImage? {
         guard regionIsClear() else { throw fail("visible_region_obscured_or_window_changed") }
