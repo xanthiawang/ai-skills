@@ -107,8 +107,14 @@ func requireFrontmost(_ pid:pid_t) throws {
     guard NSWorkspace.shared.frontmostApplication?.processIdentifier == pid else { throw fail("wechat_lost_focus") }
 }
 @MainActor func activateWeChat(_ app:NSRunningApplication) async throws {
+    if NSWorkspace.shared.frontmostApplication?.processIdentifier==app.processIdentifier {return}
+    guard app.bundleURL?.path=="/Applications/WeChat.app" else {throw fail("original_wechat_required")}
     NSApplication.shared.yieldActivation(to:app)
-    guard app.activate(from:NSRunningApplication.current,options:[.activateAllWindows]) else { throw fail("wechat_activation_denied") }
+    let request=NSWorkspace.OpenConfiguration()
+    request.activates=true;request.createsNewApplicationInstance=false;request.promptsUserIfNeeded=false
+    let opened=try await NSWorkspace.shared.openApplication(at:app.bundleURL!,configuration:request)
+    guard opened.processIdentifier==app.processIdentifier else {throw fail("wechat_process_changed")}
+    _=app.activate(from:NSRunningApplication.current,options:[.activateAllWindows])
     for _ in 0..<40 {
         if NSWorkspace.shared.frontmostApplication?.processIdentifier==app.processIdentifier {return}
         try await Task.sleep(for:.milliseconds(50))
