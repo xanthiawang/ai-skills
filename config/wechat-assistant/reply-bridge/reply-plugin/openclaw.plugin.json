@@ -1,0 +1,1 @@
+{"id":"wechat-reply-helper","name":"Human-confirmed WeChat reply drafts","description":"Prepare owner previews; final sending requires local human review","categories":["other"],"activation":{"onStartup":true},"contracts":{"tools":["wechat_reply"]},"toolMetadata":{"wechat_reply":{"optional":true}},"configSchema":{"type":"object","additionalProperties":false}}
