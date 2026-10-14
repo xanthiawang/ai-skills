@@ -5,10 +5,12 @@ import CryptoKit
 let base=FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".local/share/wechat-assistant")
 let nativeAttempt=UUID().uuidString
 @MainActor var nativeLastPhase="not_started"
+@MainActor var nativeDiagnosticFields:[String:Any]=[:]
 @MainActor func nativeStage(_ phase:String,_ fields:[String:Any]=[:]) throws {
     let folder=base.appendingPathComponent("capture-diagnostics",isDirectory:true)
     try FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true,attributes:[.posixPermissions:0o700])
-    var value=fields;value["phase"]=phase;value["previous_phase"]=nativeLastPhase;nativeLastPhase=phase;value["at"]=ISO8601DateFormatter().string(from:Date())
+    nativeDiagnosticFields.merge(fields,uniquingKeysWith: {_,new in new})
+    var value=nativeDiagnosticFields;value["phase"]=phase;value["previous_phase"]=nativeLastPhase;nativeLastPhase=phase;value["at"]=ISO8601DateFormatter().string(from:Date())
     value["foreground"]=NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "unknown"
     let file=folder.appendingPathComponent("native-"+nativeAttempt+".json")
     try JSONSerialization.data(withJSONObject:value,options:[.sortedKeys]).write(to:file,options:.atomic)
