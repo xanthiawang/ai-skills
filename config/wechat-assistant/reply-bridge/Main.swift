@@ -164,6 +164,18 @@ final class CalibrationView:NSImageView {
     // Selection and completion stay manual until the overlay can be verified.
     try await Task.sleep(for:.milliseconds(700))
 }
+@MainActor func cancelWeChatScreenshot() async throws {
+    guard !screenLocked(),AXIsProcessTrusted(),let app=NSRunningApplication.runningApplications(withBundleIdentifier:"com.tencent.xinWeChat").first,
+          app.bundleURL?.path=="/Applications/WeChat.app" else {throw fail("original_unlocked_wechat_required")}
+    let c=try config();guard let root=c["db_root"] as? String else {throw fail("expected_account_missing")}
+    try requireAccount(app.processIdentifier,root:root);try await activateWeChat(app);try requireFrontmost(app.processIdentifier)
+    for down in [true,false] {
+        guard let event=CGEvent(keyboardEventSource:nil,virtualKey:53,keyDown:down) else {throw fail("screenshot_cancel_event_failed")}
+        event.postToPid(app.processIdentifier)
+    }
+    try await Task.sleep(for:.milliseconds(350))
+    try nativeStage("picker_cancelled")
+}
 func progressHUD(_ row:[String:Any]) -> CGRect? {
     guard let pid=row[kCGWindowOwnerPID as String] as? Int32,
           let app=NSRunningApplication(processIdentifier:pid),app.bundleIdentifier=="com.codeisland.app",
@@ -252,8 +264,21 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
     try await activateWeChat(app)
     let ax=AXUIElementCreateApplication(app.processIdentifier)
     var value:CFTypeRef?
-    guard AXUIElementCopyAttributeValue(ax,kAXFocusedWindowAttribute as CFString,&value) == .success,
-          let value,CFGetTypeID(value)==AXUIElementGetTypeID() else {throw fail("focused_window_missing")}
+    if AXUIElementCopyAttributeValue(ax,kAXFocusedWindowAttribute as CFString,&value) != .success || value==nil {
+        try await cancelWeChatScreenshot()
+        _=AXUIElementCopyAttributeValue(ax,kAXMainWindowAttribute as CFString,&value)
+    }
+    if value==nil {
+        var raw:CFTypeRef?
+        if AXUIElementCopyAttributeValue(ax,kAXWindowsAttribute as CFString,&raw) == .success,let all=raw as? [AXUIElement] {
+            let main=all.filter {item in
+                var title:CFTypeRef?
+                return AXUIElementCopyAttributeValue(item,kAXTitleAttribute as CFString,&title) == .success && ["微信","WeChat","Weixin"].contains(title as? String ?? "")
+            }
+            if main.count==1 {value=main[0]}
+        }
+    }
+    guard let value,CFGetTypeID(value)==AXUIElementGetTypeID() else {throw fail("focused_window_missing")}
     let window=unsafeBitCast(value,to:AXUIElement.self)
     var pos:CFTypeRef?,size:CFTypeRef?,title:CFTypeRef?
     guard AXUIElementCopyAttributeValue(window,kAXPositionAttribute as CFString,&pos) == .success,
@@ -334,7 +359,8 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
         let app=NSApplication.shared;app.setActivationPolicy(.regular)
         Task { @MainActor in
             do {
-                if CommandLine.arguments.contains("--snapshot-diagnose") {try await screenshotOverlayDiagnostic()}
+                if CommandLine.arguments.contains("--cancel-screenshot") {try await cancelWeChatScreenshot()}
+                else if CommandLine.arguments.contains("--snapshot-diagnose") {try await screenshotOverlayDiagnostic()}
                 else if CommandLine.arguments.contains("--wechat-screenshot") {try await beginWeChatScreenshot()}
                 else if CommandLine.arguments.contains("--setup") {try await configure()}
                 else if CommandLine.arguments.contains("--diagnose") {try await diagnoseCapture()}
