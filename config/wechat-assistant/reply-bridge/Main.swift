@@ -178,21 +178,27 @@ final class CalibrationView:NSImageView {
     let before=try await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true)
     let oldIDs=Set(before.windows.map(\.windowID))
     guard let display=before.displays.first(where:{$0.frame.contains(rect)}) else {throw fail("chat_must_fit_one_display")}
-    guard let rows=CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]] else {throw fail("window_inventory_missing")}
-    var found=false
-    for row in rows {
-        guard let pid=row[kCGWindowOwnerPID as String] as? Int32,
-              let bounds=row[kCGWindowBounds as String] as? NSDictionary,
-              let frame=CGRect(dictionaryRepresentation:bounds) else {throw fail("window_bounds_missing")}
-        if pid==app.processIdentifier,abs(frame.minX-rect.minX)<=1,abs(frame.minY-rect.minY)<=1,
-           abs(frame.width-rect.width)<=1,abs(frame.height-rect.height)<=1 {found=true;break}
-        if (row[kCGWindowAlpha as String] as? Double ?? 1)>0,frame.intersects(rect) {
-            let own=pid==NSRunningApplication.current.processIdentifier
-            let owner=NSRunningApplication(processIdentifier:pid)?.bundleIdentifier ?? "system"
-            throw fail("chat_obscured_layer_\(row[kCGWindowLayer as String] as? Int ?? -1); own_dialog=\(own); owner=\(owner)")
+    var found=false,lastObstruction="visible_chat_not_found"
+    for _ in 0..<100 {
+        try requireFrontmost(app.processIdentifier)
+        guard let rows=CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]] else {throw fail("window_inventory_missing")}
+        var obstruction:String?
+        for row in rows {
+            guard let pid=row[kCGWindowOwnerPID as String] as? Int32,
+                  let bounds=row[kCGWindowBounds as String] as? NSDictionary,
+                  let frame=CGRect(dictionaryRepresentation:bounds) else {throw fail("window_bounds_missing")}
+            if pid==app.processIdentifier,abs(frame.minX-rect.minX)<=1,abs(frame.minY-rect.minY)<=1,
+               abs(frame.width-rect.width)<=1,abs(frame.height-rect.height)<=1 {found=true;break}
+            if (row[kCGWindowAlpha as String] as? Double ?? 1)>0,frame.intersects(rect) {
+                let owner=NSRunningApplication(processIdentifier:pid)?.bundleIdentifier ?? "system"
+                obstruction="chat_obscured_layer_\(row[kCGWindowLayer as String] as? Int ?? -1); owner=\(owner)";break
+            }
         }
+        if found,obstruction==nil {break}
+        found=false;lastObstruction=obstruction ?? "visible_chat_not_found"
+        try await Task.sleep(for:.milliseconds(200))
     }
-    guard found else {throw fail("visible_chat_not_found")}
+    guard found else {throw fail(lastObstruction)}
     try await beginWeChatScreenshot()
     let after=try await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true)
     let overlays=after.windows.filter { !oldIDs.contains($0.windowID) && $0.owningApplication?.processID==app.processIdentifier && $0.frame.contains(rect) }
