@@ -3,6 +3,17 @@ import ScreenCaptureKit
 import CryptoKit
 
 let base=FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".local/share/wechat-assistant")
+let nativeAttempt=UUID().uuidString
+@MainActor var nativeLastPhase="not_started"
+@MainActor func nativeStage(_ phase:String,_ fields:[String:Any]=[:]) throws {
+    let folder=base.appendingPathComponent("capture-diagnostics",isDirectory:true)
+    try FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true,attributes:[.posixPermissions:0o700])
+    var value=fields;value["phase"]=phase;value["previous_phase"]=nativeLastPhase;nativeLastPhase=phase;value["at"]=ISO8601DateFormatter().string(from:Date())
+    value["foreground"]=NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "unknown"
+    let file=folder.appendingPathComponent("native-"+nativeAttempt+".json")
+    try JSONSerialization.data(withJSONObject:value,options:[.sortedKeys]).write(to:file,options:.atomic)
+    try FileManager.default.setAttributes([.posixPermissions:0o600],ofItemAtPath:file.path)
+}
 func object(_ url:URL) throws -> [String:Any] {
     guard let value=try JSONSerialization.jsonObject(with:Data(contentsOf:url)) as? [String:Any] else { throw fail("invalid_local_object") }
     return value
@@ -174,6 +185,7 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
     return verified ? frame : nil
 }
 @MainActor func nativePickerBitmap(_ picker:SCWindow,_ rect:CGRect,_ pid:pid_t) async throws -> CGImage {
+    try nativeStage("picker_selection_start")
     let board=NSPasteboard.general
     var saved=[NSPasteboardItem](),total=0
     for item in board.pasteboardItems ?? [] {
@@ -204,6 +216,7 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
         event.post(tap:.cghidEventTap);try await Task.sleep(for:.milliseconds(100))
     }
     try await Task.sleep(for:.milliseconds(300));try active()
+    try nativeStage("picker_copy_start")
     for down in [true,false] {
         guard let key=CGEvent(keyboardEventSource:nil,virtualKey:8,keyDown:down) else {throw fail("screenshot_copy_event_failed")}
         key.flags = .maskCommand;key.post(tap:.cghidEventTap)
@@ -220,6 +233,7 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
     guard [1.0,2.0].contains(where:{abs(scale-$0)<=2/selected.width}),
           abs(Double(image.height)-selected.height*scale)<=2 else {throw fail("picker_bitmap_dimensions_mismatch; image_discarded")}
     if let source=board.string(forType:NSPasteboard.PasteboardType("org.nspasteboard.source")),source != "com.tencent.xinWeChat" {throw fail("picker_bitmap_source_mismatch; image_discarded")}
+    try nativeStage("fresh_bitmap_verified",["width":image.width,"height":image.height])
     let capturedCount=board.changeCount,signature=SHA256.hash(data:data)
     // Restore only while this exact bitmap is still current; never overwrite a newer user copy.
     if board.changeCount==capturedCount,
@@ -229,6 +243,7 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
     return image
 }
 @MainActor func screenshotOverlayDiagnostic() async throws {
+    try nativeStage("started")
     guard CGPreflightScreenCaptureAccess(),AXIsProcessTrusted() else {throw fail("screen_recording_and_accessibility_permissions_required")}
     let accountConfig=try config()
     guard let accountRoot=accountConfig["db_root"] as? String else {throw fail("expected_account_missing")}
@@ -275,10 +290,12 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
         try await Task.sleep(for:.milliseconds(200))
     }
     guard found else {throw fail(lastObstruction)}
+    try nativeStage("region_checked")
     try await beginWeChatScreenshot()
     let after=try await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true)
     let overlays=after.windows.filter { !oldIDs.contains($0.windowID) && $0.owningApplication?.processID==app.processIdentifier && $0.frame.contains(rect) }
     guard overlays.count==1 else {throw fail("native_screenshot_overlay_not_unique; no_selection_or_return")}
+    try nativeStage("picker_identified")
     try requireFrontmost(app.processIdentifier)
     // The owner-authorized native picker copies only this window region. Never press Return.
     var image=try await nativePickerBitmap(overlays[0],rect,app.processIdentifier)
@@ -306,6 +323,7 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
           AXValueGetValue(unsafeBitCast(currentSize,to:AXValue.self),.cgSize,&finalSize),finalPoint==point,finalSize==dimensions else {throw fail("chat_geometry_changed")}
     try requireAccount(app.processIdentifier,root:accountRoot)
     guard !isBlank(pixels(image)) else {throw fail("native_screenshot_overlay_blank; no_selection_or_return")}
+    try nativeStage("preview_ready",["width":image.width,"height":image.height,"filehelper_header_verified":(try? chatLeft(image,chat:"文件传输助手")) != nil])
     let width=min(750,Double(image.width),520*Double(image.width)/Double(image.height)),height=width*Double(image.height)/Double(image.width)
     let view=NSImageView(frame:NSRect(x:0,y:0,width:width,height:height));view.image=NSImage(cgImage:image,size:NSSize(width:width,height:height));view.imageScaling = .scaleProportionallyUpOrDown
     let preview=NSAlert();preview.messageText="原生截图范围只读预览";preview.informativeText="没有输入或发送消息。灰色遮挡区不可核验。没有完成截图选区。图片不保存到文件。";preview.accessoryView=view;preview.addButton(withTitle:"关闭")
@@ -328,7 +346,10 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
                     else if choice.rawValue == NSApplication.ModalResponse.alertFirstButtonReturn.rawValue+2 {try await beginWeChatScreenshot()}
                     else if choice.rawValue == NSApplication.ModalResponse.alertFirstButtonReturn.rawValue+3 {try await screenshotOverlayDiagnostic()}
                 }
-            } catch { _=dialog("发送未完成",error.localizedDescription+"\n请查看微信，程序不会自动重试。") }
+            } catch {
+                if CommandLine.arguments.contains("--snapshot-diagnose") {try? nativeStage("failed",["reason":error.localizedDescription])}
+                _=dialog("发送未完成",error.localizedDescription+"\n请查看微信，程序不会自动重试。")
+            }
             app.terminate(nil)
         }
         app.run()
