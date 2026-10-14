@@ -1,0 +1,12 @@
+{
+  "repository": "https://github.com/pbakaus/impeccable",
+  "commit": "d631a8827f99414d2b6daba4ef08b7f8701751d7",
+  "path": ".claude/skills/impeccable",
+  "license": "Apache-2.0",
+  "installed": "2026-09-17",
+  "installed_for": "月球探索舱 Quest定型轮：补齐 Codex 会话中使用过的技能",
+  "ref": "skill-v4.5.2",
+  "version": "4.5.2",
+  "updated": "2026-10-14",
+  "update_note": "4.3.1→4.5.2；skill-security-auditor 结果与 4.3.1 相同（7 条均为误报：JS 正则 .exec 与 modern-screenshot 压缩库），人工复核新增脚本行无进程/网络/文件/环境变量访问；补 upstream NOTICE.md（Apache-2.0 §4d）"
+}
