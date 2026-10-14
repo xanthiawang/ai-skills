@@ -289,6 +289,7 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
     let rect=CGRect(origin:point,size:dimensions)
     let before=try await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true)
     let oldIDs=Set(before.windows.map(\.windowID))
+    try nativeStage("geometry_checked",["chat_rect":NSStringFromRect(rect),"display_rects":before.displays.map {NSStringFromRect($0.frame)}])
     guard before.displays.contains(where:{$0.frame.contains(rect)}) else {throw fail("chat_must_fit_one_display")}
     var found=false,lastObstruction="visible_chat_not_found",hud:[String:Any]?
     for _ in 0..<100 {
