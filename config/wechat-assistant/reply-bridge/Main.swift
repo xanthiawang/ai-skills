@@ -173,6 +173,61 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
     }
     return verified ? frame : nil
 }
+@MainActor func nativePickerBitmap(_ picker:SCWindow,_ rect:CGRect,_ pid:pid_t) async throws -> CGImage {
+    let board=NSPasteboard.general
+    var saved=[NSPasteboardItem](),total=0
+    for item in board.pasteboardItems ?? [] {
+        let copy=NSPasteboardItem()
+        for type in item.types {
+            guard let data=item.data(forType:type) else {throw fail("clipboard_promised_data_cannot_be_preserved")}
+            total += data.count;guard total<=32*1024*1024 else {throw fail("clipboard_too_large_to_preserve")}
+            guard copy.setData(data,forType:type) else {throw fail("clipboard_preservation_failed")}
+        }
+        saved.append(copy)
+    }
+    let before=board.changeCount
+    let selected=rect.insetBy(dx:1,dy:1)
+    func active() throws {
+        try requireFrontmost(pid)
+        guard let rows=CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]],
+              let row=rows.first(where:{($0[kCGWindowNumber as String] as? UInt32)==picker.windowID}),
+              (row[kCGWindowOwnerPID as String] as? Int32)==pid,
+              let bounds=row[kCGWindowBounds as String] as? NSDictionary,
+              let frame=CGRect(dictionaryRepresentation:bounds),frame==picker.frame else {throw fail("native_picker_identity_changed; no_return")}
+    }
+    try active()
+    for (kind,point) in [(CGEventType.leftMouseDown,CGPoint(x:selected.minX,y:selected.minY)),
+                         (.leftMouseDragged,CGPoint(x:selected.maxX,y:selected.maxY)),
+                         (.leftMouseUp,CGPoint(x:selected.maxX,y:selected.maxY))] {
+        try active()
+        guard let event=CGEvent(mouseEventSource:nil,mouseType:kind,mouseCursorPosition:point,mouseButton:.left) else {throw fail("screenshot_selection_event_failed")}
+        event.post(tap:.cghidEventTap);try await Task.sleep(for:.milliseconds(100))
+    }
+    try await Task.sleep(for:.milliseconds(300));try active()
+    for down in [true,false] {
+        guard let key=CGEvent(keyboardEventSource:nil,virtualKey:8,keyDown:down) else {throw fail("screenshot_copy_event_failed")}
+        key.flags = .maskCommand;key.post(tap:.cghidEventTap)
+    }
+    for _ in 0..<30 {
+        if board.changeCount != before {break}
+        try await Task.sleep(for:.milliseconds(100))
+    }
+    guard !screenLocked(),NSRunningApplication(processIdentifier:pid)?.bundleURL?.path=="/Applications/WeChat.app" else {throw fail("capture_process_or_session_changed")}
+    guard board.changeCount != before,
+          let data=board.data(forType:.png) ?? board.data(forType:.tiff),data.count<=16*1024*1024,
+          let bitmap=NSBitmapImageRep(data:data),let image=bitmap.cgImage else {throw fail("no_fresh_picker_bitmap; no_return; clipboard_not_restored_without_capture_proof")}
+    let scale=Double(image.width)/selected.width
+    guard [1.0,2.0].contains(where:{abs(scale-$0)<=2/selected.width}),
+          abs(Double(image.height)-selected.height*scale)<=2 else {throw fail("picker_bitmap_dimensions_mismatch; image_discarded")}
+    if let source=board.string(forType:NSPasteboard.PasteboardType("org.nspasteboard.source")),source != "com.tencent.xinWeChat" {throw fail("picker_bitmap_source_mismatch; image_discarded")}
+    let capturedCount=board.changeCount,signature=SHA256.hash(data:data)
+    // Restore only while this exact bitmap is still current; never overwrite a newer user copy.
+    if board.changeCount==capturedCount,
+       let current=board.data(forType:.png) ?? board.data(forType:.tiff),SHA256.hash(data:current)==signature {
+        board.clearContents();if !saved.isEmpty, !board.writeObjects(saved) {throw fail("clipboard_restore_failed")}
+    }
+    return image
+}
 @MainActor func screenshotOverlayDiagnostic() async throws {
     guard CGPreflightScreenCaptureAccess(),AXIsProcessTrusted() else {throw fail("screen_recording_and_accessibility_permissions_required")}
     let accountConfig=try config()
@@ -197,7 +252,7 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
     let rect=CGRect(origin:point,size:dimensions)
     let before=try await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true)
     let oldIDs=Set(before.windows.map(\.windowID))
-    guard let display=before.displays.first(where:{$0.frame.contains(rect)}) else {throw fail("chat_must_fit_one_display")}
+    guard before.displays.contains(where:{$0.frame.contains(rect)}) else {throw fail("chat_must_fit_one_display")}
     var found=false,lastObstruction="visible_chat_not_found",hud:[String:Any]?
     for _ in 0..<100 {
         try requireFrontmost(app.processIdentifier)
@@ -225,9 +280,8 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
     let overlays=after.windows.filter { !oldIDs.contains($0.windowID) && $0.owningApplication?.processID==app.processIdentifier && $0.frame.contains(rect) }
     guard overlays.count==1 else {throw fail("native_screenshot_overlay_not_unique; no_selection_or_return")}
     try requireFrontmost(app.processIdentifier)
-    let config=SCStreamConfiguration();config.width=Int(rect.width);config.height=Int(rect.height);config.showsCursor=false
-    config.sourceRect=CGRect(x:rect.minX-display.frame.minX,y:rect.minY-display.frame.minY,width:rect.width,height:rect.height)
-    var image=try await SCScreenshotManager.captureImage(contentFilter:SCContentFilter(display:display,including:[overlays[0]]),configuration:config)
+    // The owner-authorized native picker copies only this window region. Never press Return.
+    var image=try await nativePickerBitmap(overlays[0],rect,app.processIdentifier)
     if let hud,let id=hud[kCGWindowNumber as String] as? UInt32,let pid=hud[kCGWindowOwnerPID as String] as? Int32,
        let originalFrame=progressHUD(hud) {
         guard let now=CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]],
@@ -238,10 +292,11 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
               space:CGColorSpaceCreateDeviceRGB(),bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue) else {throw fail("mask_context_failed")}
         context.draw(image,in:CGRect(x:0,y:0,width:image.width,height:image.height))
         context.setFillColor(NSColor.gray.cgColor)
-        context.fill(CGRect(x:hidden.minX-rect.minX,y:Double(image.height)-(hidden.maxY-rect.minY),width:hidden.width,height:hidden.height).insetBy(dx:-2,dy:-2))
+        let selected=rect.insetBy(dx:1,dy:1),scale=Double(image.width)/selected.width
+        context.fill(CGRect(x:(hidden.minX-selected.minX)*scale,y:Double(image.height)-(hidden.maxY-selected.minY)*scale,width:hidden.width*scale,height:hidden.height*scale).insetBy(dx:-2,dy:-2))
         guard let masked=context.makeImage() else {throw fail("mask_image_failed")};image=masked
     } else if hud != nil {throw fail("progress_hud_not_verified; image_discarded")}
-    try requireFrontmost(app.processIdentifier)
+    guard !screenLocked() else {throw fail("screen_locked")}
     var currentPos:CFTypeRef?,currentSize:CFTypeRef?
     guard AXUIElementCopyAttributeValue(window,kAXPositionAttribute as CFString,&currentPos) == .success,
           AXUIElementCopyAttributeValue(window,kAXSizeAttribute as CFString,&currentSize) == .success,
