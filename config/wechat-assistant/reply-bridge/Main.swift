@@ -288,11 +288,14 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
     var point=CGPoint.zero,dimensions=CGSize.zero
     guard AXValueGetValue(unsafeBitCast(pos,to:AXValue.self),.cgPoint,&point),
           AXValueGetValue(unsafeBitCast(size,to:AXValue.self),.cgSize,&dimensions) else {throw fail("focused_chat_geometry_missing")}
-    let rect=CGRect(origin:point,size:dimensions)
+    let rawRect=CGRect(origin:point,size:dimensions)
     let before=try await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true)
     let oldIDs=Set(before.windows.map(\.windowID))
-    try nativeStage("geometry_checked",["chat_rect":NSStringFromRect(rect),"display_rects":before.displays.map {NSStringFromRect($0.frame)}])
-    guard before.displays.contains(where:{$0.frame.contains(rect)}) else {throw fail("chat_must_fit_one_display")}
+    try nativeStage("geometry_checked",["chat_rect":NSStringFromRect(rawRect),"display_rects":before.displays.map {NSStringFromRect($0.frame)}])
+    let screens=before.displays.filter {$0.frame.contains(rawRect.insetBy(dx:1,dy:1))}
+    guard screens.count==1 else {throw fail("chat_must_fit_one_display")}
+    // Clip a one-point window-manager rounding offset; never select outside the display.
+    let rect=rawRect.intersection(screens[0].frame)
     var found=false,lastObstruction="visible_chat_not_found",hud:[String:Any]?
     for _ in 0..<100 {
         try requireFrontmost(app.processIdentifier)
