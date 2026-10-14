@@ -45,7 +45,7 @@ func targetWindow() async throws -> (SCWindow, SCDisplay) {
 }
 func waitImage(_ session:CaptureSession) async throws -> CGImage {
     for _ in 0..<40 {
-        if let image = try session.latest() { return image }
+        if let image = try session.latest(), !isBlank(pixels(image)) { return image }
         try await Task.sleep(for:.milliseconds(50))
     }
     throw fail("no_frame_after_filter_refresh")
@@ -192,6 +192,9 @@ func sendMessage(chat:String,text:String,id:String,top:Double,stateDirectory:Str
     guard let owner = window.owningApplication, let app = NSRunningApplication(processIdentifier:owner.processID) else { throw fail("wechat_not_running") }
     try requireAccount(owner.processID,root:expectedRoot)
     guard window.frame.size==expectedSize else { throw fail("window_size_changed_recalibrate") }
+    _=app.activate(options:[.activateAllWindows])
+    try await Task.sleep(for:.milliseconds(350))
+    try requireFrontmost(owner.processID)
     let session = CaptureSession()
     do {
         try await session.start(window:window,display:display,interval:0.25)
