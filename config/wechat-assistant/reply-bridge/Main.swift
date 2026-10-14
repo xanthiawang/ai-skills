@@ -22,7 +22,8 @@ func queue(_ action:String,code:String,reason:String="") throws -> [String:Any] 
     let a=NSAlert();a.messageText=title;a.informativeText=text
     for b in buttons {a.addButton(withTitle:b)}
     if buttons.count>1 {a.buttons[0].keyEquivalent="";a.window.defaultButtonCell=nil}
-    NSApp.activate(ignoringOtherApps:true);return a.runModal()
+    NSApp.activate(ignoringOtherApps:true)
+    let response=a.runModal();a.window.orderOut(nil);return response
 }
 final class CalibrationView:NSImageView {
     var ratio:Double?
@@ -185,7 +186,11 @@ final class CalibrationView:NSImageView {
               let frame=CGRect(dictionaryRepresentation:bounds) else {throw fail("window_bounds_missing")}
         if pid==app.processIdentifier,abs(frame.minX-rect.minX)<=1,abs(frame.minY-rect.minY)<=1,
            abs(frame.width-rect.width)<=1,abs(frame.height-rect.height)<=1 {found=true;break}
-        if (row[kCGWindowAlpha as String] as? Double ?? 1)>0,frame.intersects(rect) {throw fail("chat_obscured_before_native_screenshot_layer_\(row[kCGWindowLayer as String] as? Int ?? -1)")}
+        if (row[kCGWindowAlpha as String] as? Double ?? 1)>0,frame.intersects(rect) {
+            let own=pid==NSRunningApplication.current.processIdentifier
+            let owner=NSRunningApplication(processIdentifier:pid)?.bundleIdentifier ?? "system"
+            throw fail("chat_obscured_layer_\(row[kCGWindowLayer as String] as? Int ?? -1); own_dialog=\(own); owner=\(owner)")
+        }
     }
     guard found else {throw fail("visible_chat_not_found")}
     try await beginWeChatScreenshot()
@@ -209,7 +214,7 @@ final class CalibrationView:NSImageView {
     let width=min(750,Double(image.width),520*Double(image.width)/Double(image.height)),height=width*Double(image.height)/Double(image.width)
     let view=NSImageView(frame:NSRect(x:0,y:0,width:width,height:height));view.image=NSImage(cgImage:image,size:NSSize(width:width,height:height));view.imageScaling = .scaleProportionallyUpOrDown
     let preview=NSAlert();preview.messageText="原生截图范围只读预览";preview.informativeText="没有输入或发送消息。没有完成截图选区。图片不保存到文件。";preview.accessoryView=view;preview.addButton(withTitle:"关闭")
-    NSApp.activate(ignoringOtherApps:true);_=preview.runModal()
+    NSApp.activate(ignoringOtherApps:true);_=preview.runModal();preview.window.orderOut(nil)
 }
 @main struct ReplyBridge {
     @MainActor static func main() {
