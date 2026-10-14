@@ -134,7 +134,14 @@ final class CalibrationView:NSImageView {
     guard let root=c["db_root"] as? String else {throw fail("expected_account_missing")}
     try requireAccount(app.processIdentifier,root:root)
     try await activateWeChat(app)
-    _=try await targetWindow()
+    let ax=AXUIElementCreateApplication(app.processIdentifier)
+    var focused:CFTypeRef?
+    guard AXUIElementCopyAttributeValue(ax,kAXFocusedWindowAttribute as CFString,&focused) == .success,
+          let focused,CFGetTypeID(focused)==AXUIElementGetTypeID() else {throw fail("wechat_main_window_not_focused")}
+    let window=unsafeBitCast(focused,to:AXUIElement.self)
+    var title:CFTypeRef?
+    guard AXUIElementCopyAttributeValue(window,kAXTitleAttribute as CFString,&title) == .success,
+          let label=title as? String,["微信","WeChat","Weixin"].contains(label) else {throw fail("wechat_chat_window_not_focused")}
     for down in [true,false] {
         try requireFrontmost(app.processIdentifier)
         guard let event=CGEvent(keyboardEventSource:nil,virtualKey:21,keyDown:down) else {throw fail("screenshot_shortcut_event_failed")}
