@@ -158,30 +158,20 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
           let app=NSRunningApplication(processIdentifier:pid),app.bundleIdentifier=="com.codeisland.app",
           let bounds=row[kCGWindowBounds as String] as? NSDictionary,
           let frame=CGRect(dictionaryRepresentation:bounds) else {return nil}
-    var windows:CFTypeRef?
-    guard AXUIElementCopyAttributeValue(AXUIElementCreateApplication(pid),kAXWindowsAttribute as CFString,&windows) == .success,
-          let list=windows as? [AXUIElement] else {return nil}
-    var matches=0
-    for w in list {
-        var p:CFTypeRef?,s:CFTypeRef?,title:CFTypeRef?
-        guard AXUIElementCopyAttributeValue(w,kAXPositionAttribute as CFString,&p) == .success,
-              AXUIElementCopyAttributeValue(w,kAXSizeAttribute as CFString,&s) == .success,
-              AXUIElementCopyAttributeValue(w,kAXTitleAttribute as CFString,&title) == .success,
-              (title as? String ?? "").isEmpty,let p,let s,CFGetTypeID(p)==AXValueGetTypeID(),CFGetTypeID(s)==AXValueGetTypeID() else {continue}
-        var point=CGPoint.zero,size=CGSize.zero
-        guard AXValueGetValue(unsafeBitCast(p,to:AXValue.self),.cgPoint,&point),AXValueGetValue(unsafeBitCast(s,to:AXValue.self),.cgSize,&size),
-              abs(point.x-frame.minX)<=1,abs(point.y-frame.minY)<=1,abs(size.width-frame.width)<=1,abs(size.height-frame.height)<=1 else {continue}
-        var queue=[w],count=0,verified=false
-        while !queue.isEmpty,count<24 {
-            let node=queue.removeFirst();count += 1
-            var value:CFTypeRef?,children:CFTypeRef?
-            if AXUIElementCopyAttributeValue(node,kAXValueAttribute as CFString,&value) == .success,
-               let text=value as? String,text.count<=80,text.range(of:"^[A-Za-z ]+ [0-9]+ / [0-9]+$",options:.regularExpression) != nil {verified=true}
-            if AXUIElementCopyAttributeValue(node,kAXChildrenAttribute as CFString,&children) == .success,let next=children as? [AXUIElement] {queue.append(contentsOf:next.prefix(24-count))}
-        }
-        if verified {matches += 1}
+    guard let id=row[kCGWindowNumber as String] as? UInt32,
+          let rows=CGWindowListCopyWindowInfo([.optionOnScreenOnly,.excludeDesktopElements],kCGNullWindowID) as? [[String:Any]] else {return nil}
+    let visible=rows.filter {($0[kCGWindowOwnerPID as String] as? Int32)==pid && ($0[kCGWindowAlpha as String] as? Double ?? 1)>0}
+    guard visible.count==1,(visible[0][kCGWindowNumber as String] as? UInt32)==id else {return nil}
+    // A single visible CG window maps this observed system-dialog HUD to its exact ID.
+    var queue=[AXUIElementCreateApplication(pid)],count=0,verified=false
+    while !queue.isEmpty,count<40 {
+        let node=queue.removeFirst();count += 1
+        var value:CFTypeRef?,children:CFTypeRef?
+        if AXUIElementCopyAttributeValue(node,kAXValueAttribute as CFString,&value) == .success,
+           let text=value as? String,text.count<=80,text.range(of:"^[A-Za-z ]+ [0-9]+ / [0-9]+$",options:.regularExpression) != nil {verified=true}
+        if AXUIElementCopyAttributeValue(node,kAXChildrenAttribute as CFString,&children) == .success,let next=children as? [AXUIElement] {queue.append(contentsOf:next.prefix(40-count))}
     }
-    return matches==1 ? frame : nil
+    return verified ? frame : nil
 }
 @MainActor func screenshotOverlayDiagnostic() async throws {
     guard CGPreflightScreenCaptureAccess(),AXIsProcessTrusted() else {throw fail("screen_recording_and_accessibility_permissions_required")}
