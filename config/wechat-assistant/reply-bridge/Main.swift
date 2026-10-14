@@ -139,6 +139,27 @@ final class CalibrationView:NSImageView {
         throw error
     }
 }
+func chatAXWindow(_ pid:pid_t) throws -> AXUIElement {
+    let app=AXUIElementCreateApplication(pid)
+    func accepts(_ window:AXUIElement) -> Bool {
+        var title:CFTypeRef?
+        return AXUIElementCopyAttributeValue(window,kAXTitleAttribute as CFString,&title) == .success && ["微信","WeChat","Weixin"].contains(title as? String ?? "")
+    }
+    for attribute in [kAXFocusedWindowAttribute,kAXMainWindowAttribute] {
+        var value:CFTypeRef?
+        if AXUIElementCopyAttributeValue(app,attribute as CFString,&value) == .success,
+           let value,CFGetTypeID(value)==AXUIElementGetTypeID() {
+            let window=unsafeBitCast(value,to:AXUIElement.self)
+            if accepts(window) {return window}
+        }
+    }
+    var value:CFTypeRef?
+    guard AXUIElementCopyAttributeValue(app,kAXWindowsAttribute as CFString,&value) == .success,
+          let windows=value as? [AXUIElement] else {throw fail("main_window_list_missing")}
+    let matches=windows.filter(accepts)
+    guard matches.count==1 else {throw fail("expected_one_original_ax_chat_window")}
+    return matches[0]
+}
 @MainActor func beginWeChatScreenshot() async throws {
     guard AXIsProcessTrusted() else {throw fail("accessibility_permission_required")}
     guard let app=NSRunningApplication.runningApplications(withBundleIdentifier:"com.tencent.xinWeChat").first,
@@ -147,14 +168,7 @@ final class CalibrationView:NSImageView {
     guard let root=c["db_root"] as? String else {throw fail("expected_account_missing")}
     try requireAccount(app.processIdentifier,root:root)
     try await activateWeChat(app)
-    let ax=AXUIElementCreateApplication(app.processIdentifier)
-    var focused:CFTypeRef?
-    guard AXUIElementCopyAttributeValue(ax,kAXFocusedWindowAttribute as CFString,&focused) == .success,
-          let focused,CFGetTypeID(focused)==AXUIElementGetTypeID() else {throw fail("wechat_main_window_not_focused")}
-    let window=unsafeBitCast(focused,to:AXUIElement.self)
-    var title:CFTypeRef?
-    guard AXUIElementCopyAttributeValue(window,kAXTitleAttribute as CFString,&title) == .success,
-          let label=title as? String,["微信","WeChat","Weixin"].contains(label) else {throw fail("wechat_chat_window_not_focused")}
+    _=try chatAXWindow(app.processIdentifier)
     for down in [true,false] {
         try requireFrontmost(app.processIdentifier)
         guard let event=CGEvent(keyboardEventSource:nil,virtualKey:21,keyDown:down) else {throw fail("screenshot_shortcut_event_failed")}
@@ -261,25 +275,8 @@ func progressHUD(_ row:[String:Any]) -> CGRect? {
     guard let accountRoot=accountConfig["db_root"] as? String else {throw fail("expected_account_missing")}
     guard let app=NSRunningApplication.runningApplications(withBundleIdentifier:"com.tencent.xinWeChat").first,
           app.bundleURL?.path=="/Applications/WeChat.app" else {throw fail("original_wechat_required")}
-    try await activateWeChat(app)
-    let ax=AXUIElementCreateApplication(app.processIdentifier)
-    var value:CFTypeRef?
-    if AXUIElementCopyAttributeValue(ax,kAXFocusedWindowAttribute as CFString,&value) != .success || value==nil {
-        try await cancelWeChatScreenshot()
-        _=AXUIElementCopyAttributeValue(ax,kAXMainWindowAttribute as CFString,&value)
-    }
-    if value==nil {
-        var raw:CFTypeRef?
-        if AXUIElementCopyAttributeValue(ax,kAXWindowsAttribute as CFString,&raw) == .success,let all=raw as? [AXUIElement] {
-            let main=all.filter {item in
-                var title:CFTypeRef?
-                return AXUIElementCopyAttributeValue(item,kAXTitleAttribute as CFString,&title) == .success && ["微信","WeChat","Weixin"].contains(title as? String ?? "")
-            }
-            if main.count==1 {value=main[0]}
-        }
-    }
-    guard let value,CFGetTypeID(value)==AXUIElementGetTypeID() else {throw fail("focused_window_missing")}
-    let window=unsafeBitCast(value,to:AXUIElement.self)
+    try await cancelWeChatScreenshot();try await activateWeChat(app)
+    let window=try chatAXWindow(app.processIdentifier)
     var pos:CFTypeRef?,size:CFTypeRef?,title:CFTypeRef?
     guard AXUIElementCopyAttributeValue(window,kAXPositionAttribute as CFString,&pos) == .success,
           AXUIElementCopyAttributeValue(window,kAXSizeAttribute as CFString,&size) == .success,
