@@ -3,6 +3,20 @@
 Deployment started 2026-10-13. This directory contains reproducible, non-secret
 installation declarations only. It must never contain credentials or chat data.
 
+## Public distribution (2026-10-14)
+
+- Standalone source: https://github.com/xanthiawang/wechat-chat-assistant
+- First release: https://github.com/xanthiawang/wechat-chat-assistant/releases/tag/v0.1.0
+- Local source checkout: `~/programs/wechat-chat-assistant/`.
+- Public package has a separate `wechat-chat-assistant` profile and runtime
+  directory; it does not change this running `zixin-wechat` deployment.
+- Release includes guided `.command` installation, fixed-version checksum
+  bootstrap, an owner-only OpenClaw query plugin, exact npm root version locks,
+  attributed MIT reader sources, privacy/recovery docs and source-only archives.
+- Beta: actual portable reader queried genuine local data; core model/delivery
+  flow has prior real-data evidence. Clean-machine installation is not yet
+  validated. Never include private config, keys, databases, IDs or logs in releases.
+
 ## Installation
 
 - OpenClaw: `2026.10.3`
