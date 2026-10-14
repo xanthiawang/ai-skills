@@ -44,7 +44,7 @@ func targetWindow() async throws -> (SCWindow, SCDisplay) {
     return (w,d)
 }
 func waitImage(_ session:CaptureSession) async throws -> CGImage {
-    for _ in 0..<40 {
+    for _ in 0..<80 {
         if let image = try session.latest(), !isBlank(pixels(image)) { return image }
         try await Task.sleep(for:.milliseconds(50))
     }
@@ -179,7 +179,7 @@ final class Journal {
         try FileManager.default.setAttributes([.posixPermissions:0o600],ofItemAtPath:file.path)
     }
 }
-func sendMessage(chat:String,text:String,id:String,top:Double,stateDirectory:String,expectedRoot:String,expectedSize:CGSize) async throws {
+func sendMessage(chat:String,text:String,id:String,top:Double,stateDirectory:String,expectedRoot:String,expectedSize:CGSize,route:String) async throws {
     let key="enter"
     guard !chat.isEmpty, validMessage(text), !id.isEmpty, top.isFinite, top>=0.45, top<=0.88 else { throw fail("invalid_approved_request") }
     guard CGPreflightScreenCaptureAccess(), AXIsProcessTrusted() else { throw fail("screen_recording_and_accessibility_permissions_required") }
@@ -188,16 +188,17 @@ func sendMessage(chat:String,text:String,id:String,top:Double,stateDirectory:Str
         if status == "sent_ui_verified" { emit(["type":"already_sent","id":id]); return }
         throw fail("id_already_attempted_"+status+"; inspect_WeChat_before_any_new_id")
     }
-    let (window,display) = try await targetWindow()
-    guard let owner = window.owningApplication, let app = NSRunningApplication(processIdentifier:owner.processID) else { throw fail("wechat_not_running") }
+    let (initialWindow,_) = try await targetWindow()
+    guard let owner = initialWindow.owningApplication, let app = NSRunningApplication(processIdentifier:owner.processID) else { throw fail("wechat_not_running") }
     try requireAccount(owner.processID,root:expectedRoot)
-    guard window.frame.size==expectedSize else { throw fail("window_size_changed_recalibrate") }
     _=app.activate(options:[.activateAllWindows])
     try await Task.sleep(for:.milliseconds(350))
     try requireFrontmost(owner.processID)
+    let (window,display)=try await targetWindow()
+    guard window.owningApplication?.processID==owner.processID,window.frame.size==expectedSize else {throw fail("window_changed_recalibrate")}
     let session = CaptureSession()
     do {
-        try await session.start(window:window,display:display,interval:0.25)
+        try await session.start(window:window,display:display,interval:0.25,route:route)
         var image = try await waitImage(session)
         var left = try chatLeft(image,chat:chat)
         guard try composerEmpty(image,left:left,top:top) else { throw fail("composer_not_empty_or_wrong_composer_top") }

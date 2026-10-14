@@ -44,8 +44,12 @@ final class CalibrationView:NSImageView {
         _=dialog("需要本人授予权限","请在系统设置 → 隐私与安全中，为“微信回复确认”开启辅助功能和屏幕录制，再重新打开设置。权限用于核对微信窗口、在本人确认后输入发送。不会改变微信原版签名或SIP。")
         return
     }
+    let c0=try config();let s0=c0["mac_sender"] as? [String:Any] ?? [:]
+    let route=s0["capture_route"] as? String ?? "appCrop"
+    guard let app=NSRunningApplication.runningApplications(withBundleIdentifier:"com.tencent.xinWeChat").first else {throw fail("wechat_not_running")}
+    _=app.activate(options:[.activateAllWindows]);try await Task.sleep(for:.milliseconds(350))
     let (w,d)=try await targetWindow();let capture=CaptureSession()
-    try await capture.start(window:w,display:d,interval:0.25)
+    try await capture.start(window:w,display:d,interval:0.25,route:route)
     let image=try await waitImage(capture);await capture.stop()
     let width=min(750,Double(image.width),520*Double(image.width)/Double(image.height)),height=width*Double(image.height)/Double(image.width)
     let view=CalibrationView(frame:NSRect(x:0,y:0,width:width,height:height))
@@ -57,9 +61,43 @@ final class CalibrationView:NSImageView {
     var c=try config();var s=c["mac_sender"] as? [String:Any] ?? [:]
     s["permissions_confirmed"]=true;s["composer_top"]=r;s["window_width"]=w.frame.width;s["window_height"]=w.frame.height
     s["enabled"]=false;c["mac_sender"]=s
+    s["capture_route"]=route;s["calibration_route"]=route;c["mac_sender"]=s
     try JSONSerialization.data(withJSONObject:c,options:[.sortedKeys]).write(to:base.appendingPathComponent("reader-config.json"),options:.atomic)
     try FileManager.default.setAttributes([.posixPermissions:0o600],ofItemAtPath:base.appendingPathComponent("reader-config.json").path)
     _=dialog("权限与输入区已设置","接下来请在微信助手里说：给文件传输助手准备一条“微信助手代发测试”，让我Mac确认。先在Mac打开文件传输助手。你确认的真实试发通过后，其他联系人代发才会启用。")
+}
+@MainActor func diagnoseCapture() async throws {
+    guard CGPreflightScreenCaptureAccess(),AXIsProcessTrusted() else {throw fail("screen_recording_and_accessibility_permissions_required")}
+    guard let app=NSRunningApplication.runningApplications(withBundleIdentifier:"com.tencent.xinWeChat").first,app.bundleURL?.path=="/Applications/WeChat.app" else {throw fail("original_wechat_required")}
+    _=app.activate(options:[.activateAllWindows]);try await Task.sleep(for:.milliseconds(350))
+    let (w,d)=try await targetWindow()
+    var results:[[String:Any]]=[];var selected:String?
+    for route in ["appThenWindow","appCrop","windowCrop","independentWindow"] {
+        let capture=CaptureSession();var result:[String:Any]=["route":route,"header_verified":false]
+        do {
+            try await capture.start(window:w,display:d,interval:0.25,route:route)
+            let frame=try await waitImage(capture)
+            _=try chatLeft(frame,chat:"文件传输助手")
+            try requireFrontmost(app.processIdentifier)
+            let (current,_)=try await targetWindow()
+            guard current.windowID==w.windowID,current.frame==w.frame else {throw fail("window_changed_during_diagnostics")}
+            result["header_verified"]=true;selected=selected ?? route
+        } catch {result["error"]=error.localizedDescription}
+        result["frames"]=capture.diagnostics();await capture.stop();results.append(result)
+        if selected != nil {break}
+    }
+    let folder=base.appendingPathComponent("capture-diagnostics",isDirectory:true)
+    try FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true,attributes:[.posixPermissions:0o700])
+    let file=folder.appendingPathComponent(UUID().uuidString+".json")
+    try JSONSerialization.data(withJSONObject:results,options:[.sortedKeys]).write(to:file,options:.atomic)
+    try FileManager.default.setAttributes([.posixPermissions:0o600],ofItemAtPath:file.path)
+    guard let selected else {throw fail("all_scoped_capture_routes_failed; diagnostics_saved_locally")}
+    var c=try config();var s=c["mac_sender"] as? [String:Any] ?? [:]
+    s["capture_route"]=selected;s["enabled"]=false;s.removeValue(forKey:"calibration_route");c["mac_sender"]=s
+    try JSONSerialization.data(withJSONObject:c,options:[.sortedKeys]).write(to:base.appendingPathComponent("reader-config.json"),options:.atomic)
+    try FileManager.default.setAttributes([.posixPermissions:0o600],ofItemAtPath:base.appendingPathComponent("reader-config.json").path)
+    _=dialog("已找到可用捕获方式",selected+"\n只捕获微信应用或指定窗口，没有扩大到整个屏幕。现在重新校准输入区。")
+    try await configure()
 }
 @MainActor func review(_ code:String) async throws {
     let r=try queue("validate",code:code)
@@ -70,6 +108,7 @@ final class CalibrationView:NSImageView {
     let c=try config();guard let s=c["mac_sender"] as? [String:Any],s["permissions_confirmed"] as? Bool==true,
           let top=s["composer_top"] as? Double,let width=s["window_width"] as? Double,let height=s["window_height"] as? Double else {throw fail("setup_required")}
     let testing=id=="filehelper" && text=="微信助手代发测试"
+    guard let route=s["capture_route"] as? String,s["calibration_route"] as? String==route else {throw fail("capture_route_requires_recalibration")}
     guard s["enabled"] as? Bool==true || testing else {throw fail("genuine_file_transfer_test_required_before_other_recipients")}
     let alias=payload["recipient_alias"] as? String ?? ""
     let explanation="收件人：\(label)\n联系人ID：\(id)\n微信号：\(alias.isEmpty ? "未提供" : alias)\n\n完整正文：\n\(text)\n\n请先在Mac打开并核对该收件人聊天，保存已有草稿并清空输入区。你在这里确认选中的联系人；程序只能核对窗口标题和当前微信账号，不能从截图证明联系人ID。发送过程中请勿操作微信。"
@@ -78,7 +117,7 @@ final class CalibrationView:NSImageView {
     guard current["payload_hash"] as? String==hash else {throw fail("draft_changed_since_review")}
     _=try queue("claim",code:code)
     do {
-        try await sendMessage(chat:label,text:text,id:code,top:top,stateDirectory:base.appendingPathComponent("reply-journals").path,expectedRoot:root,expectedSize:CGSize(width:width,height:height))
+        try await sendMessage(chat:label,text:text,id:code,top:top,stateDirectory:base.appendingPathComponent("reply-journals").path,expectedRoot:root,expectedSize:CGSize(width:width,height:height),route:route)
         _=try queue("ui-sent",code:code)
         _=try queue("verify",code:code)
         _=dialog("已代发并核对本机记录","\(label)\n\(text)\n此结果不代表对方已读。")
@@ -93,9 +132,12 @@ final class CalibrationView:NSImageView {
         Task { @MainActor in
             do {
                 if CommandLine.arguments.contains("--setup") {try await configure()}
+                else if CommandLine.arguments.contains("--diagnose") {try await diagnoseCapture()}
                 else if let i=CommandLine.arguments.firstIndex(of:"--request"),i+1<CommandLine.arguments.count {try await review(CommandLine.arguments[i+1])}
                 else {
-                    if dialog("微信回复确认","首次设置需要辅助功能与屏幕录制，用于核对微信窗口并在你逐条确认后输入发送。回复草稿由微信助手准备。",["首次设置","关闭"]) == .alertFirstButtonReturn {try await configure()}
+                    let choice=dialog("微信回复确认","先在原版微信打开文件传输助手。“检查窗口捕获”只读画面、不输入、不发送。首次设置用于权限与输入区校准。",["检查窗口捕获","首次设置","关闭"])
+                    if choice == .alertFirstButtonReturn {try await diagnoseCapture()}
+                    else if choice == .alertSecondButtonReturn {try await configure()}
                 }
             } catch { _=dialog("发送未完成",error.localizedDescription+"\n请查看微信，程序不会自动重试。") }
             app.terminate(nil)

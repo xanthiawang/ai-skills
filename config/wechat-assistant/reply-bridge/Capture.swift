@@ -69,10 +69,17 @@ final class CaptureSession: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     private var image: CGImage?
     private var failure: Error?
     private var sequence = 0
+    private var callbacks = 0
+    private var incomplete = 0
     private var stream: SCStream?
     var key = ""
     func stream(_ stream: SCStream, didOutputSampleBuffer sample: CMSampleBuffer, of type: SCStreamOutputType) {
         guard type == .screen, sample.isValid, let pixel = sample.imageBuffer else { return }
+        lock.lock();callbacks += 1;lock.unlock()
+        let attachments=CMSampleBufferGetSampleAttachmentsArray(sample,createIfNecessary:false) as? [[SCStreamFrameInfo:Any]]
+        guard let status=attachments?.first?[.status] as? Int,status==SCFrameStatus.complete.rawValue else {
+            lock.lock();incomplete += 1;lock.unlock();return
+        }
         let input = CIImage(cvPixelBuffer: pixel)
         guard let frame = context.createCGImage(input, from: input.extent) else { return }
         lock.lock(); image = frame; sequence += 1; lock.unlock()
@@ -81,30 +88,43 @@ final class CaptureSession: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         lock.lock(); failure = error; lock.unlock()
     }
     func serial() -> Int { lock.lock(); defer { lock.unlock() }; return sequence }
+    func diagnostics() -> [String:Any] {
+        lock.lock();defer {lock.unlock()}
+        return ["callbacks":callbacks,"incomplete":incomplete,"complete_frames":sequence,
+                "width":image?.width ?? 0,"height":image?.height ?? 0,"stream_error":failure != nil]
+    }
     func latest() throws -> CGImage? {
         lock.lock(); defer { lock.unlock() }
         if let failure { throw failure }
         return image
     }
-    func start(window: SCWindow, display: SCDisplay, interval: Double) async throws {
+    func start(window: SCWindow, display: SCDisplay, interval: Double,route:String="appCrop") async throws {
         guard let app = window.owningApplication else { throw NSError(domain:"capture",code:1) }
         let config = SCStreamConfiguration()
         config.width = Int(window.frame.width); config.height = Int(window.frame.height)
         config.showsCursor = false
         config.minimumFrameInterval = CMTime(seconds: interval, preferredTimescale: 600)
         config.queueDepth = 3
-        config.sourceRect = CGRect(x:window.frame.minX-display.frame.minX,
-            y:window.frame.minY-display.frame.minY, width:window.frame.width, height:window.frame.height)
-        // Reproducible macOS workaround: app-filter stream -> window-filter update.
-        // Direct single-window streams and one-shot screenshots omit this WeChat window.
-        let initial = SCContentFilter(display:display, including:[app], exceptingWindows:[])
+        if route != "independentWindow" {
+            config.sourceRect = CGRect(x:window.frame.minX-display.frame.minX,
+                y:window.frame.minY-display.frame.minY,width:window.frame.width,height:window.frame.height)
+        }
+        let initial:SCContentFilter
+        switch route {
+        case "appCrop","appThenWindow":initial=SCContentFilter(display:display,including:[app],exceptingWindows:[])
+        case "windowCrop":initial=SCContentFilter(display:display,including:[window])
+        case "independentWindow":initial=SCContentFilter(desktopIndependentWindow:window)
+        default:throw fail("unsupported_capture_route")
+        }
         let active = SCStream(filter:initial, configuration:config, delegate:self)
         stream = active
         try active.addStreamOutput(self, type:.screen, sampleHandlerQueue:DispatchQueue(label:"wechat.frames"))
         try await active.startCapture()
-        try await Task.sleep(for:.milliseconds(250))
-        try await active.updateContentFilter(SCContentFilter(display:display, including:[window]))
-        try await Task.sleep(for:.milliseconds(550))
+        if route=="appThenWindow" {
+            try await Task.sleep(for:.milliseconds(250))
+            try await active.updateContentFilter(SCContentFilter(display:display,including:[window]))
+        }
+        try await Task.sleep(for:.milliseconds(600))
     }
     func stop() async { if let stream { try? await stream.stopCapture() }; stream = nil }
 }
