@@ -19,6 +19,11 @@ from wechat_db import Reader, literal
 
 
 def cfg():return json.loads((BASE/'reader-config.json').read_text())
+def snapshot_or_empty(reader,recipient):
+    try:return reader.snapshot(recipient)
+    except RuntimeError as error:
+        if str(error)=='conversation_has_no_local_message_table':return {'cursor':{},'salts':{}}
+        raise
 def norm(text):return ''.join(unicodedata.normalize('NFKC',text).split())
 def digest(value):return hashlib.sha256(json.dumps(value,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
 def binding(c):return digest({k:c[k] for k in ['owner','account','self_id','db_root','key_file']})
@@ -53,7 +58,7 @@ def get_request(code,require_fresh=True):
 
 def validate_source(payload,c):
     root=Path(c['db_root']);reader=Reader(root,c['key_file'])
-    now=reader.snapshot(payload['recipient_id'])
+    now=snapshot_or_empty(reader,payload['recipient_id'])
     baseline=payload['baseline']
     for name,salt in baseline['salts'].items():
         if now['salts'].get(name)!=salt or now['cursor'].get(name,-1)<baseline['cursor'].get(name,0):
@@ -82,7 +87,7 @@ def prepare(value):
     if any(unicodedata.category(ch)=='Cc' or '\u202a'<=ch<='\u202e' or '\u2066'<=ch<='\u2069' for ch in label):raise RuntimeError('Unsupported control characters in recipient title')
     collisions={r['username'] for r in contacts if any(norm(x or '')==norm(label) for x in [r['remark'],r['nick_name'],r['alias'],r['username']])}
     if collisions!={contact['username']}:raise RuntimeError('Duplicate or visually similar chat title; no automatic sending')
-    reader=Reader(root,c['key_file']);baseline=reader.snapshot(contact['username'])
+    reader=Reader(root,c['key_file']);baseline=snapshot_or_empty(reader,contact['username'])
     code=secrets.token_hex(6).upper()
     payload={'recipient_id':contact['username'],'recipient_label':label,'recipient_alias':contact['alias'] or '',
              'text':text,'db_root':str(root),'baseline':baseline}
@@ -106,11 +111,14 @@ def verify_sent(code):
     matches=[]
     for _ in range(16):
         validate_source(payload,c)
-        now=reader.snapshot(payload['recipient_id'])
+        now=snapshot_or_empty(reader,payload['recipient_id'])
         for name,salt in r['send_baseline']['salts'].items():
             if now['salts'].get(name)!=salt or now['cursor'].get(name,-1)<r['send_baseline']['cursor'].get(name,0):
                 raise RuntimeError('Send verification database changed; never retry')
-        rows=reader.read(payload['recipient_id'],limit=200,after=r['send_baseline']['cursor'],self_id=c['self_id'])
+        try:rows=reader.read(payload['recipient_id'],limit=200,after=r['send_baseline']['cursor'],self_id=c['self_id'])
+        except RuntimeError as error:
+            if str(error)!='conversation_has_no_local_message_table':raise
+            rows=[]
         matches=[x for x in rows if x['from_self'] and x['text']==payload['text'] and int(x['server_id'] or 0)!=0]
         if len(matches)==1:break
         if len(matches)>1:raise RuntimeError('Multiple matching rows; send cannot be uniquely verified')
@@ -139,7 +147,7 @@ def main():
             elif action=='claim':
                 if r['status']!='waiting_mac_confirmation':raise RuntimeError('Approval already used; no automatic retry')
                 validate_source(r['payload'],c)
-                r['send_baseline']=Reader(Path(c['db_root']),c['key_file']).snapshot(r['payload']['recipient_id'])
+                r['send_baseline']=snapshot_or_empty(Reader(Path(c['db_root']),c['key_file']),r['payload']['recipient_id'])
                 r['status']='pending_before_typing';save(path,r);result={'claimed':True}
             elif action=='ui-sent':
                 if r['status']!='pending_before_typing':raise RuntimeError('Invalid sender state')
