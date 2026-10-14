@@ -47,7 +47,7 @@ final class CalibrationView:NSImageView {
     let c0=try config();let s0=c0["mac_sender"] as? [String:Any] ?? [:]
     let route=s0["capture_route"] as? String ?? "appCrop"
     guard let app=NSRunningApplication.runningApplications(withBundleIdentifier:"com.tencent.xinWeChat").first else {throw fail("wechat_not_running")}
-    _=app.activate(options:[.activateAllWindows]);try await Task.sleep(for:.milliseconds(350))
+    try await activateWeChat(app);try await Task.sleep(for:.milliseconds(350))
     let (w,d)=try await targetWindow();let capture=CaptureSession()
     try await capture.start(window:w,display:d,interval:0.25,route:route)
     let image=try await waitImage(capture);await capture.stop()
@@ -69,7 +69,7 @@ final class CalibrationView:NSImageView {
 @MainActor func diagnoseCapture() async throws {
     guard CGPreflightScreenCaptureAccess(),AXIsProcessTrusted() else {throw fail("screen_recording_and_accessibility_permissions_required")}
     guard let app=NSRunningApplication.runningApplications(withBundleIdentifier:"com.tencent.xinWeChat").first,app.bundleURL?.path=="/Applications/WeChat.app" else {throw fail("original_wechat_required")}
-    _=app.activate(options:[.activateAllWindows]);try await Task.sleep(for:.milliseconds(350))
+    try await activateWeChat(app);try await Task.sleep(for:.milliseconds(350))
     let (w,d)=try await targetWindow()
     var results:[[String:Any]]=[];var selected:String?
     for route in ["visibleRegion","appThenWindow","appCrop","windowCrop","independentWindow"] {

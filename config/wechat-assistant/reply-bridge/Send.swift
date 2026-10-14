@@ -106,6 +106,15 @@ func outgoingContains(_ image:CGImage,left:Double,top:Double,text:String) throws
 func requireFrontmost(_ pid:pid_t) throws {
     guard NSWorkspace.shared.frontmostApplication?.processIdentifier == pid else { throw fail("wechat_lost_focus") }
 }
+@MainActor func activateWeChat(_ app:NSRunningApplication) async throws {
+    NSApplication.shared.yieldActivation(to:app)
+    guard app.activate(from:NSRunningApplication.current,options:[.activateAllWindows]) else { throw fail("wechat_activation_denied") }
+    for _ in 0..<40 {
+        if NSWorkspace.shared.frontmostApplication?.processIdentifier==app.processIdentifier {return}
+        try await Task.sleep(for:.milliseconds(50))
+    }
+    throw fail("wechat_activation_not_completed")
+}
 func requireExactEditor(_ pid:pid_t,text:String) throws {
     let app=AXUIElementCreateApplication(pid)
     var focused:CFTypeRef?
@@ -191,7 +200,7 @@ func sendMessage(chat:String,text:String,id:String,top:Double,stateDirectory:Str
     let (initialWindow,_) = try await targetWindow()
     guard let owner = initialWindow.owningApplication, let app = NSRunningApplication(processIdentifier:owner.processID) else { throw fail("wechat_not_running") }
     try requireAccount(owner.processID,root:expectedRoot)
-    _=app.activate(options:[.activateAllWindows])
+    try await activateWeChat(app)
     try await Task.sleep(for:.milliseconds(350))
     try requireFrontmost(owner.processID)
     let (window,display)=try await targetWindow()
@@ -204,7 +213,7 @@ func sendMessage(chat:String,text:String,id:String,top:Double,stateDirectory:Str
         guard try composerEmpty(image,left:left,top:top) else { throw fail("composer_not_empty_or_wrong_composer_top") }
         guard try !outgoingContains(image,left:left,top:top,text:text) else { throw fail("same_text_already_visible; refusing_duplicate") }
         try journal.save("pending_before_typing")
-        _ = app.activate(options:[.activateAllWindows])
+        try await activateWeChat(app)
         try await Task.sleep(for:.milliseconds(300))
         try requireFrontmost(owner.processID)
         let (current,_) = try await targetWindow()
