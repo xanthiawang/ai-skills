@@ -7,12 +7,12 @@ func object(_ url:URL) throws -> [String:Any] {
     return value
 }
 func config() throws -> [String:Any] {try object(base.appendingPathComponent("reader-config.json"))}
-func queue(_ action:String,code:String) throws -> [String:Any] {
+func queue(_ action:String,code:String,reason:String="") throws -> [String:Any] {
     let c=try config();guard let python=c["python"] as? String else {throw fail("python_not_configured")}
     let p=Process();p.executableURL=URL(fileURLWithPath:python)
     p.arguments=[base.appendingPathComponent("reply-bridge/reply_queue.py").path]
     let input=Pipe(),out=Pipe(),err=Pipe();p.standardInput=input;p.standardOutput=out;p.standardError=err
-    try p.run();input.fileHandleForWriting.write(try JSONSerialization.data(withJSONObject:["action":action,"code":code]));try input.fileHandleForWriting.close()
+    try p.run();input.fileHandleForWriting.write(try JSONSerialization.data(withJSONObject:["action":action,"code":code,"failure_reason":String(reason.prefix(180))]));try input.fileHandleForWriting.close()
     let bytes=out.fileHandleForReading.readDataToEndOfFile();p.waitUntilExit()
     guard p.terminationStatus==0, let r=try JSONSerialization.jsonObject(with:bytes) as? [String:Any] else {throw fail("request_validation_or_readback_failed")}
     return r
@@ -83,7 +83,7 @@ final class CalibrationView:NSImageView {
         _=try queue("verify",code:code)
         _=dialog("已代发并核对本机记录","\(label)\n\(text)\n此结果不代表对方已读。")
     } catch {
-        _=try? queue("failed",code:code)
+        _=try? queue("failed",code:code,reason:error.localizedDescription)
         throw error
     }
 }

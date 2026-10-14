@@ -153,6 +153,7 @@ def main():
                 if r['status']!='pending_before_typing':raise RuntimeError('Invalid sender state')
                 r['status']='ui_sent_pending_db';save(path,r);result={'status':r['status']}
             else:
+                r['failure_reason']=str(value.get('failure_reason',''))[:180]
                 r['status']='blocked_or_uncertain';save(path,r);result={'status':r['status']}
         elif action=='verify':result=verify_sent(value['code'])
         else:raise RuntimeError('Unsupported bounded queue action')
