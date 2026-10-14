@@ -126,18 +126,38 @@ final class CalibrationView:NSImageView {
         throw error
     }
 }
+@MainActor func beginWeChatScreenshot() async throws {
+    guard AXIsProcessTrusted() else {throw fail("accessibility_permission_required")}
+    guard let app=NSRunningApplication.runningApplications(withBundleIdentifier:"com.tencent.xinWeChat").first,
+          app.bundleURL?.path=="/Applications/WeChat.app" else {throw fail("original_wechat_required")}
+    let c=try config()
+    guard let root=c["db_root"] as? String else {throw fail("expected_account_missing")}
+    try requireAccount(app.processIdentifier,root:root)
+    try await activateWeChat(app)
+    _=try await targetWindow()
+    for down in [true,false] {
+        try requireFrontmost(app.processIdentifier)
+        guard let event=CGEvent(keyboardEventSource:nil,virtualKey:21,keyDown:down) else {throw fail("screenshot_shortcut_event_failed")}
+        event.flags = .maskCommand
+        event.post(tap:.cghidEventTap)
+    }
+    // Selection and completion stay manual until the overlay can be verified.
+    try await Task.sleep(for:.milliseconds(700))
+}
 @main struct ReplyBridge {
     @MainActor static func main() {
         let app=NSApplication.shared;app.setActivationPolicy(.regular)
         Task { @MainActor in
             do {
-                if CommandLine.arguments.contains("--setup") {try await configure()}
+                if CommandLine.arguments.contains("--wechat-screenshot") {try await beginWeChatScreenshot()}
+                else if CommandLine.arguments.contains("--setup") {try await configure()}
                 else if CommandLine.arguments.contains("--diagnose") {try await diagnoseCapture()}
                 else if let i=CommandLine.arguments.firstIndex(of:"--request"),i+1<CommandLine.arguments.count {try await review(CommandLine.arguments[i+1])}
                 else {
-                    let choice=dialog("微信回复确认","先在原版微信打开文件传输助手。“检查窗口捕获”只读画面、不输入、不发送。首次设置用于权限与输入区校准。",["检查窗口捕获","首次设置","关闭"])
+                    let choice=dialog("微信回复确认","先在原版微信打开文件传输助手。“微信自带截图”只触发 ⌘4，框选和完成由你操作；不输入、不发送。",["检查窗口捕获","首次设置","微信自带截图","关闭"])
                     if choice == .alertFirstButtonReturn {try await diagnoseCapture()}
                     else if choice == .alertSecondButtonReturn {try await configure()}
+                    else if choice.rawValue == NSApplication.ModalResponse.alertFirstButtonReturn.rawValue+2 {try await beginWeChatScreenshot()}
                 }
             } catch { _=dialog("发送未完成",error.localizedDescription+"\n请查看微信，程序不会自动重试。") }
             app.terminate(nil)
