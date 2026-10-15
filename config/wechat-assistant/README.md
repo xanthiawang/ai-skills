@@ -137,3 +137,7 @@ Generic source lives in the public wechat-chat-assistant repository, app/local_m
 - Unique model sessions are cancelled on termination/timeouts; preparation1000s, delivery120s, learning300s supervisor limits. The learning script's own work deadline is240s. Built-in owner-only failure alerts are configured for preparation and delivery, with1h cooldown.
 - Generic scheduler implementation is app/setup.py in the public repository; learning implementation is app/memory_refresh.py. Local IDs, paths, credentials, samples, receipts and logs remain in private runtime state.
 -2026-10-15 morning run started09:00 and timed out10:00 before delivery; automatic retry was confirmed sent10:51. Old logs do not prove the precise internal stall. A synchronous relationship refresh had been in the critical path; it is now independent.
+
+## Persistent owner tasks (2026-10-15)
+
+Generic task storage and explicit-owner completion handling are in local_memory.py and history-plugin/index.mjs. 09:00 delivery snapshots outstanding tasks independently of model preparation and learning. Per-page pending/sent/unknown receipts prevent blind retries; completed/cancelled tasks remain auditable. Current private meeting import stays outside this repository. Direct owner commands: /todo list, /todo done T001, /todo reopen T001, /todo cancel T001 (replace actual ID). Delivery command budget is300seconds.
