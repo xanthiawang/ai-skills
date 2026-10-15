@@ -8,11 +8,18 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 from zoneinfo import ZoneInfo
 from history_reader import read, private_write, BASE
 
 CLI = BASE/'runtime/node_modules/.bin/openclaw'
 TZ = ZoneInfo('Asia/Shanghai')
+STARTED = time.monotonic()
+
+
+def phase(name, **fields):
+    print(json.dumps({'phase': name, 'at': datetime.now(TZ).isoformat(),
+                      'elapsed_seconds': round(time.monotonic()-STARTED, 3), **fields}), flush=True)
 
 
 def cli(args, timeout=900):
@@ -30,6 +37,7 @@ def cli(args, timeout=900):
 
 
 def model(prompt, key, folder):
+    phase('model_started', stage=key, input_bytes=len(prompt.encode()))
     file = folder/(key+'.prompt.txt')
     file.write_text(prompt)
     result = cli(['agent','--session-key','agent:main:wechat-digest-'+key,'--message-file',str(file),'--thinking','low','--timeout','800','--json'])
@@ -39,6 +47,7 @@ def model(prompt, key, folder):
     text = '\n'.join(p.get('text','') for p in result.get('result',{}).get('payloads',[])).strip()
     if not text:
         raise RuntimeError('Model returned no summary')
+    phase('model_completed', stage=key)
     return text
 
 
@@ -57,7 +66,10 @@ def main():
         if state.get('status') in ('sent','delivery_pending','delivery_unknown'):
             print(json.dumps({'day':day,'status':state['status'],'duplicate_suppressed':True}))
             return
+        private_write(state_path,{'day':day,'status':'reading'})
+        phase('reading_started', day=day)
         source=read(day=day,full=True)
+        phase('reading_completed', day=day, text_messages=source['read_text'])
         private_write(folder/'source.json',source)
         metadata={k:v for k,v in source.items() if k not in ('records','ledger')}
         private_write(state_path,{'day':day,'status':'summarizing','coverage':metadata})
@@ -88,6 +100,7 @@ def main():
         (folder/'briefing.txt').write_text(final)
         config=json.loads((BASE/'reader-config.json').read_text())
         private_write(state_path,{'day':day,'status':'delivery_pending','coverage':metadata,'batches':len(batches)})
+        phase('delivery_started', day=day)
         try:
             sent=cli(['message','send','--channel','openclaw-weixin','--account',config['account'],'--target',config['owner'],'--message',final,'--json'],timeout=120)
             private_write(folder/'delivery.json',sent)
@@ -97,6 +110,7 @@ def main():
             private_write(state_path,{'day':day,'status':'delivery_unknown','coverage':metadata,'batches':len(batches)})
             raise
         private_write(state_path,{'day':day,'status':'sent','sent_at':datetime.now(TZ).isoformat(),'coverage':metadata,'batches':len(batches)})
+        phase('delivery_confirmed', day=day)
         print(json.dumps({'day':day,'status':'sent','text_messages_processed':source['read_text'],'nontext_or_unreadable':source['omitted'],'batches':len(batches)}),flush=True)
 
 
