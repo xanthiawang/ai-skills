@@ -14,6 +14,8 @@ read [the shared project revision profile](../pptx/references/fathompeak-revisio
 and follow the existing-deck delivery checks in [PPTX Skill](../pptx/SKILL.md).
 Both skills are maintained together in the portable ai-skills repository.
 
+**Revisions of any delivered deck (default since 2026-10-15):** treat the last delivered deck as the base, make local edits on it, and highlight every new or rewritten text run in pale yellow `FFF2A8` (pptxgenjs text-run option `highlight: "FFF2A8"`; for an entirely new slide highlight only its title; never highlight or recolor figures). Save as a clearly named highlighted revision beside the untouched base; give a clean copy only on request. Full rule: the "Existing-deck revisions and delivery" section of [PPTX Skill](../pptx/SKILL.md).
+
 Build editable PPTX decks with `ying_template.js`. Route biomedical and
 scientific schematics through `nature-schematic`, use Mermaid for deterministic
 flowcharts, and reserve generic image generation for non-biomedical abstract
