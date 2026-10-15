@@ -1031,7 +1031,7 @@ function _addSimpleThankYouSlide(pres, opts = {}) {
     });
   }
 
-  s.addText("Thank You", {
+  s.addText(opts.title || "Thank You", {
     x: MARGIN.left, y: 1.4, w: CONTENT_W, h: 0.8,
     fontSize: 36, fontFace: FONTS.heading, color: COLORS.ink, bold: true, align: "center", margin: 0,
   });
