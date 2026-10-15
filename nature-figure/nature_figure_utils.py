@@ -3100,9 +3100,11 @@ def add_panel_labels(fig, axes_dict, pad_x=-0.02, pad_y=0.01,
         ss = ax.get_subplotspec().get_topmost_subplotspec()
         info[lbl] = dict(
             x0=tb_fig.x0,       # tightbbox left (whole panel)
+            x1=tb_fig.x1,       # tightbbox right (incl. outside legends/annotations)
             y0=tb_fig.y0,       # tightbbox bottom
             y1=tb_fig.y1,       # tightbbox top
             row=ss.rowspan.start,
+            rows=set(range(ss.rowspan.start, ss.rowspan.stop)),  # every grid row the panel occupies
         )
 
     # Row-align y: all labels in the same grid row share the highest y1
@@ -3121,20 +3123,25 @@ def add_panel_labels(fig, axes_dict, pad_x=-0.02, pad_y=0.01,
     sorted_rows = sorted(row_y_top.keys())
 
     for lbl, d in sorted(info.items()):
-        # x: tight-bbox left edge (above all content), but clamped
-        # to not bleed into the left neighbor's panel area
+        # x: tight-bbox left edge (above all content), clamped so the label
+        # never crosses into any panel to its left.
         ax_pos = axes_dict[lbl].get_position()
         target_x = d["x0"] + pad_x
-        # Find left neighbor's right edge and don't cross it
         for lbl2, d2 in info.items():
             if lbl2 == lbl:
                 continue
             ax2_pos = axes_dict[lbl2].get_position()
-            # Same row, to our left?
-            if (d2["row"] == d["row"]
-                    and ax2_pos.x1 < ax_pos.x0):
-                floor = ax2_pos.x1 + 0.005
-                target_x = max(target_x, floor)
+            # Left neighbour = any panel to our left whose ROW SPAN overlaps
+            # ours (a panel spanning several rows is a neighbour of every
+            # panel beside it, not only the one in its starting row).
+            if not (d2["rows"] & d["rows"]) or ax2_pos.x1 > ax_pos.x0:
+                continue
+            # Its boundary is the axes edge OR its outside-axes decorations
+            # (right-side legend, colorbar, annotation column), whichever
+            # reaches further right -- but never past our own content edge.
+            col_left_boundary = max(ax2_pos.x1, min(d2["x1"], d["x0"]))
+            floor_x = col_left_boundary + 0.005
+            target_x = max(target_x, floor_x)
         target_x = max(target_x, 0.0)
 
         # y: row-aligned top + small offset — always above the panel
