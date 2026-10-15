@@ -55,6 +55,10 @@ class DocumentGenerator:
     def _base_doc(self) -> Document:
         """创建应用版式规范的空白文档：紧凑页边距 + 仿宋正文 + 深蓝标题 + 页脚页码"""
         doc = Document()
+        # 本机修正：python-docx 默认模板的 <w:zoom> 缺必需的 w:percent
+        for z in doc.settings.element.findall(qn("w:zoom")):
+            if z.get(qn("w:percent")) is None:
+                z.set(qn("w:percent"), "100")
 
         # 紧凑正式件参数：压缩页边距/行距/段距，避免无效留白
         for section in doc.sections:
@@ -93,10 +97,9 @@ class DocumentGenerator:
         """页脚居中页码（PAGE 域）"""
         para = section.footer.paragraphs[0]
         para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run = para.add_run()
         fld = OxmlElement("w:fldSimple")
         fld.set(qn("w:instr"), " PAGE ")
-        run._r.append(fld)
+        para._p.append(fld)  # 本机修正：fldSimple 须为段落子元素，放在 run 内不符合 OOXML
 
     @staticmethod
     def _shade(cell, hex_color: str):
@@ -295,9 +298,7 @@ class DocumentGenerator:
         # 渲染器（LibreOffice / WPS）按 tblGrid 的 gridCol 分配列宽，需同步写入并固定布局
         for gc, w in zip(table._tbl.tblGrid.findall(qn("w:gridCol")), widths):
             gc.set(qn("w:w"), str(int(w / 2.54 * 1440)))
-        layout = OxmlElement("w:tblLayout")
-        layout.set(qn("w:type"), "fixed")
-        table._tbl.tblPr.append(layout)
+        # 固定列宽由 table.autofit = False 写入（tblLayout fixed），不再重复添加
 
         port = doc.add_section(WD_SECTION.NEW_PAGE)
         port.orientation = WD_ORIENT.PORTRAIT
