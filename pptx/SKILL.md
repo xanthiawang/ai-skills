@@ -6,6 +6,15 @@ license: Proprietary. LICENSE.txt has complete terms
 
 # PPTX Skill
 
+## Existing-deck revisions and delivery
+
+- The supplied deck and the user's latest selected design take precedence over the design suggestions below. Make focused edits; preserve unrelated content, ordering, fonts, colors, tables, notes and editable objects.
+- Inspect the current source file before editing. A previous insertion record, preview or completion message does not establish what the current deck contains.
+- When asked to add an image, embed the actual asset in the requested slide. A separate PNG/PDF, external link, attachment-list screenshot or intermediate preview does not fulfill that request. Preserve aspect ratio, labels and source attribution.
+- Reopen or render the exact final saved PPTX and verify the requested content, slide position, image embedding, text fit and cropping. For small edits inspect changed slides and check unrelated content for unintended changes. Report a rendering limitation honestly rather than claiming a visual check.
+- Deliver the complete updated deck and identify the changed slide(s) and the file to open. Preserve a recoverable source version; do not create confusing competing “final” files. Claim completion only after confirming the changes exist in the delivered file.
+- For 沐仞 / FathomPeak company decks, read [the project revision profile](references/fathompeak-revisions.md) before editing. These project preferences do not apply automatically to other clients or scientific talks.
+
 ## Quick Reference
 
 | Task | Guide |

@@ -5,6 +5,15 @@ description: "Ying Lab slide pipeline: pptxgenjs template calibrated against the
 
 # Ying Lab Slide Pipeline
 
+## User reference and company-deck precedence
+
+For an existing deck, the user's source and latest selected design override this
+skill's template, palette, fonts, density and Kang/IPD calibration defaults.
+Do not restyle a company deck as a research talk. For 沐仞 / FathomPeak revisions,
+read [the shared project revision profile](../pptx/references/fathompeak-revisions.md)
+and follow the existing-deck delivery checks in [PPTX Skill](../pptx/SKILL.md).
+Both skills are maintained together in the portable ai-skills repository.
+
 Build editable PPTX decks with `ying_template.js`. Route biomedical and
 scientific schematics through `nature-schematic`, use Mermaid for deterministic
 flowcharts, and reserve generic image generation for non-biomedical abstract
