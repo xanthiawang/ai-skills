@@ -147,3 +147,5 @@ Readable WeChat reminders (2026-10-15): references MindScope synapse/command-cen
 Natural task names (2026-10-15): owner-facing reminders and confirmations now hide internal IDs, use compact Markdown bullet lists, and accept an explicit unique task name for completion. IDs remain stable in storage/tool parameters; source records and status audit remain unchanged.
 
 Narrative morning report (2026-10-15): four exact sections with context, responsibility and source times, plus deterministic coverage footer. At09:00 current open tasks are merged into section1 and recent owner-reported closed states into progress. One frozen account-bound report is paragraph-paginated with per-page pending/sent/unknown receipts; historical sent reports are not replayed. Task integration errors are reported inside the chat brief and do not block its delivery. Preparation failure retains separately labeled task-only fallback.
+
+2026-10-15：简报采用“一、→（一）→1.”三级编号；按责任、日程状态、真实项目分组。私有任务身份关联可合并真实待办，发送时隐藏编号；不因标题相似删除不同事项。来源和统计仅本机保存，展示只留总结结果。
