@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "installed_on": "2026-10-16",
+  "upstream_repository": "https://github.com/anthropics/knowledge-work-plugins",
+  "upstream_commit": "33eeda1e8fd856455b05479d13a0f85b5f803744",
+  "license": "Apache-2.0",
+  "deployment": "Source directories in this repository; managed symlinks for Codex and Claude Code. No connectors or credentials are bundled.",
+  "local_adaptations": [
+    "Remove Claude-plugin-only argument-hint frontmatter for the Codex skill validator.",
+    "Bundle the applicable CONNECTORS.md and LICENSE and repair relative links.",
+    "Add evidence, jurisdiction, no-fabrication, and current-authorization constraints.",
+    "Keep NDA screening and risk scores advisory; do not infer signing or approval authority.",
+    "No private chat records, client identities, or company playbooks are included."
+  ],
+  "skills": [
+    {
+      "name": "triage-nda",
+      "upstream_path": "legal/skills/triage-nda",
+      "installed_skill_sha256": "fdd57f0ca05ec9636403085d5490cd5930094e57a072efeebd6069fa154cbe11"
+    },
+    {
+      "name": "legal-risk-assessment",
+      "upstream_path": "legal/skills/legal-risk-assessment",
+      "installed_skill_sha256": "8b80f2407df3893bf99e7a63afb109f1d886d5f7b1f547eb74f1cc80d4e1ca29"
+    },
+    {
+      "name": "synthesize-research",
+      "upstream_path": "product-management/skills/synthesize-research",
+      "installed_skill_sha256": "0591e6042d93b4e651f38a9fee121569022949ce9cad1d3975d038b5d15647a2"
+    },
+    {
+      "name": "write-spec",
+      "upstream_path": "product-management/skills/write-spec",
+      "installed_skill_sha256": "925350ec1c5c0ea1c7199cad46576896cb613cfec92fd9297755c970fded27a5"
+    },
+    {
+      "name": "competitive-brief",
+      "upstream_path": "product-management/skills/competitive-brief",
+      "installed_skill_sha256": "64b250fca1ce233d4b7d0ec874f78931fa62f815d7d5f978151986e90c792632"
+    }
+  ]
+}
