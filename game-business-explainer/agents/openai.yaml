@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏商业模式解释"
+  short_description: "用普通中文解释游戏研发发行、渠道支付、广告和授权的角色及交易逻辑"
+  default_prompt: "请用 $game-business-explainer 讲清楚各方做什么、赚什么，以及资金、权利和数据如何流转。"

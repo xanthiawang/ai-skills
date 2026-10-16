@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "created_on": "2026-10-16",
+  "purpose": "Shared instruction-only game-industry commercial/legal workflows for Codex and Claude Code.",
+  "focus_areas": [
+    "game cross-border payments",
+    "game company business models",
+    "commercial contracts",
+    "IP collaborations and licensing",
+    "advertising procurement",
+    "NDAs",
+    "legal briefings"
+  ],
+  "deployment": {
+    "source": "~/programs/ai-skills",
+    "managed_targets": [
+      "~/.codex/skills",
+      "~/.claude/skills"
+    ],
+    "sync_commands": [
+      "scripts/sync_agent_environment.sh apply",
+      "scripts/sync_agent_environment.sh check"
+    ],
+    "connectors_added": [],
+    "credentials_included": false
+  },
+  "authorship": {
+    "custom_skills_author": "Zixin Wang",
+    "custom_skill_count": 6,
+    "upstream_skill_count": 1
+  },
+  "upstream": [
+    {
+      "repository": "https://github.com/anthropics/knowledge-work-plugins",
+      "commit": "33eeda1e8fd856455b05479d13a0f85b5f803744",
+      "path": "legal/skills/meeting-briefing",
+      "license": "Apache-2.0",
+      "installed_as": "meeting-briefing",
+      "adaptations": [
+        "Add narrow current authorization and source evidence constraints.",
+        "Separate draft follow-ups from sending, approval, signing or external updates.",
+        "Bundle applicable LICENSE and CONNECTORS.md.",
+        "Add optional Chinese UI metadata and game briefing handoff."
+      ]
+    }
+  ],
+  "reused_existing_skills": [
+    "contract-copilot",
+    "contract-review-pro",
+    "triage-nda",
+    "legal-risk-assessment",
+    "cn-contract-review"
+  ],
+  "candidates_not_installed": [
+    {
+      "repository": "https://github.com/duraninci/openclaw-legal-skills",
+      "commit": "2f9a5a2da8fa8ebccda6c6d8341599f33bbd4669",
+      "path": "skills/contract-review/skill.md",
+      "license": "MIT",
+      "static_security_verdict": "PASS",
+      "reason": "Generic merchant-contract checklist duplicates existing engines and includes unsourced default negotiation thresholds; not a game-payments specialist."
+    },
+    {
+      "repository": "https://github.com/Salah-XD/equipt",
+      "commit": "6380fd246d95eedb65077f466d37534a557d48dc",
+      "path": "plugins/equipt-business/skills/licensing-agreement/SKILL.md",
+      "static_security_verdict": "PASS",
+      "reason": "Generic creator-content licensing with sample amounts and default rate multipliers; not a good fit for game-IP collaboration review."
+    }
+  ],
+  "security_review": {
+    "method": "Manual complete instruction review plus skill-security-auditor strict static scan and frontmatter/relative-reference checks.",
+    "scope": "Seven new skill directories; inherited engine skills were not re-audited by this manifest.",
+    "limits": "Static checks do not prove runtime safety, legal correctness, lawful data processing or authority. No law library, transaction tool, plugin, connector, dependency or credentials are installed by this bundle.",
+    "public_data_policy": "No private chats, client identities, contracts, negotiation positions, replay fixtures or session logs."
+  },
+  "skills": [
+    {
+      "name": "game-commercial-legal",
+      "file_sha256": {
+        "SKILL.md": "2ee18fa8adde15f45f798160d37ea575f28ba593e0b68541dfdbd77ff12be786",
+        "agents/openai.yaml": "61e88be44cece140c3ab4f97d68b12f3b7489b6a60056fd111c1d32efed1f6fa",
+        "references/core-review.md": "336bf8edf31dd94fcd7aa095701806d4e4f2007ac21572a3437e61917248de78",
+        "references/game-nda.md": "640a3fdd245bddaed014ba352f952700e07bca58a4ae19672b8d20b6c0a0cca8",
+        "references/source-entrypoints.md": "fc064fd9e17a5f0e74a41ba001336cbcc5d9e1dcd628e3bc7a7f8e9a5921d7e0"
+      }
+    },
+    {
+      "name": "game-business-explainer",
+      "file_sha256": {
+        "SKILL.md": "0617d3b3f69a6f6837675d6b36d7c0fc2481d331133bb7783529d1c0bf353018",
+        "agents/openai.yaml": "7793b2b16793b90729940c526378bd980614bb941a069baec8af015bb8f17422"
+      }
+    },
+    {
+      "name": "game-crossborder-payments",
+      "file_sha256": {
+        "SKILL.md": "10ee31f2c371fdc1a99c1b598b24e669c5c6a49292d0d1b48ab68a2ac50f8012",
+        "agents/openai.yaml": "0cd0ea4caaa5694a4c9399384dc4c24c3b66cbaf1b70c25a8982dd43199ba34b"
+      }
+    },
+    {
+      "name": "game-ip-collab-review",
+      "file_sha256": {
+        "SKILL.md": "32806bb053a7523a2a10b622815f41a19bf542532ba591ffecbff2ac063f23c4",
+        "agents/openai.yaml": "3229cddabf0692ed637a19e67b8626218acbc0c182def4096f31bdcbc48c6232"
+      }
+    },
+    {
+      "name": "game-ad-procurement-review",
+      "file_sha256": {
+        "SKILL.md": "672eaae760ff981c6cedfc00b0e008c52a8ed900cfea6544ac070f3c79207956",
+        "agents/openai.yaml": "1ee9568e017102f434a1e844be9444c51683f80d50e56c867d03eeb3119e7f22"
+      }
+    },
+    {
+      "name": "game-legal-briefing",
+      "file_sha256": {
+        "SKILL.md": "2cbc8dfce74d28f7e6761a6e7660314bc2bada92e38fd1f0a59cac2dd170e865",
+        "agents/openai.yaml": "264f1a8839662580e05fd24674028616f0ca6f300be1dc6817c069322951d2bf"
+      }
+    },
+    {
+      "name": "meeting-briefing",
+      "file_sha256": {
+        "CONNECTORS.md": "1f420b2dada7768a536bf9668939ed67b193a0466af1d4617db0e80370e70dc4",
+        "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "SKILL.md": "d1cbe6724e749e8dbf0599e6036ab0c766f550211dd069216f3d47bfe367aa66",
+        "agents/openai.yaml": "24aac3407397bfcc206e2d0b6aacc227c06a1d13ba67709718ccb234e7132ded"
+      }
+    }
+  ]
+}

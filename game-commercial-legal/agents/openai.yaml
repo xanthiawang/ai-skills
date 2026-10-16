@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏出海商业法务"
+  short_description: "面向游戏出海的商业解释、专项合同审阅、风险确认与中文法务汇报"
+  default_prompt: "请用 $game-commercial-legal 先判断本轮任务和我方立场，再选择对应专项技能处理提供的材料。"

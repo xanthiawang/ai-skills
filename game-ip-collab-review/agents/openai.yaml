@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏 IP 联名授权"
+  short_description: "审阅游戏联名授权的权利范围、监修、分成、周边景品和退出安排"
+  default_prompt: "请用 $game-ip-collab-review 核对授权范围与履约机制，提出有依据的局部修改及确认项。"

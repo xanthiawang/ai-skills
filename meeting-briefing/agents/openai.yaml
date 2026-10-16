@@ -1,0 +1,4 @@
+interface:
+  display_name: "法务会前简报"
+  short_description: "依据授权范围内的真实资料准备法务会议背景、议题、问题和行动草稿"
+  default_prompt: "请用 $meeting-briefing 仅依据本轮授权材料准备会前简报，并清楚标记未知与待确认事项。"

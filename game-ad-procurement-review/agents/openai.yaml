@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏广告采购审阅"
+  short_description: "解释游戏广告链路并审阅代理采购、归因指标、费用、数据与验收机制"
+  default_prompt: "请用 $game-ad-procurement-review 梳理广告角色、收费和归因，再按本轮需要识别合同风险。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏出海支付审阅"
+  short_description: "梳理游戏跨境支付主体、结算费率、退款拒付、资金控制和数据责任"
+  default_prompt: "请用 $game-crossborder-payments 分析支付合作的实际交易链路，区分已确认事实与待确认问题。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏法务汇报"
+  short_description: "把真实业务材料和审阅结果整理为中文领导汇报、业务反馈和确认清单"
+  default_prompt: "请用 $game-legal-briefing 根据提供的事实和审阅结果，生成可直接使用且保留待确认项的中文汇报。"
