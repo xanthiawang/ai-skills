@@ -132,7 +132,7 @@ Generic source lives in the public wechat-chat-assistant repository, app/local_m
 
 ## Independent schedules repaired2026-10-15
 
-- Morning preparation08:40, delivery-only09:00 Asia/Shanghai. Ready artifacts are bound to the verified account and exact text hash. Pending/unknown deliveries are never retried blindly. A ready briefing plus awake, connected Mac is required for the09:00 delivery attempt.
+- Morning preparation08:20, delivery-only09:00 Asia/Shanghai. Ready artifacts are bound to the verified account and exact text hash. Pending/unknown deliveries are never retried blindly. A ready briefing plus awake, connected Mac is required for the09:00 delivery attempt.
 - Learning is a separate bounded command at05:30,11:30,17:30,23:30. It updates genuine self-sent voice examples and source-backed relationship candidates. Ambiguous changed-message matches remain candidates; zero observed edits is preserved as zero. No resident local model is added.
 - Unique model sessions are cancelled on termination/timeouts; preparation1000s, delivery120s, learning300s supervisor limits. The learning script's own work deadline is240s. Built-in owner-only failure alerts are configured for preparation and delivery, with1h cooldown.
 - Generic scheduler implementation is app/setup.py in the public repository; learning implementation is app/memory_refresh.py. Local IDs, paths, credentials, samples, receipts and logs remain in private runtime state.
@@ -151,3 +151,5 @@ Narrative morning report (2026-10-15): four exact sections with context, respons
 2026-10-15：简报采用“一、→（一）→1.”三级编号；按责任、日程状态、真实项目分组。私有任务身份关联可合并真实待办，发送时隐藏编号；不因标题相似删除不同事项。来源和统计仅本机保存，展示只留总结结果。
 
 2026-10-15：修正独立发送命令未加载会话凭据的问题；改用Gateway的message.action，操作键发送前持久化。failed、queued、unknown分别记录，结果不明或队列持有时不重复发。服务端会话拒收仍需真实微信入站刷新，本机不能伪造或静默续期。
+
+2026-10-16：备用待办同样使用三级编号并补足联系人和具体动作；联系线索存本机task-routing.json，按账号和来源版本验证。日记录读取独立进程上限120秒，准备提前至08:20，09:00仍只投递已准备文本。
