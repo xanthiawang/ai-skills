@@ -153,3 +153,7 @@ Narrative morning report (2026-10-15): four exact sections with context, respons
 2026-10-15：修正独立发送命令未加载会话凭据的问题；改用Gateway的message.action，操作键发送前持久化。failed、queued、unknown分别记录，结果不明或队列持有时不重复发。服务端会话拒收仍需真实微信入站刷新，本机不能伪造或静默续期。
 
 2026-10-16：备用待办同样使用三级编号并补足联系人和具体动作；联系线索存本机task-routing.json，按账号和来源版本验证。日记录读取独立进程上限120秒，准备提前至08:20，09:00仍只投递已准备文本。
+
+## Public configuration application (2026-10-18)
+
+The standalone distribution now provides v0.2.0 Beta: an independently written native Mac setup/status launcher, DMG, source archives and fixed-version checksums. Authorization remains interactive in Terminal. The public package does not include the unverified reply sender. Existing private profile, credentials, task states and delivery journals are not replaced or migrated by the launcher. See the public repository for current release and clean-Mac verification limits.
