@@ -739,9 +739,12 @@ sync_codex_mcp() {
         return
     fi
 
-    local codex_bin
-    codex_bin="$(command -v codex)"
-    ensure_codex_stdio_mcp codex "$codex_bin" mcp-server
+    # `codex mcp-server` was removed in Codex CLI 0.154.0 (2026-09); drop the stale entry.
+    # Claude reaches Codex through `codex exec` or the official openai/codex-plugin-cc instead.
+    if codex_has_mcp codex; then
+        codex mcp remove codex
+        info "codex mcp: removed codex (mcp-server no longer exists)"
+    fi
     ensure_codex_stdio_mcp codex-cli npx -y codex-mcp-server
     ensure_codex_stdio_mcp mobile-mcp npx -y @mobilenext/mobile-mcp@latest
     ensure_codex_screenpipe_mcp
@@ -845,10 +848,11 @@ sync_claude_mcp() {
         return
     fi
 
-    local codex_bin
-    codex_bin="$(command -v codex || true)"
-    if [ -n "$codex_bin" ]; then
-        ensure_claude_stdio_mcp codex "$codex_bin" mcp-server
+    # `codex mcp-server` was removed in Codex CLI 0.154.0 (2026-09); the stale entry
+    # makes Claude show "Couldn't reconnect codex". Use `codex exec` or openai/codex-plugin-cc.
+    if claude_has_mcp codex; then
+        claude mcp remove codex -s user
+        info "claude mcp: removed codex (mcp-server no longer exists)"
     fi
     ensure_claude_stdio_mcp mobile-mcp npx -y @mobilenext/mobile-mcp@latest
     # Playwright removed 2026-05-30: redundant with claude-in-chrome (which
