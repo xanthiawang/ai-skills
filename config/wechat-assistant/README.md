@@ -157,3 +157,11 @@ Narrative morning report (2026-10-15): four exact sections with context, respons
 ## Public configuration application (2026-10-18)
 
 The standalone distribution now provides v0.2.0 Beta: an independently written native Mac setup/status launcher, DMG, source archives and fixed-version checksums. Authorization remains interactive in Terminal. The public package does not include the unverified reply sender. Existing private profile, credentials, task states and delivery journals are not replaced or migrated by the launcher. See the public repository for current release and clean-Mac verification limits.
+
+## v0.3.0 resilient scheduling and reviewed imports (2026-10-18)
+
+The public app now includes a user LaunchAgent supervisor, bounded preparation retries with source/model cache, 08:00 synchronization check, 09:00 delivery and wake recovery before noon. Receipt layout/binding must be explicit for legacy installations; no account search or receipt migration. Unknown sends remain held; sent/unsent pages can safely resume. Program upgrades retain backups and restore partially switched directories on failure.
+
+Reviewed imports accept local TXT/Markdown/CSV/JSON or pasted lines. Preview edits include contact, topic, responsibility, date and owner-confirmed status. Duplicate imports preserve existing task identity and status. Actual original sources and review receipts stay private; no example private task data is included here. Native UI and portable setup remain in the standalone public repo.
+
+Developer verification used actual existing31tasks: all four import formats and a GUI save returned duplicates without inserting tasks or changing events. New controller is loaded with genuine yesterday-ready report preserved; first09:00 run on the new backend and clean second-Mac installation remain unverified. Sleep/offline are hardware/service limitations, not guaranteed delivery.
