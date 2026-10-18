@@ -165,3 +165,9 @@ The public app now includes a user LaunchAgent supervisor, bounded preparation r
 Reviewed imports accept local TXT/Markdown/CSV/JSON or pasted lines. Preview edits include contact, topic, responsibility, date and owner-confirmed status. Duplicate imports preserve existing task identity and status. Actual original sources and review receipts stay private; no example private task data is included here. Native UI and portable setup remain in the standalone public repo.
 
 Developer verification used actual existing31tasks: all four import formats and a GUI save returned duplicates without inserting tasks or changing events. New controller is loaded with genuine yesterday-ready report preserved; first09:00 run on the new backend and clean second-Mac installation remain unverified. Sleep/offline are hardware/service limitations, not guaranteed delivery.
+
+## Ordinary-user installation audit (2026-10-18)
+
+Distribution v0.3.1 repairs independent step-3 read verification, cancellation, fresh pending gateway setup recovery and misleading import labels. The launcher reuses installed formulas and installs missing ones. Full screenshots/source/native UI remain in the standalone public repository; user guide: https://github.com/xanthiawang/wechat-chat-assistant/blob/main/docs/QUICKSTART.md .
+
+Downloaded v0.3.0 DMG and ZIP were verified, fresh-directory UI and real lockfile npm installation checked, then the patch UI/entrypoint checked. No second account/service/login or synthetic chats were created; fresh authorization, key initialization and second-machine delivery remain unverified. Real Oct18 morning report missed its planned time and was owner-delivered14:10 after gateway health recovered; this is not an on-time validation.
