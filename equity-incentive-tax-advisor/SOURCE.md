@@ -2,7 +2,7 @@
 
 - Upstream: https://github.com/vivy-yi/Greater-China-Legal (plugins/legal-scenes/tax-compliance/skills/equity-incentive-tax-advisor)
 - Commit: fccdf09b53eaf32ea56c069a49e9a5176e9dcce9
-- License: Apache-2.0 (see LICENSE)
+- License: README states “Apache 2.0 — 详见 LICENSE”, but the LICENSE file is absent from the upstream clone (2026-11-01); treat as Apache-2.0 declared, file not shipped
 - Imported: 2026-11-01
 - Audit: skill-security-auditor PASS (0 findings); pure Markdown, no scripts. Scene-level references (output-template / 查询路径 / routing-table) copied into references/ for self-containment.
 
