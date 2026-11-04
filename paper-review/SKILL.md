@@ -43,6 +43,22 @@ Prioritize comments that would change a reviewer's understanding or decision. Av
 
 When a sentence can be fixed locally, quote or identify it and give a concrete replacement direction. When the problem is structural, explain which sections should change and what each should accomplish.
 
+## Calibration from real decision letters
+
+Zixin's own rejections (CHI 2027 Assisted Desk Rejection, Computers & Education reject after review, LAK27 reviews; stored in `manuscript-revision/comment-library/entries/`, local only) show which paper-facing problems decide outcomes. Check each one explicitly, in this order, before writing the verdict. All are judged from the manuscript text alone.
+
+1. **Readability and positioning first.** Can a reader state the research gap in one sentence by the end of the introduction's second paragraph, or does it only appear in Related Work? Does the abstract use labels defined only later (condition names, ratio names, internal code names)? CHI desk-rejects on this before reading any statistics.
+2. **Structure.** Flag one- or two-sentence subsections, results reported inside Methods, Methods not organized by research question, and an introduction that previews results at length.
+3. **Rationale for every key choice.** The theoretical framework (why this model and not its alternatives), each coding definition (why a borderline category counts where it counts), sample size, and every system or design decision should carry a stated reason.
+4. **Research-question alignment.** Flag a research question that bundles several questions, and any research question or claim that names something the study never tested (an "intervention window", "transfer failure").
+5. **Claims within evidence.** Flag mechanism and causal vocabulary for behavioral or associational evidence ("trap", "self-reinforcing", "mechanistic core", "measures cognitive offloading" when the scheme classifies observable dialogue), generalization from a small or single-coder subsample, and practical recommendations for a system that was never deployed.
+6. **Internal consistency.** Compare how the introduction, results, and discussion state the same finding; flag introduction claims about prior work that the paper's own reanalysis contradicts, and constructs defined one way and discussed another.
+7. **Balanced headline numbers.** Flag a pooled or combined number emphasized while the strictest number (holdout, primary analysis) is weaker; reviewers notice.
+8. **Reader-facing completeness.** Every supplement the text mentions is locatable by name; non-English figures carry translations; data language and any translation are described; the generative-AI declaration separates research-method use from manuscript-preparation use.
+9. **Literature coverage.** Recent work in the target venue on the same topic is cited; published versions replace preprints.
+
+Praise that recurs is also informative: transparent reporting, effect sizes with intervals, robustness checks, and an abstract that states purpose, methods, findings, and implications were credited by reviewers and need no change.
+
 ## Output
 
 Lead with a concise verdict in the target venue's terms when known. Then provide:

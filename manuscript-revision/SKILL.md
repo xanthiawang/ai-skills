@@ -72,6 +72,24 @@ registration line, stand-alone captions. Recurring judgment anchors: mechanism/c
 from descriptive data, "non-significant ≠ no effect" (vote-counting), heterogeneous pooling
 without invariance, internal number contradictions, RQ bundling.
 
+**Writing anchors from Zixin's own rejections (2026-07 to 2026-11; entries for Computers & Education,
+CHI 2027 ADR, LAK27).** Five patterns recurred across three venues and two manuscripts, so treat
+them as habits to test for, not one-off fixes. Each maps to a taxonomy category:
+
+| Pattern | Category | Grep / check in the manuscript |
+|---|---|---|
+| Behavioral evidence written as mechanism or causation | `CLAIMS-SCOPE` | `trap`, `self-reinforc`, `self-stabilis`, `mechanis`, `window`, `transfer fail`, `measures cognitive`; recommendations for an undeployed system |
+| RQ bundles several questions, or names something untested | `RQ-ALIGNMENT` | count the questions inside each RQ; match each RQ phrase to a Results subsection that tests it; Methods ordered by RQ |
+| Key choice with no stated reason | `RATIONALE` | theoretical framework vs alternatives, each borderline coding rule, sample size, every system-design decision |
+| Introduction or definition contradicts own results | `INTERNAL-CONSISTENCY` | every prior-work number quoted in the introduction against the paper's own reanalysis; each construct's definition against its use in the Discussion |
+| Reader cannot find what they need | `FRAMING-GAP`, `CLARITY-STRUCTURE`, `REPORTING-COMPLETENESS` | one-sentence gap by end of intro ¶2; no undefined labels in the abstract; no one- or two-sentence subsections; no results in Methods; supplements named and locatable; non-English figures translated |
+
+Two single-letter anchors to check as well: a pooled number emphasized over a weaker holdout
+number (`SELECTIVE-REPORTING`), and missing same-venue recent work or preprints left in place of
+published versions (`CITATION-COVERAGE`). For coding-scheme papers, also report human-human
+agreement next to machine-human agreement, and re-measure human agreement after any codebook
+revision that merges or renames codes.
+
 ## Workflow
 
 `grep` the exact phrase → edit the manuscript and/or write the response (in **all** P2P copies) → mark substantive new text → rebuild → verify. In a P2P the unit is: reviewer text → author **response** → the **quoted, highlighted** manuscript change.
