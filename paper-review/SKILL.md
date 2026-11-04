@@ -57,6 +57,19 @@ Zixin's own rejections (CHI 2027 Assisted Desk Rejection, Computers & Education 
 8. **Reader-facing completeness.** Every supplement the text mentions is locatable by name; non-English figures carry translations; data language and any translation are described; the generative-AI declaration separates research-method use from manuscript-preparation use.
 9. **Literature coverage.** Recent work in the target venue on the same topic is cited; published versions replace preprints.
 
+### Clarity checks from the CHI 2027 desk rejection
+
+The CHI Associate Chair and Subcommunity Chair rejected the paper mainly because it was "difficult to understand": the abstract and introduction were "very difficult to understand", the gap "remained unclear until the Related Work section", Section 4 needed reorganizing, design decisions lacked justification, the methodology lacked clarity, and the introduction was long. Their own summary of the paper misread the study design, which is the clearest sign that the writing failed. Run these tests on every manuscript, and report each failure as a major comment:
+
+- **Outsider summary test.** Read only the title, abstract, and introduction, then write the one-sentence summary a reviewer would write (what was built or studied, with whom, how, what was found). If it misstates the design or the contribution, the framing has failed regardless of the results.
+- **Abstract.** Every term is either common in the field or defined on the spot; condition names, ratio or index names, code labels, and phrases like "conventional proxies" are replaced by plain descriptions. The abstract states the problem, what was done, the setting and sample, the main results with their numbers, and one implication, in that order.
+- **One gap, early.** The introduction states a single gap, in one sentence, by the end of its second paragraph. Several half-gaps spread over paragraphs three and four count as no gap. Related Work opens by naming the open problem and each subsection ends by saying what remains open for this paper.
+- **Introduction length.** About 800-900 words for a journal or CHI paper; the results preview is at most one paragraph; contributions are stated compactly.
+- **No empty sections.** A heading such as "Design goals" must contain the goals, each with its rationale. A subsection of one or two sentences is merged into its neighbor or filled with the missing content.
+- **Methods a reader can follow.** Methods is ordered as context and participants, design and procedure, measures, then analysis subsections that follow the research questions. Measures describes procedures only; any result found there belongs in Results.
+- **Why, not only what.** Each system or study component carries one sentence explaining why it was designed that way (for example, why two models, why a condensed prompt, why a particular trigger or fading rule).
+- **Findable materials.** Every supplementary file the text mentions is named and cited at first use; non-English figure text is translated in the caption or an appendix.
+
 Praise that recurs is also informative: transparent reporting, effect sizes with intervals, robustness checks, and an abstract that states purpose, methods, findings, and implications were credited by reviewers and need no change.
 
 ## Output

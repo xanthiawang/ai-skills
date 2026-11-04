@@ -84,6 +84,25 @@ them as habits to test for, not one-off fixes. Each maps to a taxonomy category:
 | Introduction or definition contradicts own results | `INTERNAL-CONSISTENCY` | every prior-work number quoted in the introduction against the paper's own reanalysis; each construct's definition against its use in the Discussion |
 | Reader cannot find what they need | `FRAMING-GAP`, `CLARITY-STRUCTURE`, `REPORTING-COMPLETENESS` | one-sentence gap by end of intro ¶2; no undefined labels in the abstract; no one- or two-sentence subsections; no results in Methods; supplements named and locatable; non-English figures translated |
 
+**CHI clarity pass (required before any submission).** The CHI 2027 desk rejection was a
+clarity rejection, not a statistics rejection: the abstract and introduction were "very difficult
+to understand", the gap appeared only in Related Work, Section 3.1 "Design goals" was one sentence
+with no goals, Section 4 mixed design, attrition and ethics and reported results under Measures,
+and design decisions had no reasons. The reviewers' own summary misread the design. Before
+submission, revise until each check passes, and keep the edits in `[..]{.mark}` like any other
+substantive change:
+
+| Check | Pass condition | What fixed it in StudyAI v51 |
+|---|---|---|
+| Outsider summary | A one-sentence summary written from title + abstract + intro alone states the design and contribution correctly | Rewritten abstract and introduction |
+| Abstract labels | No term in the abstract is defined only later; condition, ratio and code names replaced by plain words | "session CO ratio", "Adaptive-first / Direct-first", "conventional proxies" removed |
+| Single early gap | One gap sentence by the end of intro ¶2; Related Work opens with it and each subsection ends on it | Three scattered gaps replaced by one |
+| Introduction length | About 800-900 words; results preview one paragraph | 1,392 to 839 words |
+| No empty sections | Every heading delivers its content; no subsection under three sentences | Sec 3.1 rewritten as four goals with rationale; thin 3.4 and 3.6 merged |
+| Methods order | Context and participants, design and procedure, measures, analysis by RQ; no results in Measures | Sec 4 reorganized; detector results moved to Results |
+| Design rationale | One "why" sentence for every system or study component | Two-model split, concurrent calls, condensed prompt, trigger families, fading rule explained |
+| Findable materials | Supplementary files named (S1, S2, ...) and cited at first use; non-English figures translated | S1-S5 labels; Fig 2 caption translation and appendix table |
+
 Two single-letter anchors to check as well: a pooled number emphasized over a weaker holdout
 number (`SELECTIVE-REPORTING`), and missing same-venue recent work or preprints left in place of
 published versions (`CITATION-COVERAGE`). For coding-scheme papers, also report human-human
