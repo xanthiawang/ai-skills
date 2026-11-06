@@ -84,6 +84,22 @@ them as habits to test for, not one-off fixes. Each maps to a taxonomy category:
 | Introduction or definition contradicts own results | `INTERNAL-CONSISTENCY` | every prior-work number quoted in the introduction against the paper's own reanalysis; each construct's definition against its use in the Discussion |
 | Reader cannot find what they need | `FRAMING-GAP`, `CLARITY-STRUCTURE`, `REPORTING-COMPLETENESS` | one-sentence gap by end of intro ¶2; no undefined labels in the abstract; no one- or two-sentence subsections; no results in Methods; supplements named and locatable; non-English figures translated |
 
+**Anchors from the ICLR 2027 official reviews (2026-11, a third manuscript; ratings 1, 2, 1, 2).**
+No reviewer disputed a number. The paper was read as a thorough empirical report without a stated
+contribution, and the clarity pattern above recurred (Presentation 2 or lower from all four reviewers).
+Three further patterns apply to ML and other findings-driven papers:
+
+| Pattern | Category | Grep / check in the manuscript |
+|---|---|---|
+| Findings listed with no central insight and no rule for use | `CONTRIBUTION-SIGNIFICANCE` | abstract and introduction enumerate findings (`(1)`, `(2)`, `three key findings`) without one sentence on what is new against Related Work; no paragraph or table saying when the effect occurs and which intervention to use, with conditions and counterexamples |
+| Proposed fix dominated in the paper's own table, or a combined headline number | `BASELINES`, `SELECTIVE-REPORTING` | every table row that beats the proposed method at similar cost is acknowledged in the text; each headline number that combines interventions has its single-intervention numbers beside it |
+| Generality left to the appendix or the limitations | `EXTERNAL-VALIDITY` | main text reports a real benchmark, a second resource or constraint type, the strongest available model, and frequency in a realistic workflow; a rate conditioned on a selected subset is shown with its unconditioned version and by difficulty and failure type |
+
+When drafting the rebuttal for such reviews, answer the contribution question first and in the
+reviewer's own terms (one or two insights, what was unknown before, which comparison shows it), then
+the decision rule, then the baselines; point to existing appendix results by table number before
+offering new experiments.
+
 **CHI clarity pass (required before any submission).** The CHI 2027 desk rejection was a
 clarity rejection, not a statistics rejection: the abstract and introduction were "very difficult
 to understand", the gap appeared only in Related Work, Section 3.1 "Design goals" was one sentence
