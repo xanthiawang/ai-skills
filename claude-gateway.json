@@ -1,0 +1,6 @@
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.nexrouter.ai"
+  },
+  "model": "claude-opus-5-5"
+}

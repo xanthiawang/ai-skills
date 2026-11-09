@@ -1011,6 +1011,27 @@ install_managed_launchers() {
     fi
 }
 
+apply_claude_gateway_settings() {
+    python3 - "$REPO_ROOT/claude-gateway.json" <<'PYGATEWAY'
+import json
+import sys
+from pathlib import Path
+
+try:
+    declaration = json.loads(Path(sys.argv[1]).read_text())
+    path = Path.home() / ".claude/settings.json"
+    data = json.loads(path.read_text()) if path.exists() else {}
+    data.setdefault("env", {}).update(declaration["env"])
+    data["model"] = declaration["model"]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
+    path.chmod(0o600)
+    print("[OK] Claude gateway URL and model applied; local credentials preserved")
+except Exception as exc:
+    raise SystemExit(f"Claude gateway settings failed: {exc}")
+PYGATEWAY
+}
+
 check_sync() {
     git -C "$REPO_ROOT" status --short --branch
     if have_cmd codex; then
@@ -1052,6 +1073,7 @@ case "$MODE" in
         install_managed_launchers
         install_codex_pywal_theme
         apply_codex_settings
+        apply_claude_gateway_settings
         ;;
     pull)
         git -C "$REPO_ROOT" pull --ff-only
@@ -1066,6 +1088,7 @@ case "$MODE" in
         install_managed_launchers
         install_codex_pywal_theme
         apply_codex_settings
+        apply_claude_gateway_settings
         ;;
     mcp)
         sync_mcp
