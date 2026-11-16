@@ -79,6 +79,19 @@ Never begin a sentence with "Additionally," "Furthermore," or "Moreover."
 - No performing intelligence. No citation decoration, no jargon for jargon's sake, no writing that exists to make the author look smart rather than transfer understanding.
 - No knowledge-gap filler. If you don't know something, say so or say nothing.
 
+### No labels, notes, or parenthetical asides in deliverables (Zixin, 2026-11-16)
+
+Applies to any document handed to someone else: replies, reports, proposals, briefs, and decks, in Chinese or English.
+
+- No source or section labels in front of a paragraph. Do not write "行业做法：", "说明：", "注：", "备注：", "Note:", or "Source:". To separate material by origin, use formatting such as text colour, and explain the colours in the chat, not in the document.
+- No text about the document itself. Legends, change logs, "what changed since the last version", and reading guides go in the chat.
+- No parentheses for added information, full-width or half-width. Put specs, dates, counts, and conditions into the sentence. Write "8 张 16 GB 的 V100", not "8×V100（每卡 16 GB）". Write "10 月 28 日做了同机对照实测", not "同机对照实测（10 月 28 日）".
+- Tables follow the same rule. Give dates and sample sizes their own column or put them in the cell text. Write "未报告" for a missing value instead of a dash plus a legend.
+- Caveats stay, as plain sentences. "以下是仿真，不是实测。" is fine. The same words inside parentheses or as a heading suffix are not.
+- Before delivering, search the document for （ ） ( ) and for 说明, 注, 备注, 图例, and rewrite each hit.
+- Exceptions: citations and reference callouts in papers, math, code, units that a style guide requires in parentheses, and parentheses already in a draft that Zixin did not ask to change.
+- In a deliverable document this rule overrides the option to use parentheses in place of em dashes.
+
 ### The cardinal rule
 
 **Every sentence must carry information.** If a sentence can be removed without changing the reader's understanding, remove it.
