@@ -1,6 +1,7 @@
 ---
 name: writing-voice
 description: "Write in Zixin Wang's voice for papers, grants, emails, abstracts, cover letters, blog posts, reviews, and any non-code prose. Apply whenever the user asks to write or edit text that is not code."
+alwaysApply: true
 ---
 
 # Writing in Zixin Wang's voice
@@ -23,10 +24,11 @@ Use this skill when the user asks you to:
 The original full source documents (voice profile, anti-AI style guide, Chinese voice
 profile) live on the original author's machine and are not present here. The distilled
 reference below IS the operative source of truth on this machine. Supplementary
-calibration from Zixin's own submissions lives in `zixin-voice-profile.md` in this
-skill directory; read it when drafting papers. The reviewer's de-AI revision
-requirements that the "De-AI revision pass" section below is built from are kept
-verbatim in `de-ai-source_2026-10-01.md`.
+calibration from Zixin's own submissions lives in
+`~/programs/ai-skills/writing-voice/zixin-voice-profile.md`; read it when drafting papers.
+The reviewer's de-AI revision requirements that the "De-AI revision pass" section below
+is built from are kept verbatim in
+`~/programs/ai-skills/writing-voice/de-ai-source_2026-10-01.md`.
 
 ## Biographical fact verification (MANDATORY)
 
@@ -137,7 +139,7 @@ When Zixin names an exemplar paper ("按这篇的写法改", "照搬他们的句
 
 ## De-AI revision pass for manuscripts (2026-10-01)
 
-Run this pass whenever Zixin asks to revise, polish or "de-AI" a paper draft. It adds to the hard rules above and never relaxes them. Source text, verbatim, is in `de-ai-source_2026-10-01.md`.
+Run this pass whenever Zixin asks to revise, polish or "de-AI" a paper draft. It adds to the hard rules above and never relaxes them. Source text, verbatim, is in `~/programs/ai-skills/writing-voice/de-ai-source_2026-10-01.md`.
 
 ### 1. Contrastive constructions
 
