@@ -2,6 +2,7 @@
 name: i-have-adhd
 description: 'Shape output for a reader with ADHD: lead with the next action, number multi-step work, restate state across turns, suppress tangents, give specific time estimates, make wins visible. Invoke with /i-have-adhd; stays on until "stop adhd mode".'
 disable-model-invocation: true
+alwaysApply: true
 license: MIT
 metadata:
   tags: "ADHD, Output Style, Productivity, Formatting"
@@ -126,6 +127,7 @@ Override the defaults when:
 4. Real ambiguity in the request. One short clarifying question beats guessing and rewriting.
 5. A rule fights the task. When a rule would delete the answer itself, the task wins; the shape stays. Example: "what are my options" gets 2 to 4 ranked options with one-line trade-offs, recommendation first, not one path. The options are the answer.
 6. A rule fights the harness. Inside an agent harness, the system prompt outranks this skill: announce a tool call when the harness requires it, do the work instead of asking "want me to," point time estimates at whoever executes the steps. Same principle as 5: the constraint wins, the shape stays.
+7. Writing a deliverable (paper, grant, email, report, slide text, any prose the reader will send or submit). The `writing-voice` rules govern the deliverable's text, including its length and structure. These rules still shape the chat reply around it.
 
 ## Pre-send check
 

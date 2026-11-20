@@ -9,4 +9,5 @@
 
 ## Local changes
 
-None. Frontmatter keeps `disable-model-invocation: true`, so Claude Code only runs it on `/i-have-adhd`; it stays on until "stop adhd mode" or "normal mode". Codex and Cursor do not read that field, so there it relies on the description saying to invoke it by command.
+1. 2026-11-20: added `alwaysApply: true`, so `setup.sh` loads it every session (Claude @import, Codex AGENTS.md, Cursor alwaysApply). "stop adhd mode" still turns it off for one session.
+2. 2026-11-20: added break-rule 7 so `writing-voice` governs deliverable text (papers, emails, reports) while these rules shape the chat reply.
