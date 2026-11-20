@@ -17,6 +17,30 @@ alwaysApply: true
 - Meaningful commit messages describing what and why
 - **Never** add `Co-Authored-By` lines to commit messages
 
+## Full-Chain Check Before Acting or Answering (Zixin, 2026-11-21)
+
+Zixin's instruction, verbatim: 「你每次做任务、做事和讲事情的时候，你要把所有流程全部跑一遍，看这东西到底需不需要、是否对齐，然后研究变量和控制变量是否 OK。你不要老漏东西。」
+
+Trigger: every task, recommendation, yes/no answer ("需要吗", "should we buy X"), and status report. A one-line factual lookup is exempt.
+
+The failure this prevents: answering only the narrow question in front of you. Example (2026-11-21): asked "do we need the OSS storage package?" during a domain purchase, the agent said no and stopped. The package was indeed unnecessary, but the OSS service itself was required later, because `server/src/config.ts:237` refuses content moderation without OSS. Zixin later heard "OSS is needed" and saw it as a contradiction.
+
+Run these five steps before you answer or act. Do them silently; put only the results in the reply.
+
+1. **Walk the whole chain.** Trace from Zixin's goal to the end state where a real user gets the result: steps, accounts, approvals, reviews, money, waiting times, and every consumer downstream. Read the code, config, and docs that consume the thing (grep for its env var or name), not only the page in front of you.
+2. **For each item, answer four questions with evidence** (a file:line, a doc, a page, a command output):
+   - Is it needed? Now, later, or never?
+   - What depends on it, and what does it depend on?
+   - Does it align with earlier decisions, memory, and global rules?
+   - What is the cheaper or reversible option?
+3. **Variables and controls.** Name what changes and what must stay fixed. When comparing options (models, prices, servers, vendors), hold everything else equal: same inputs, same location, same time window. Say which variables you could not control (network path, cache, load).
+4. **Premortem.** Assume it failed at launch or when Zixin used it. List the likely reasons, the ones from the walk in step 1 first. Fix each one, or name it in the reply as open.
+5. **Answer the whole question.** Keep apart the bundle being offered and the underlying service, and keep "now" apart from "later". When the answer is "not now", name the later step that will need it and when that step comes. End with what you did not check.
+
+Sources borrowed from (read 2026-11-21): obra/superpowers `verification-before-completion` (evidence before any claim; "requirements met" needs a line-by-line checklist), `brainstorming` ("look before you ask"; tell the user about constraints, conflicts, or cheaper paths they have not considered), `writing-plans` ("Global Constraints" and "Review Focus" list the failure modes the spec implies but nothing tests), and Klein-style premortem skills such as AndyShaman/premortem.
+
+Self-check before sending: could Zixin hear a different answer from you next week about this same item, because of something you already could have found? If yes, go back to step 1.
+
 ## Data Integrity (ABSOLUTE PROHIBITION)
 
 Never simulate, fabricate, or generate artificial data or statistical results under any circumstances.
