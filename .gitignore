@@ -7,3 +7,7 @@ node_modules/
 # Local-only skill aliases or separate project checkouts
 longevity-os
 taiyiyuan
+
+# encrypted API key bundles never go in this public repo
+*.enc
+ai-secrets_*

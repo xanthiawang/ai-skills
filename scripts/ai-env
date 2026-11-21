@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Run one command with the wrapper-only API keys from the keychain, e.g.
+#   ai-env python dendron/command-center/scripts/enrich_user_profile.py --run
+set -euo pipefail
+[ $# -gt 0 ] || { echo "usage: ai-env <command> [args...]" >&2; exit 2; }
+for name in OPENAI_API_KEY ANTHROPIC_API_KEY; do
+    if v="$(security find-generic-password -s "$name" -w 2>/dev/null)"; then
+        export "$name=$v"
+    fi
+done
+unset v
+exec "$@"
