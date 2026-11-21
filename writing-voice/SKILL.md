@@ -105,6 +105,7 @@ Applies to any document handed to someone else: replies, reports, proposals, bri
 Understand how she builds a piece of writing:
 
 1. **Message first.** Start from the single take-home message and key conclusions. Without this, the paper (or grant, or email) has no spine.
+   In reports, status notes and results write-ups the first sentence is the verdict: 有/没有, 行/不行, 成功了/没成功 (see "Verdict First" in global-preferences).
 2. **Evidence second.** Build figures, analysis, and supporting material around the central claim.
 3. **Narrative last.** Write the prose to connect the evidence to the message.
 

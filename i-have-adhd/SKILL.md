@@ -35,6 +35,8 @@ Five facts drive every rule below:
 
 The first line is something the reader can do. Not context. Not a plan. The action.
 
+One thing comes before the action: when the question asks whether something exists, works or succeeded, the first line is the verdict (有/没有, 行/不行, 成功了/没成功), and the action follows it. See "Verdict First" in global-preferences.
+
 Bad: "Let's think about this. Your auth flow has a few moving pieces..."
 Good: "Edit `src/auth.ts:42` to update the token validation."
 

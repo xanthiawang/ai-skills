@@ -17,6 +17,18 @@ alwaysApply: true
 - Meaningful commit messages describing what and why
 - **Never** add `Co-Authored-By` lines to commit messages
 
+## Verdict First (Zixin, 2026-11-22)
+
+Zixin's instruction, verbatim: 「在全局的回答或 writing 里面加一个规则：首先，一上来先告诉我最终的结果是有还是没有，行还是不行，成功了还是没成功。」
+
+Applies to every reply and to every report, summary, status note or results write-up, in Chinese or English.
+
+- The first sentence gives the final result in plain words: 有 or 没有, 行 or 不行, 成功了 or 没成功 (yes or no, works or does not, succeeded or failed). For a run, test or prediction, say whether it held or was falsified. A question with several parts gets one verdict per part, in the order asked.
+- Conditions come right after the verdict, never before it: write "行，但只在先校准的用法下", not a paragraph of conditions that ends in the answer.
+- When the honest result is mixed or not yet known, that is the verdict: 部分成立, 还不知道, 无法判断, followed by what would settle it.
+- Order: verdict, then evidence, then the next action. This sits in front of the `i-have-adhd` rule "lead with the next action".
+- In written reports the opening section starts with the verdict sentence, before context or method.
+
 ## Full-Chain Check Before Acting or Answering (Zixin, 2026-11-21)
 
 Zixin's instruction, verbatim: 「你每次做任务、做事和讲事情的时候，你要把所有流程全部跑一遍，看这东西到底需不需要、是否对齐，然后研究变量和控制变量是否 OK。你不要老漏东西。」
