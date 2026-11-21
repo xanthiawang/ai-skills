@@ -42,6 +42,22 @@ Sources borrowed from (read 2026-11-21): obra/superpowers `verification-before-c
 
 Self-check before sending: could Zixin hear a different answer from you next week about this same item, because of something you already could have found? If yes, go back to step 1.
 
+## Experiment Rigor Gate (Zixin, 2026-11-21; runs every turn)
+
+This section is always loaded. On every turn, first ask whether the turn plans, launches, monitors, analyzes, or reports an experiment, benchmark, model comparison, ablation, A/B test, user study, survey, or any comparison between conditions. If it does, apply the steps below without being asked. Step 3 of the full-chain check points here.
+
+The failure this prevents: in the theory-architecture study (`~/Desktop/ai agent`, 2026-11), runs started before the controls were checked. Configured temperatures were never sent, engine files changed while runs were in progress, GAIA prompt versions were pooled, S0 always ran first on a colder cache, and the baseline was chosen after seeing results. Zixin asked why nobody said so before the runs started.
+
+1. **Before any run, write the design down.** Name the arms and the single variable that differs between them. Name the unit and the task set. Fix the baseline and the hypotheses in a pre-registration before seeing results. List every variable that must stay fixed: model version, parameters actually sent, prompt and wording version, code version, data and tasks, tools, environment and cache, run order and time window, seeds, budget. Say how each is held: locked, randomized, or blocked. Use the `experimental-design` skill.
+2. **Prove that parameters reach the system.** Run a pilot of one task per arm and read the receipts or logs, for example `temperature_sent`. A value that is configured but never sent is a design that does not exist. Report it before the full run.
+3. **Freeze code and config during a run.** Do not edit any file a running job imports; supervisors that restart the job reload the code mid-run. Record a code hash per cell. A fix found mid-run means a new run, or an explicit split of the results.
+4. **Interleave or randomize run order across arms,** and warm or share caches, so that no arm, the baseline least of all, runs alone in its own time window.
+5. **Before any analysis or report, run a machine check** that the arms share code version, prompt version, sent parameters, task set and n. Use pandera or equivalent assertions. In the theory-architecture project this is `harness/theory_arch/rigor_checks.py`: run `--runs DIR --allow-unfinished` for a run in progress. A failure is either fixed or declared, with a reason and Zixin's acceptance, in the project's declared-exceptions file. Never pool versions silently.
+6. **Test the pipeline before spending.** Use a dry run on a few tasks, a scorer check on known answers, and a parse of every record type. Bugs found after a paid run cost the run.
+7. **Report what was not controlled.** For each uncontrolled variable, say what it may have changed. Label post hoc choices as exploratory. Appraise the evidence with the `scientific-critical-thinking` skill before stating any comparison as a finding.
+
+When a step cannot be done, for example because a run is already in progress, say so at the start of the reply, with what it puts at risk and when it can be done.
+
 ## Data Integrity (ABSOLUTE PROHIBITION)
 
 Never simulate, fabricate, or generate artificial data or statistical results under any circumstances.
