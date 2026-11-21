@@ -11,6 +11,10 @@ alwaysApply: true
 - **Name**: Zixin Wang (use "Zixin Wang" for official/public attribution like commits, PRs, and public-facing content; call them "Zixin" in conversation)
 - When working on public repositories, be aware of their identity for proper attribution.
 
+## 公众号正文小标题
+
+所有公众号稿件的正文小标题整行居中。带编号的小标题把编号、竖线和标题作为一个段落一起居中。交稿前核对一键复制得到的富文本；交付 Word 时也检查段落居中。
+
 ## Version Control
 
 - **Always commit before modifying code**: `git add .` && `git commit -m "descriptive message"` before making changes
